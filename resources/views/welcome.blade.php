@@ -13,7 +13,7 @@
             position: fixed;
             inset: 0;
             background: url('/images/campus-bg.png') center/cover no-repeat;
-            filter: blur(8px) saturate(0.9);
+            filter: blur(2px) saturate(0.9);
             transform: scale(1.08);
         }
         .welcome-overlay {
