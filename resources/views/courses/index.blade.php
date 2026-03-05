@@ -1,60 +1,46 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-primary-950 leading-tight">
-            {{ __('Courses') }}
-        </h2>
+        <h2 class="mb-0 fw-bold" style="color: var(--lu-deep-purple);">{{ __('Courses') }}</h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-primary-950">Explore Courses</h1>
-                <p class="mt-2 text-primary-600">Short video lessons, quizzes, and assignments. Learn at your own pace.</p>
-            </div>
+    <div class="container">
+        <div class="mb-5">
+            <h1 class="h3 fw-bold" style="color: var(--lu-deep-purple);">Explore Courses</h1>
+            <p class="text-muted">Short video lessons, quizzes, and assignments. Learn at your own pace.</p>
+        </div>
 
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                @forelse ($courses as $course)
-                    <a href="{{ route('courses.show', $course) }}"
-                       class="group block bg-white rounded-xl border border-primary-100 overflow-hidden shadow-sm hover:shadow-md hover:border-primary-200 transition-all duration-200">
-                        <div class="aspect-video bg-primary-100 flex items-center justify-center">
+        <div class="row g-4">
+            @forelse ($courses as $course)
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <a href="{{ route('courses.show', $course) }}" class="card text-decoration-none border-0 shadow-sm h-100 overflow-hidden">
+                        <div class="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center">
                             @if ($course->thumbnail)
-                                <img src="{{ $course->thumbnail }}" alt="{{ $course->title }}"
-                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                <img src="{{ $course->thumbnail }}" alt="{{ $course->title }}" class="object-fit-cover">
                             @else
-                                <svg class="w-16 h-16 text-primary-300" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M4 6h16v12H4V6zm2 2v8l6-4 6 4V8H6z"/>
-                                </svg>
+                                <svg class="text-secondary" width="48" height="48" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8l6-4 6 4V8H6z"/></svg>
                             @endif
                         </div>
-                        <div class="p-4">
-                            <span class="text-xs font-medium text-primary-500 uppercase tracking-wider">{{ $course->level }}</span>
-                            <h3 class="mt-1 font-semibold text-primary-950 group-hover:text-primary-700 transition-colors">{{ $course->title }}</h3>
-                            <p class="mt-1 text-sm text-primary-600 line-clamp-2">{{ Str::limit($course->description, 80) }}</p>
-                            <p class="mt-2 text-xs text-primary-500">{{ $course->instructor->name }}</p>
+                        <div class="card-body">
+                            <span class="badge bg-light text-dark mb-2">{{ $course->level }}</span>
+                            <h5 class="card-title text-dark">{{ $course->title }}</h5>
+                            <p class="card-text text-muted small">{{ Str::limit($course->description, 80) }}</p>
+                            <p class="small text-muted mb-2">{{ $course->instructor->name }}</p>
                             @if ($enrolledIds->contains($course->id))
-                                <span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800">
-                                    Enrolled
-                                </span>
+                                <span class="badge rounded-pill" style="background: rgba(45,27,78,0.15); color: var(--lu-deep-purple);">Enrolled</span>
                             @endif
                         </div>
                     </a>
-                @empty
-                    <div class="col-span-full text-center py-16">
-                        <svg class="mx-auto h-12 w-12 text-primary-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                        <h3 class="mt-2 text-sm font-medium text-primary-950">No courses yet</h3>
-                        <p class="mt-1 text-sm text-primary-600">Courses will appear here once they are published.</p>
-                    </div>
-                @endforelse
-            </div>
-
-            @if ($courses->hasPages())
-                <div class="mt-8">
-                    {{ $courses->links() }}
                 </div>
-            @endif
+            @empty
+                <div class="col-12 text-center py-5 text-muted">
+                    <svg class="mb-2" width="48" height="48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+                    <p class="mb-0">No courses yet. Courses will appear here once published.</p>
+                </div>
+            @endforelse
         </div>
+
+        @if ($courses->hasPages())
+            <div class="mt-4">{{ $courses->links() }}</div>
+        @endif
     </div>
 </x-app-layout>

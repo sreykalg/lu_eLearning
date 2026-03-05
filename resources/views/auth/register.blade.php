@@ -1,6 +1,6 @@
 <x-guest-layout title="Register">
-    <h2 class="fw-bold text-dark mb-1">Create Account</h2>
-    <p class="text-muted mb-4">Join LU Learn to start your learning journey.</p>
+    <h2 class="auth-heading" style="color: var(--lu-deep-purple);">Create Account</h2>
+    <p class="auth-subheading">Join LU Academy to start your learning journey.</p>
 
     @if ($errors->any())
         <div class="alert alert-danger mb-3">
@@ -39,7 +39,7 @@
         <button type="submit" class="btn btn-lu-primary w-100 py-3">Register</button>
     </form>
 
-    <p class="text-center text-muted mt-4 mb-0">
-        Already have an account? <a href="{{ route('login') }}" class="fw-medium text-decoration-none" style="color: var(--lu-purple);">Log In</a>
+    <p class="text-center auth-footer mt-4 mb-0">
+        Already have an account? <a href="{{ route('login') }}" class="text-decoration-none" style="color: var(--lu-purple);">Log In</a>
     </p>
 </x-guest-layout>

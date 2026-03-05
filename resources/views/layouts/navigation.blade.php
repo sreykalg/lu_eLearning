@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-lu py-3">
     <div class="container">
         <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ route('courses.index') }}" style="color: var(--lu-deep-purple);">
-            <img src="/images/life-university-logo.png" alt="LU Learn" height="36" class="me-2">
-            LU Learn
+            <img src="/images/life-university-logo.png" alt="LU Academy" height="36" class="me-2">
+            LU Academy
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>

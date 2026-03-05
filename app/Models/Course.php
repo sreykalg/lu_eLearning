@@ -64,4 +64,9 @@ class Course extends Model
     {
         return $this->hasMany(Assignment::class)->orderBy('order');
     }
+
+    public function discussions()
+    {
+        return $this->hasMany(Discussion::class);
+    }
 }

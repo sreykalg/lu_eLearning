@@ -1,6 +1,6 @@
 <x-guest-layout title="Log in">
-    <h2 class="fw-bold text-dark mb-1">Welcome Back!</h2>
-    <p class="text-muted mb-4">Log in to continue your learning journey.</p>
+    <h2 class="auth-heading" style="color: var(--lu-deep-purple);">Welcome Back</h2>
+    <p class="auth-subheading">Log in to continue your LU Academy journey.</p>
 
     @if (session('status'))
         <div class="alert alert-success mb-3">{{ session('status') }}</div>
@@ -43,8 +43,8 @@
     </form>
 
     @if (Route::has('register'))
-        <p class="text-center text-muted mt-4 mb-0">
-            Don't have an account? <a href="{{ route('register') }}" class="fw-medium text-decoration-none" style="color: var(--lu-purple);">Register</a>
+        <p class="text-center auth-footer mt-4 mb-0">
+            Don't have an account? <a href="{{ route('register') }}" class="text-decoration-none" style="color: var(--lu-purple);">Register</a>
         </p>
     @endif
 </x-guest-layout>

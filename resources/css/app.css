@@ -1,3 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Bootstrap loaded via CDN - minimal overrides */
+:root {
+    --lu-deep-purple: #2d1b4e;
+    --lu-purple: #4c1d95;
+}
