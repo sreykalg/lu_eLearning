@@ -26,12 +26,14 @@ class AssignmentController extends Controller
             'max_score' => 'required|integer|min:0',
             'grading_type' => 'required|in:auto,manual',
             'due_at' => 'nullable|date',
+            'allow_late_submission' => 'boolean',
             'is_required' => 'boolean',
         ]);
 
         $valid['course_id'] = $course->id;
         $valid['order'] = $course->assignments()->max('order') + 1;
         $valid['is_required'] = $request->boolean('is_required');
+        $valid['allow_late_submission'] = $request->boolean('allow_late_submission', false);
 
         Assignment::create($valid);
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Assignment added.');
@@ -57,9 +59,11 @@ class AssignmentController extends Controller
             'max_score' => 'required|integer|min:0',
             'grading_type' => 'required|in:auto,manual',
             'due_at' => 'nullable|date',
+            'allow_late_submission' => 'boolean',
             'is_required' => 'boolean',
         ]);
         $valid['is_required'] = $request->boolean('is_required');
+        $valid['allow_late_submission'] = $request->boolean('allow_late_submission', false);
 
         $assignment->update($valid);
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Assignment updated.');

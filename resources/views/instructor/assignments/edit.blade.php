@@ -46,6 +46,11 @@
                         </div>
                     </div>
                     <div class="mb-3 form-check">
+                        <input type="checkbox" name="allow_late_submission" value="1" class="form-check-input" id="allow_late_submission" {{ old('allow_late_submission', $assignment->allow_late_submission ?? false) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="allow_late_submission">Allow late submission</label>
+                        <div class="form-text">If unchecked, students cannot submit after the due date.</div>
+                    </div>
+                    <div class="mb-3 form-check">
                         <input type="checkbox" name="is_required" value="1" class="form-check-input" id="is_required" {{ old('is_required', $assignment->is_required) ? 'checked' : '' }}>
                         <label class="form-check-label" for="is_required">Required</label>
                     </div>

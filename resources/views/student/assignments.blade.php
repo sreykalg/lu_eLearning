@@ -36,7 +36,7 @@
 
 <div class="d-flex flex-column gap-3">
     @forelse($filtered as $a)
-        @php $sub = $submissions->get($a->id); $isGraded = $sub?->isGraded() ?? false; $isSubmitted = $sub !== null; @endphp
+        @php $sub = $submissions->get($a->id); $isGraded = $sub?->isGraded() ?? false; $isSubmitted = $sub !== null; $canSubmit = $a->canSubmit(); @endphp
         <a href="{{ route('student.assignments.show', [$a->course, $a]) }}" class="text-decoration-none text-dark">
             <div class="card border-0 shadow-sm assignment-card">
                 <div class="card-body">
@@ -47,13 +47,17 @@
                                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: #dcfce7;">
                                         <svg width="14" height="14" fill="#16a34a" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
                                     </span>
+                                @elseif(!$canSubmit && !$isSubmitted)
+                                    <span class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: #f1f5f9;">
+                                        <svg width="14" height="14" fill="none" stroke="#64748b" viewBox="0 0 24 24"><path stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                    </span>
                                 @else
                                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 28px; height: 28px; background: #fef3c7;">
                                         <svg width="14" height="14" fill="none" stroke="#b45309" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </span>
                                 @endif
-                                <span class="badge {{ $isGraded ? 'bg-success' : ($isSubmitted ? 'bg-info' : 'bg-warning text-dark') }}">
-                                    {{ $isGraded ? 'Graded' : ($isSubmitted ? 'Submitted' : 'Pending') }}
+                                <span class="badge {{ $isGraded ? 'bg-success' : ($isSubmitted ? 'bg-info' : (!$canSubmit ? 'bg-secondary' : 'bg-warning text-dark')) }}">
+                                    {{ $isGraded ? 'Graded' : ($isSubmitted ? 'Submitted' : (!$canSubmit ? 'Closed' : 'Pending')) }}
                                 </span>
                                 <h6 class="mb-0 fw-semibold">{{ $a->title }}</h6>
                             </div>
@@ -70,8 +74,8 @@
                             </div>
                         </div>
                         <div class="flex-shrink-0">
-                            <span class="btn btn-sm {{ $isGraded ? 'btn-outline-secondary' : 'btn-primary' }}">
-                                {{ $isGraded ? 'View' : 'Submit' }}
+                            <span class="btn btn-sm {{ ($isGraded || !$canSubmit) ? 'btn-outline-secondary' : 'btn-primary' }}">
+                                {{ $isGraded ? 'View' : (!$canSubmit ? 'View' : 'Submit') }}
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" class="ms-1"><path d="M9 5l7 7-7 7"/></svg>
                             </span>
                         </div>

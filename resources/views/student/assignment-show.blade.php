@@ -29,7 +29,11 @@
                     <span class="badge bg-info">Submitted</span>
                 @endif
             @else
-                <span class="badge bg-warning text-dark">Pending</span>
+                @if(!$assignment->canSubmit())
+                    <span class="badge bg-secondary">Closed</span>
+                @else
+                    <span class="badge bg-warning text-dark">Pending</span>
+                @endif
             @endif
         </div>
         @if($assignment->instructions)
@@ -49,7 +53,17 @@
                 </div>
             @endif
             <a href="{{ route('courses.show', $assignment->course) }}" class="btn btn-outline-secondary btn-sm mt-3">Back to course</a>
+        @elseif(!$assignment->canSubmit())
+            <div class="alert alert-secondary mb-0">
+                <strong>Submission closed.</strong> The due date has passed and late submissions are not allowed for this assignment.
+            </div>
+            <a href="{{ route('student.assignments') }}" class="btn btn-outline-secondary btn-sm mt-3">Back to assignments</a>
         @else
+            @if($assignment->isPastDue())
+                <div class="alert alert-warning mb-3">
+                    <strong>Past due.</strong> Late submissions are allowed for this assignment.
+                </div>
+            @endif
             <form action="{{ route('student.assignments.submit', [$course, $assignment]) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">

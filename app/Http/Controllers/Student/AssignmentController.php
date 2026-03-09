@@ -60,6 +60,10 @@ class AssignmentController extends Controller
             return redirect()->route('student.assignments.show', [$course, $assignment])
                 ->with('error', 'You have already submitted this assignment.');
         }
+        if (!$assignment->canSubmit()) {
+            return redirect()->route('student.assignments.show', [$course, $assignment])
+                ->with('error', 'The submission deadline has passed. Late submissions are not allowed for this assignment.');
+        }
         $valid = $request->validate([
             'content' => 'nullable|string',
             'file' => 'nullable|file|max:10240',
