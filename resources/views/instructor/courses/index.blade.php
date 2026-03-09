@@ -23,12 +23,21 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 @endif
+@if(session('error'))
+    <div class="alert alert-warning alert-dismissible fade show">{{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
 
 <div class="row g-4">
     @forelse($courses as $course)
         <div class="col-md-6 col-lg-4">
             <div class="card border-0 shadow-sm h-100 overflow-hidden course-card-inner">
+                @if(($course->approval_status ?? 'draft') === 'pending')
+                <div class="text-decoration-none text-dark" style="cursor: default;">
+                @else
                 <a href="{{ route('instructor.courses.edit', $course) }}" class="text-decoration-none text-dark">
+                @endif
                     <div class="course-card-top ratio ratio-16x9">
                         @if($course->thumbnail)
                             <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" class="object-fit-cover w-100 h-100">
@@ -59,9 +68,17 @@
                         </div>
                         <h5 class="card-title fw-semibold mb-2">{{ Str::limit($course->title, 50) }}</h5>
                         <p class="text-muted small mb-3">{{ $course->lessons_count }} lessons · {{ $course->quizzes_count }} quizzes · {{ $course->assignments_count }} assignments</p>
+                        @if(($course->approval_status ?? 'draft') === 'pending')
+                        <span class="btn btn-sm btn-outline-secondary disabled">Under review — editing disabled</span>
+                        @else
                         <span class="btn btn-sm btn-outline-dark">Edit Course</span>
+                        @endif
                     </div>
+                @if(($course->approval_status ?? 'draft') === 'pending')
+                </div>
+                @else
                 </a>
+                @endif
             </div>
         </div>
     @empty

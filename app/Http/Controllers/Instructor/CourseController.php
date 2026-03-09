@@ -44,9 +44,15 @@ class CourseController extends Controller
         return redirect()->route('instructor.courses.index')->with('success', 'Course created and submitted for approval.');
     }
 
-    public function edit(Course $course): View
+    public function edit(Course $course)
     {
-        $this->authorize('update', $course);
+        if ($course->instructor_id !== auth()->id()) {
+            abort(403);
+        }
+        if ($course->approval_status === Course::APPROVAL_PENDING) {
+            return redirect()->route('instructor.courses.index')
+                ->with('error', 'This course is under review. You can edit it after the HoD approves or requests changes.');
+        }
         $course->load(['modules', 'lessons.videoQuizzes', 'quizzes.questions', 'assignments']);
         return view('instructor.courses.edit', compact('course'));
     }

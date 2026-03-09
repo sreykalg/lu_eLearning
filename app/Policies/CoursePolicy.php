@@ -9,11 +9,23 @@ class CoursePolicy
 {
     public function update(User $user, Course $course): bool
     {
-        return $course->instructor_id === $user->id;
+        if ($course->instructor_id !== $user->id) {
+            return false;
+        }
+        if ($course->approval_status === Course::APPROVAL_PENDING) {
+            return false;
+        }
+        return true;
     }
 
     public function delete(User $user, Course $course): bool
     {
-        return $course->instructor_id === $user->id;
+        if ($course->instructor_id !== $user->id) {
+            return false;
+        }
+        if ($course->approval_status === Course::APPROVAL_PENDING) {
+            return false;
+        }
+        return true;
     }
 }
