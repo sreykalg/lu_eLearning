@@ -26,7 +26,11 @@ class CourseController extends Controller
 
     public function show(Request $request, Course $course): View
     {
-        if (!$course->is_published && (!$request->user() || !$request->user()->isInstructor())) {
+        $canPreview = $request->user() && (
+            ($request->user()->isInstructor() && $course->instructor_id === $request->user()->id) ||
+            $request->user()->isHeadOfDept()
+        );
+        if (!$course->is_published && !$canPreview) {
             abort(404);
         }
 

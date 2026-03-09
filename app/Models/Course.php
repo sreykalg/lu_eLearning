@@ -19,11 +19,37 @@ class Course extends Model
         'level',
         'order',
         'is_published',
+        'approval_status',
+        'submitted_at',
+        'approved_at',
+        'revision_notes',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'submitted_at' => 'datetime',
+        'approved_at' => 'datetime',
     ];
+
+    public const APPROVAL_DRAFT = 'draft';
+    public const APPROVAL_PENDING = 'pending';
+    public const APPROVAL_APPROVED = 'approved';
+    public const APPROVAL_NEEDS_REVISION = 'needs_revision';
+
+    public function isPending(): bool
+    {
+        return $this->approval_status === self::APPROVAL_PENDING;
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->approval_status === self::APPROVAL_APPROVED;
+    }
+
+    public function isNeedsRevision(): bool
+    {
+        return $this->approval_status === self::APPROVAL_NEEDS_REVISION;
+    }
 
     public function getRouteKeyName(): string
     {

@@ -85,6 +85,7 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::get('/announcements/create', [InstructorAnnouncementController::class, 'create'])->name('announcements.create');
     Route::post('/announcements', [InstructorAnnouncementController::class, 'store'])->name('announcements.store');
     Route::resource('courses', InstructorCourseController::class)->except(['show'])->parameters(['courses' => 'course']);
+    Route::post('courses/{course}/submit-approval', [InstructorCourseController::class, 'submitForApproval'])->name('courses.submit-approval');
     Route::post('courses/{course}/modules', [InstructorModuleController::class, 'store'])->name('modules.store');
     Route::put('courses/{course}/modules/{module}', [InstructorModuleController::class, 'update'])->name('modules.update');
     Route::delete('courses/{course}/modules/{module}', [InstructorModuleController::class, 'destroy'])->name('modules.destroy');
@@ -115,6 +116,7 @@ Route::middleware(['auth', 'verified', 'head_of_dept'])->prefix('hod')->name('ho
     Route::get('/', [HodDashboardController::class, 'index'])->name('dashboard');
     Route::get('/approval', [HodApprovalController::class, 'index'])->name('approval');
     Route::post('/approval/{course}/approve', [HodApprovalController::class, 'approve'])->name('approval.approve');
+    Route::post('/approval/{course}/request-changes', [HodApprovalController::class, 'requestChanges'])->name('approval.request-changes');
     Route::get('/reports', [HodReportsController::class, 'index'])->name('reports');
     Route::get('/users', [HodUserController::class, 'index'])->name('users');
 });

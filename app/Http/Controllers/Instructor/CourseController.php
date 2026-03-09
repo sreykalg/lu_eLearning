@@ -33,13 +33,15 @@ class CourseController extends Controller
         $valid['instructor_id'] = $request->user()->id;
         $valid['slug'] = Str::slug($valid['title']);
         $valid['is_published'] = false;
+        $valid['approval_status'] = Course::APPROVAL_PENDING;
+        $valid['submitted_at'] = now();
 
         if ($request->hasFile('thumbnail')) {
             $valid['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
         }
 
         Course::create($valid);
-        return redirect()->route('instructor.courses.index')->with('success', 'Course created.');
+        return redirect()->route('instructor.courses.index')->with('success', 'Course created and submitted for approval.');
     }
 
     public function edit(Course $course): View
@@ -56,15 +58,12 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'level' => 'required|in:beginner,intermediate,advanced',
-            'is_published' => 'boolean',
             'thumbnail' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('thumbnail')) {
             $valid['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
         }
-        $valid['is_published'] = $request->boolean('is_published');
-
         $course->update($valid);
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Course updated.');
     }
@@ -74,5 +73,19 @@ class CourseController extends Controller
         $this->authorize('delete', $course);
         $course->delete();
         return redirect()->route('instructor.courses.index')->with('success', 'Course deleted.');
+    }
+
+    public function submitForApproval(Course $course)
+    {
+        $this->authorize('update', $course);
+        if (!in_array($course->approval_status, [Course::APPROVAL_DRAFT, Course::APPROVAL_NEEDS_REVISION])) {
+            return back()->with('error', 'Course cannot be submitted in current status.');
+        }
+        $course->update([
+            'approval_status' => Course::APPROVAL_PENDING,
+            'submitted_at' => now(),
+            'revision_notes' => null,
+        ]);
+        return redirect()->route('instructor.courses.index')->with('success', 'Course submitted for approval.');
     }
 }

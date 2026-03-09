@@ -24,6 +24,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 @endif
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
 
 <div class="cb-wrap">
     <div class="cb-sidebar">
@@ -58,11 +63,37 @@
                 <input type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/*">
                 @error('thumbnail')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" name="is_published" value="1" class="form-check-input" id="is_published" {{ old('is_published', $course->is_published) ? 'checked' : '' }}>
-                <label class="form-check-label" for="is_published">Published</label>
+            @php
+                $statusLabel = match($course->approval_status ?? 'draft') {
+                    'pending' => 'Pending Review',
+                    'approved' => 'Approved',
+                    'needs_revision' => 'Needs Revision',
+                    default => 'Draft',
+                };
+            @endphp
+            <div class="mb-3">
+                <span class="badge {{ $course->approval_status === 'approved' ? 'bg-success' : ($course->approval_status === 'pending' ? 'bg-warning text-dark' : ($course->approval_status === 'needs_revision' ? 'bg-danger' : 'bg-secondary')) }}">{{ $statusLabel }}</span>
+                @if($course->revision_notes)
+                    <div class="mt-2 p-3 rounded bg-light border">
+                        <small class="text-muted d-block mb-1">Feedback from HoD:</small>
+                        <p class="mb-0 small">{{ $course->revision_notes }}</p>
+                    </div>
+                @endif
             </div>
-            <button type="submit" class="btn btn-primary">Save Course</button>
+            <div class="d-flex gap-2 flex-wrap align-items-center">
+                <button type="submit" class="btn btn-primary">Save Course</button>
+                @if(in_array($course->approval_status ?? 'draft', ['draft', 'needs_revision']))
+                    <form action="{{ route('instructor.courses.submit-approval', $course) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-success">Submit for Approval</button>
+                    </form>
+                @endif
+                <form action="{{ route('instructor.courses.destroy', $course) }}" method="POST" class="d-inline ms-auto" onsubmit="return confirm('Delete this course? All lessons, quizzes, and assignments will be removed. This cannot be undone.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-outline-danger">Delete Course</button>
+                </form>
+            </div>
         </form>
     </div>
 </div>

@@ -41,9 +41,21 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <span class="course-level-badge course-level-{{ $course->level ?? 'beginner' }}">{{ strtoupper($course->level ?? 'beginner') }}</span>
-                            @if(!$course->is_published)
-                                <span class="badge bg-secondary">Draft</span>
-                            @endif
+                            @php
+                                $statusLabel = match($course->approval_status ?? 'draft') {
+                                    'pending' => 'Pending Review',
+                                    'approved' => 'Active',
+                                    'needs_revision' => 'Needs Revision',
+                                    default => 'Draft',
+                                };
+                                $statusClass = match($course->approval_status ?? 'draft') {
+                                    'approved' => 'bg-success',
+                                    'pending' => 'bg-warning text-dark',
+                                    'needs_revision' => 'bg-danger',
+                                    default => 'bg-secondary',
+                                };
+                            @endphp
+                            <span class="badge {{ $statusClass }}">{{ $statusLabel }}</span>
                         </div>
                         <h5 class="card-title fw-semibold mb-2">{{ Str::limit($course->title, 50) }}</h5>
                         <p class="text-muted small mb-3">{{ $course->lessons_count }} lessons · {{ $course->quizzes_count }} quizzes · {{ $course->assignments_count }} assignments</p>
