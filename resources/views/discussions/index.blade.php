@@ -47,11 +47,17 @@ $layout = auth()->check()
 {{-- New discussion input --}}
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-0">
-        <form method="POST" action="{{ route('discussions.store') }}" class="d-flex flex-column">
+        <form method="POST" action="{{ route('discussions.store') }}" class="d-flex flex-column" enctype="multipart/form-data">
             @csrf
             <textarea name="body" class="form-control border-0 p-3" rows="3" required
                       placeholder="Start a new discussion..." style="resize: none;"></textarea>
-            <div class="d-flex justify-content-end p-2 border-top bg-light">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top bg-light flex-wrap gap-2">
+                <label class="mb-0 d-flex align-items-center gap-1 text-muted small cursor-pointer" style="cursor: pointer;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span>Attach image</span>
+                    <input type="file" name="attachments[]" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" multiple class="d-none">
+                </label>
+                <span class="text-muted small" id="discussion-files-label">No file chosen</span>
                 @if(request('course_id'))
                     <input type="hidden" name="course_id" value="{{ request('course_id') }}">
                 @endif
@@ -86,11 +92,30 @@ $layout = auth()->check()
                     <a href="{{ route('discussions.show', $d) }}" class="text-decoration-none text-dark">
                         <p class="mb-2">{{ $d->body }}</p>
                     </a>
+                    @if($d->attachments->isNotEmpty())
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            @foreach($d->attachments as $att)
+                                <a href="{{ asset($att->path) }}" target="_blank" rel="noopener" class="d-inline-block">
+                                    <img src="{{ asset($att->path) }}" alt="{{ $att->original_name }}" class="rounded" style="max-width:120px;max-height:80px;object-fit:cover;">
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
                     <div class="d-flex align-items-center gap-3 text-muted small">
-                        <span class="d-flex align-items-center gap-1">
+                        @auth
+                        <form action="{{ route('discussions.like', $d) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-link p-0 d-flex align-items-center gap-1 text-decoration-none {{ $d->hasLiked(auth()->user()) ? 'text-primary' : 'text-muted' }}" style="border:none;background:none;">
+                                <svg width="16" height="16" fill="{{ $d->hasLiked(auth()->user()) ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
+                                {{ $d->likes->count() }}
+                            </button>
+                        </form>
+                        @else
+                        <span class="d-flex align-items-center gap-1 text-muted">
                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
-                            0
+                            {{ $d->likes->count() }}
                         </span>
+                        @endauth
                         <a href="{{ route('discussions.show', $d) }}" class="text-muted text-decoration-none d-flex align-items-center gap-1">
                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                             {{ $d->replies->count() }} {{ Str::plural('reply', $d->replies->count()) }}
@@ -136,4 +161,15 @@ $layout = auth()->check()
 @endforelse
 
 {{ $discussions->links() }}
+
+@auth
+@push('scripts')
+<script>
+document.querySelector('input[name="attachments[]"]')?.addEventListener('change', function() {
+    var n = this.files.length;
+    document.getElementById('discussion-files-label').textContent = n ? n + ' file(s) chosen' : 'No file chosen';
+});
+</script>
+@endpush
+@endauth
 @endsection

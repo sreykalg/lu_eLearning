@@ -49,4 +49,19 @@ class Discussion extends Model
     {
         return $this->hasMany(DiscussionReply::class, 'discussion_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(DiscussionLike::class);
+    }
+
+    public function hasLiked(User $user): bool
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(DiscussionAttachment::class);
+    }
 }

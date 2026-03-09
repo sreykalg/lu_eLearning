@@ -62,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/lessons/progress', [LessonController::class, 'updateProgress'])->name('lessons.progress');
 
     Route::post('/discussions', [DiscussionController::class, 'store'])->name('discussions.store');
+    Route::post('/discussions/{discussion}/like', [DiscussionController::class, 'like'])->name('discussions.like');
     Route::post('/discussions/reply', [DiscussionController::class, 'reply'])->name('discussions.reply');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

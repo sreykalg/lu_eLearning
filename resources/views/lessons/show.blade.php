@@ -30,13 +30,31 @@ $layout = auth()->user()->isStudent()
 
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="lesson-card shadow-sm">
-            <div class="ratio ratio-16x9 bg-dark d-flex align-items-center justify-content-center">
+        <div class="lesson-card shadow-sm position-relative">
+            <div class="ratio ratio-16x9 bg-dark d-flex align-items-center justify-content-center position-relative">
                 @if ($lesson->video_url)
                     <video id="lesson-video" class="w-100 h-100" controls preload="metadata"
                            data-lesson-id="{{ $lesson->id }}" data-duration="{{ $lesson->video_duration ?? 0 }}">
                         <source src="{{ $lesson->video_url }}" type="video/mp4">
                     </video>
+                    @if($lesson->videoQuizzes->isNotEmpty())
+                        <div id="video-quiz-overlay" class="position-absolute top-0 start-0 end-0 bottom-0 d-none flex-column align-items-center justify-content-center p-4" style="background: rgba(0,0,0,0.85); z-index: 10;">
+                            <div class="bg-white rounded-3 shadow-lg p-4 w-100" style="max-width: 500px;">
+                                <h5 class="fw-bold mb-3" id="quiz-question"></h5>
+                                <div id="quiz-options" class="d-flex flex-column gap-2 mb-3"></div>
+                                <div id="quiz-feedback" class="small mb-2 d-none"></div>
+                                <button type="button" id="quiz-submit" class="btn btn-sm" style="background:#0f172a;color:#fff;">Submit</button>
+                            </div>
+                        </div>
+                        <div id="video-quiz-timeline" class="position-absolute start-0 end-0 d-none align-items-center" style="bottom: 0; height: 20px; z-index: 5; padding: 0 12px 4px; pointer-events: none;">
+                            <div class="flex-grow-1 position-relative rounded overflow-visible" style="height: 4px; background: rgba(255,255,255,0.4);">
+                                <div id="video-progress-fill" class="position-absolute top-0 start-0 bottom-0 rounded" style="background: rgba(255,255,255,0.9); width: 0%;"></div>
+                                @foreach($lesson->videoQuizzes as $vq)
+                                    <span class="quiz-marker position-absolute top-50 translate-middle-y rounded-circle" style="width: 10px; height: 10px; background: #fbbf24; left: 0%; margin-left: -5px;" data-seconds="{{ $vq->timestamp_seconds }}" title="Quiz at {{ gmdate('i:s', $vq->timestamp_seconds) }}"></span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <div class="text-white-50 text-center">
                         <svg width="64" height="64" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8l6-4 6 4V8H6z"/></svg>
@@ -97,6 +115,10 @@ $layout = auth()->user()->isStudent()
         var video = document.getElementById('lesson-video');
         if (!video || !video.dataset.lessonId) return;
         var lessonId = video.dataset.lessonId, lastSent = 0;
+        var videoQuizzes = @json($lesson->videoQuizzes);
+        var passedQuizzes = {};
+        var currentQuiz = null;
+
         function send(sec, done) {
             if (sec <= lastSent && !done) return;
             lastSent = sec;
@@ -105,11 +127,102 @@ $layout = auth()->user()->isStudent()
                 body: JSON.stringify({ lesson_id: lessonId, watched_seconds: Math.floor(sec), completed: done })
             });
         }
+
+        function checkQuizzes() {
+            if (videoQuizzes.length && !currentQuiz) {
+                var t = Math.floor(video.currentTime);
+                for (var i = 0; i < videoQuizzes.length; i++) {
+                    var q = videoQuizzes[i];
+                    if (passedQuizzes[q.id]) continue;
+                    if (t >= q.timestamp_seconds) {
+                        video.pause();
+                        currentQuiz = q;
+                        showQuiz(q);
+                        break;
+                    }
+                }
+            }
+        }
+
+        function showQuiz(q) {
+            var overlay = document.getElementById('video-quiz-overlay');
+            if (!overlay) return;
+            document.getElementById('quiz-question').textContent = q.question;
+            var opts = document.getElementById('quiz-options');
+            opts.innerHTML = '';
+            var correctIdx = (q.options || []).findIndex(function(o) { return o.is_correct; });
+            (q.options || []).forEach(function(o, i) {
+                var lb = document.createElement('label');
+                lb.className = 'd-flex align-items-center gap-2 p-2 rounded border cursor-pointer';
+                lb.style.cursor = 'pointer';
+                var rb = document.createElement('input');
+                rb.type = 'radio';
+                rb.name = 'quiz_ans';
+                rb.value = i;
+                lb.appendChild(rb);
+                lb.appendChild(document.createTextNode(o.text));
+                lb.addEventListener('click', function() { rb.checked = true; });
+                opts.appendChild(lb);
+            });
+            document.getElementById('quiz-feedback').classList.add('d-none');
+            overlay.classList.remove('d-none');
+            overlay.classList.add('d-flex');
+        }
+
+        function hideQuiz() {
+            var overlay = document.getElementById('video-quiz-overlay');
+            if (overlay) {
+                overlay.classList.add('d-none');
+                overlay.classList.remove('d-flex');
+            }
+            currentQuiz = null;
+            video.play();
+        }
+
+        var timeline = document.getElementById('video-quiz-timeline');
+        var progressFill = document.getElementById('video-progress-fill');
+        function updateTimeline() {
+            var dur = video.duration;
+            if (!dur || !isFinite(dur)) return;
+            if (timeline) {
+                timeline.classList.remove('d-none');
+                timeline.classList.add('d-flex');
+            }
+            if (progressFill) progressFill.style.width = (video.currentTime / dur * 100) + '%';
+            document.querySelectorAll('.quiz-marker').forEach(function(m) {
+                var sec = parseInt(m.dataset.seconds || 0);
+                m.style.left = (sec / dur * 100) + '%';
+            });
+        }
+        video.addEventListener('loadedmetadata', updateTimeline);
+        video.addEventListener('durationchange', updateTimeline);
+        video.addEventListener('timeupdate', function() {
+            var dur = video.duration;
+            if (progressFill && dur && isFinite(dur)) progressFill.style.width = (video.currentTime / dur * 100) + '%';
+        });
+
+        var quizSubmit = document.getElementById('quiz-submit');
+        if (quizSubmit) quizSubmit.addEventListener('click', function() {
+            if (!currentQuiz) return;
+            var selected = document.querySelector('input[name="quiz_ans"]:checked');
+            var feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('d-none');
+            var correctIdx = (currentQuiz.options || []).findIndex(function(o) { return o.is_correct; });
+            if (!selected || parseInt(selected.value) !== correctIdx) {
+                feedback.textContent = 'Incorrect. Try again.';
+                feedback.className = 'small mb-2 text-danger';
+                return;
+            }
+            feedback.textContent = 'Correct!';
+            feedback.className = 'small mb-2 text-success';
+            passedQuizzes[currentQuiz.id] = true;
+            setTimeout(hideQuiz, 600);
+        });
         video.addEventListener('timeupdate', function() {
             var d = parseInt(video.dataset.duration || 0);
             send(video.currentTime, d > 0 && video.currentTime >= d * 0.9);
+            checkQuizzes();
         });
-        video.addEventListener('ended', function() { send(video.duration || video.currentTime, true); });
     });
 </script>
 @endpush

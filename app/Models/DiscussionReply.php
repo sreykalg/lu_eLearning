@@ -42,4 +42,9 @@ class DiscussionReply extends Model
     {
         return $this->hasMany(DiscussionReply::class, 'parent_id');
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(DiscussionReplyAttachment::class, 'discussion_reply_id');
+    }
 }
