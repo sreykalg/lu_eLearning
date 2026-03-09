@@ -18,6 +18,7 @@ use App\Http\Controllers\Instructor\ProgressController as InstructorProgressCont
 use App\Http\Controllers\Instructor\QuizController as InstructorQuizController;
 use App\Http\Controllers\Instructor\VideoQuizController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\AssignmentController as StudentAssignmentController;
 use App\Http\Controllers\Student\CourseController as StudentCourseController;
@@ -36,6 +37,8 @@ Route::get('/discussions', [DiscussionController::class, 'index'])->name('discus
 Route::get('/discussions/{discussion}', [DiscussionController::class, 'show'])->name('discussions.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/overview', [OverviewController::class, 'index'])->name('overview');
+
     Route::get('/dashboard', function () {
         if (auth()->user()->isHeadOfDept()) {
             return redirect()->route('hod.dashboard');
