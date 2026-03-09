@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Models\UserPointEarning;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -83,6 +84,10 @@ class QuizController extends Controller
         $percentage = $total > 0 ? (int) round(($score / $total) * 100) : 0;
         $passingScore = (int) ($quiz->passing_score ?? 0);
         $passed = $passingScore > 0 ? $percentage >= $passingScore : null;
+
+        if ($passed) {
+            UserPointEarning::award($request->user(), 'quiz', $quiz->id, 5, $quiz->course_id);
+        }
 
         QuizAttempt::create([
             'user_id' => $request->user()->id,

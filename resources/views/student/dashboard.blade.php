@@ -20,9 +20,16 @@
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <h1 class="h4 fw-bold mb-1">Welcome back, {{ auth()->user()->name }}!</h1>
-    <p class="text-muted mb-0">@if($deadlines->count() > 0)You have {{ $deadlines->count() }} upcoming {{ Str::plural('deadline', $deadlines->count()) }}.@else Continue learning or explore new courses.@endif</p>
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+    <div>
+        <h1 class="h4 fw-bold mb-1">Welcome back, {{ auth()->user()->name }}!</h1>
+        <p class="text-muted mb-0">@if($deadlines->count() > 0)You have {{ $deadlines->count() }} upcoming {{ Str::plural('deadline', $deadlines->count()) }}.@else Continue learning or explore new courses.@endif</p>
+    </div>
+    <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3" style="background: #0f172a; color: #fff;">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span class="fw-bold">{{ $totalPoints }}</span>
+        <span class="small opacity-75">points</span>
+    </div>
 </div>
 
 @if($continueCourse)

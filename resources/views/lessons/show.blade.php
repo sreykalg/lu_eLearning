@@ -62,6 +62,15 @@ $layout = auth()->user()->isStudent()
                     </div>
                 @endif
             </div>
+            @if ($lesson->video_url && auth()->check())
+                <div id="lesson-finished-actions" class="p-3 border-top d-none" style="background: #f0fdf4;">
+                    <p class="small text-success mb-2">You've finished watching this lesson. Click Finish to earn 1 point!</p>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('courses.show', $course) }}" class="btn btn-outline-secondary btn-sm">← Back</a>
+                        <button type="button" id="lesson-finish-btn" class="btn btn-sm" style="background:#0f172a;color:#fff;border:none;">Finish & earn point</button>
+                    </div>
+                </div>
+            @endif
         </div>
         @if ($lesson->content || $lesson->attachments->isNotEmpty())
             <div class="lesson-card shadow-sm mt-4">
@@ -239,6 +248,27 @@ $layout = auth()->user()->isStudent()
             var d = parseInt(video.dataset.duration || 0);
             send(video.currentTime, d > 0 && video.currentTime >= d * 0.9);
             checkQuizzes();
+            var dur = video.duration;
+            if (dur && isFinite(dur) && video.currentTime >= dur - 1) {
+                document.getElementById('lesson-finished-actions')?.classList.remove('d-none');
+            }
+        });
+        video.addEventListener('ended', function() {
+            document.getElementById('lesson-finished-actions')?.classList.remove('d-none');
+        });
+        document.getElementById('lesson-finish-btn')?.addEventListener('click', function() {
+            var btn = this;
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            fetch('{{ route("lessons.progress") }}', {
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: JSON.stringify({ lesson_id: lessonId, watched_seconds: Math.floor(video.duration || 0), completed: true })
+            }).then(function() {
+                window.location.href = '{{ $nextLesson ? route("lessons.show", [$course, $nextLesson]) : route("courses.show", $course) }}';
+            }).catch(function() {
+                btn.disabled = false;
+                btn.textContent = 'Finish & earn point';
+            });
         });
     });
 </script>

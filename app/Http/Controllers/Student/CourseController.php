@@ -26,8 +26,10 @@ class CourseController extends Controller
             $done = $request->user()->lessonProgress()->whereHas('lesson', fn ($q) => $q->where('course_id', $c->id))->where('completed', true)->count();
             $c->progress_pct = $lessons > 0 ? round(($done / $lessons) * 100) : 0;
             $c->progress_done = $done;
+            $c->course_points = $request->user()->coursePoints($c->id);
         });
         $levels = ['beginner' => 'Beginner', 'intermediate' => 'Intermediate', 'advanced' => 'Advanced'];
-        return view('student.courses', compact('courses', 'levels'));
+        $totalPoints = $request->user()->totalPoints();
+        return view('student.courses', compact('courses', 'levels', 'totalPoints'));
     }
 }

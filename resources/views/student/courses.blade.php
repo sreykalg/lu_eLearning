@@ -14,9 +14,16 @@
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">My Courses</h1>
-    <p class="text-muted mb-0">{{ $courses->count() }} enrolled courses</p>
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">My Courses</h1>
+        <p class="text-muted mb-0">{{ $courses->count() }} enrolled courses</p>
+    </div>
+    <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3" style="background: #0f172a; color: #fff;">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span class="fw-bold">{{ $totalPoints }}</span>
+        <span class="small opacity-75">points</span>
+    </div>
 </div>
 
 {{-- Filters + Search --}}
@@ -57,6 +64,7 @@
                     <div class="p-3">
                         <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
                             <span class="course-level-badge course-level-{{ $course->level ?? 'beginner' }}">{{ strtoupper($course->level ?? 'beginner') }}</span>
+                            <span class="small text-muted">· {{ $course->course_points ?? 0 }} pts</span>
                         </div>
                         <h6 class="fw-semibold mb-1">{{ Str::limit($course->title, 45) }}</h6>
                         <p class="text-muted small mb-2">{{ $course->instructor->name ?? '—' }}</p>

@@ -34,6 +34,7 @@ class CourseController extends Controller
 
         $enrollment = null;
         $progress = collect();
+        $coursePoints = 0;
         if ($request->user()) {
             $enrollment = Enrollment::where('user_id', $request->user()->id)
                 ->where('course_id', $course->id)
@@ -43,10 +44,11 @@ class CourseController extends Controller
                     ->whereIn('lesson_id', $course->lessons->pluck('id'))
                     ->get()
                     ->keyBy('lesson_id');
+                $coursePoints = $request->user()->coursePoints($course->id);
             }
         }
 
-        return view('courses.show', compact('course', 'enrollment', 'progress'));
+        return view('courses.show', compact('course', 'enrollment', 'progress', 'coursePoints'));
     }
 
     public function enroll(Request $request, Course $course)

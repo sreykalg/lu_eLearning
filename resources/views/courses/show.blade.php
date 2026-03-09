@@ -34,6 +34,12 @@ $layout = auth()->check()
         <a href="{{ auth()->check() ? route('overview') : route('courses.index') }}" class="course-back d-inline-block mb-2">&larr; Back to courses</a>
         <h1 class="h3 fw-bold mb-1" style="color: #0f172a;">{{ $course->title }}</h1>
         @auth
+            @if($enrollment)
+                <div class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded small mt-1" style="background: #e0f2fe; color: #0c4a6e;">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <span class="fw-semibold">{{ $coursePoints ?? 0 }}</span> points in this course
+                </div>
+            @endif
             @if (!$enrollment)
                 <form action="{{ route('courses.enroll', $course) }}" method="POST" class="mt-2">@csrf
                     <button type="submit" class="btn btn-enroll btn-sm">Enroll Now</button>

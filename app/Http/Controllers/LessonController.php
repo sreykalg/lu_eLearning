@@ -7,6 +7,7 @@ use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\LessonAttachment;
 use App\Models\LessonProgress;
+use App\Models\UserPointEarning;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
@@ -31,6 +32,16 @@ class LessonController extends Controller
         }
 
         $course->load(['lessons']);
+        if ($enrollment && !$request->user()->isInstructor() && !$request->user()->isHeadOfDept()) {
+            $prevLesson = $course->lessons->where('order', '<', $lesson->order)->sortByDesc('order')->first();
+            if ($prevLesson) {
+                $prevProgress = $prevLesson->getProgressFor($request->user());
+                if (!($prevProgress && $prevProgress->completed)) {
+                    return redirect()->route('courses.show', $course)
+                        ->with('error', 'Complete the previous lesson to unlock this one.');
+                }
+            }
+        }
         $lesson->load(['videoQuizzes', 'attachments']);
         $progress = $lesson->getProgressFor($request->user());
 
@@ -59,11 +70,19 @@ class LessonController extends Controller
         );
 
         $progress->watched_seconds = max($progress->watched_seconds, (int) $request->watched_seconds);
+        $justCompleted = false;
         if ($request->boolean('completed')) {
+            if (!$progress->completed) {
+                $justCompleted = true;
+            }
             $progress->completed = true;
             $progress->completed_at = $progress->completed_at ?? now();
         }
         $progress->save();
+
+        if ($justCompleted) {
+            UserPointEarning::award($request->user(), 'lesson', $lesson->id, 1, $lesson->course_id);
+        }
 
         return response()->json(['success' => true]);
     }

@@ -84,6 +84,21 @@ class User extends Authenticatable
         return $this->hasMany(DiscussionReply::class, 'user_id');
     }
 
+    public function pointEarnings()
+    {
+        return $this->hasMany(UserPointEarning::class);
+    }
+
+    public function totalPoints(): int
+    {
+        return (int) $this->pointEarnings()->sum('points');
+    }
+
+    public function coursePoints(int $courseId): int
+    {
+        return (int) $this->pointEarnings()->where('course_id', $courseId)->sum('points');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

@@ -45,6 +45,8 @@ class DashboardController extends Controller
             ->limit(6)
             ->get();
 
-        return view('student.dashboard', compact('enrollments', 'avgProgress', 'continueCourse', 'deadlines'));
+        $totalPoints = $user->totalPoints();
+
+        return view('student.dashboard', compact('enrollments', 'avgProgress', 'continueCourse', 'deadlines', 'totalPoints'));
     }
 }
