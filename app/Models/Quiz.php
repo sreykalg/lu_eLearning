@@ -18,6 +18,7 @@ class Quiz extends Model
         'duration_minutes',
         'order',
         'type',
+        'grading_type',
         'passing_score',
         'total_points',
         'max_attempts',

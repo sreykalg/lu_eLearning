@@ -24,6 +24,7 @@ class AssignmentController extends Controller
             'instructions' => 'nullable|string',
             'lesson_id' => 'nullable|exists:lessons,id',
             'max_score' => 'required|integer|min:0',
+            'grading_type' => 'required|in:auto,manual',
             'due_at' => 'nullable|date',
             'is_required' => 'boolean',
         ]);
@@ -54,6 +55,7 @@ class AssignmentController extends Controller
             'instructions' => 'nullable|string',
             'lesson_id' => 'nullable|exists:lessons,id',
             'max_score' => 'required|integer|min:0',
+            'grading_type' => 'required|in:auto,manual',
             'due_at' => 'nullable|date',
             'is_required' => 'boolean',
         ]);

@@ -28,6 +28,13 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Grading type</label>
+                        <select name="grading_type" class="form-select">
+                            <option value="auto" {{ old('grading_type', $assignment->grading_type ?? 'manual') === 'auto' ? 'selected' : '' }}>Auto-grading</option>
+                            <option value="manual" {{ old('grading_type', $assignment->grading_type ?? 'manual') === 'manual' ? 'selected' : '' }}>Manual grading by instructor</option>
+                        </select>
+                    </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Max score</label>

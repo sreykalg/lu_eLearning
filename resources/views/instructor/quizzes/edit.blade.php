@@ -63,6 +63,13 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Grading type</label>
+                        <select name="grading_type" class="form-select">
+                            <option value="auto" {{ old('grading_type', $quiz->grading_type ?? 'auto') === 'auto' ? 'selected' : '' }}>Auto-grading</option>
+                            <option value="manual" {{ old('grading_type', $quiz->grading_type ?? 'auto') === 'manual' ? 'selected' : '' }}>Manual grading by instructor</option>
+                        </select>
+                    </div>
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Full score (total points)</label>
@@ -102,7 +109,7 @@
                                     <input type="hidden" name="questions[{{ $i }}][id]" value="{{ $q->id }}">
                                     <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
                                         <div class="flex-grow-1">
-                                            <label class="form-label">Question {{ $i + 1 }}</label>
+                                            <label class="form-label mb-0">Question {{ $i + 1 }}</label>
                                             <input type="text" name="questions[{{ $i }}][question]" class="form-control q-text" value="{{ old("questions.{$i}.question", $q->question) }}">
                                         </div>
                                         <div style="width: 100px;">
@@ -133,6 +140,11 @@
                                     <div class="q-expected-wrap {{ $isMc ? 'd-none' : '' }}">
                                         <label class="form-label small">Expected answer (for auto-grading)</label>
                                         <input type="text" name="questions[{{ $i }}][expected_answer]" class="form-control" value="{{ old("questions.{$i}.expected_answer", $expected) }}" placeholder="Expected answer (optional)">
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-2 pt-2 border-top">
+                                        <button type="button" class="btn btn-outline-danger btn-sm delete-question" title="Delete question">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +195,7 @@
                     <div class="card-body">
                         <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
                             <div class="flex-grow-1">
-                                <label class="form-label">Question ${qIndex + 1}</label>
+                                <label class="form-label mb-0">Question ${qIndex + 1}</label>
                                 <input type="text" name="questions[${qIndex}][question]" class="form-control q-text" placeholder="Question text">
                             </div>
                             <div style="width: 100px;">
@@ -212,6 +224,11 @@
                             <label class="form-label small">Expected answer (for auto-grading)</label>
                             <input type="text" name="questions[${qIndex}][expected_answer]" class="form-control" placeholder="Expected answer (optional)">
                         </div>
+                        <div class="d-flex justify-content-end mt-2 pt-2 border-top">
+                            <button type="button" class="btn btn-outline-danger btn-sm delete-question" title="Delete question">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>`;
             document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
@@ -220,6 +237,12 @@
         });
         document.querySelectorAll('.question-block').forEach(toggleQuestionType);
         updateTotalPoints();
+        document.getElementById('questionsContainer')?.addEventListener('click', function(e) {
+            if (e.target.closest('.delete-question')) {
+                e.target.closest('.question-block')?.remove();
+                updateTotalPoints();
+            }
+        });
     </script>
     @endpush
 @endsection

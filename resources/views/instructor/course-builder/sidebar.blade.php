@@ -41,7 +41,23 @@
                 </div>
             </div>
         @endforeach
-        @php $uLessons = $course->lessons->whereNull('module_id'); $uQuizzes = $course->quizzes->whereNull('module_id'); @endphp
+        @php
+            $uLessons = $course->lessons->whereNull('module_id');
+            $uQuizzes = $course->quizzes->whereNull('module_id');
+            $uAssignments = $course->assignments ?? collect();
+        @endphp
+        @if($uAssignments->isNotEmpty())
+            <div class="cb-ungrouped mt-2 pt-2 border-top">
+                <div class="cb-module-title small text-muted mb-1">Assignments</div>
+                @foreach($uAssignments as $a)
+                    <a href="{{ route('instructor.assignments.edit', [$course, $a]) }}" class="cb-item {{ isset($assignment) && $assignment->id === $a->id ? 'active' : '' }}">
+                        <span class="cb-drag">⋮⋮</span>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span class="cb-label">{{ Str::limit($a->title, 32) }}</span>
+                    </a>
+                @endforeach
+            </div>
+        @endif
         @if($uLessons->isNotEmpty() || $uQuizzes->isNotEmpty())
             <div class="cb-ungrouped mt-2 pt-2 border-top">
                 @foreach($uLessons as $l)
@@ -67,7 +83,8 @@
     </div>
     <div class="cb-actions mt-3 pt-3 border-top">
         <a href="{{ route('instructor.lessons.create', $course) }}" class="btn btn-outline-secondary btn-sm w-100 mb-1">+ Add Lesson</a>
-        <a href="{{ route('instructor.quizzes.create', $course) }}" class="btn btn-outline-secondary btn-sm w-100">+ Add Quiz</a>
+        <a href="{{ route('instructor.quizzes.create', $course) }}" class="btn btn-outline-secondary btn-sm w-100 mb-1">+ Add Quiz</a>
+        <a href="{{ route('instructor.assignments.create', $course) }}" class="btn btn-outline-secondary btn-sm w-100">+ Add Assignment</a>
     </div>
 </div>
 

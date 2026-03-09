@@ -16,6 +16,7 @@ class Assignment extends Model
         'instructions',
         'order',
         'max_score',
+        'grading_type',
         'due_at',
         'is_required',
     ];
