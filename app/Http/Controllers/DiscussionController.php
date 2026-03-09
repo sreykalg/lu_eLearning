@@ -12,7 +12,7 @@ class DiscussionController extends Controller
 {
     public function index(Request $request): View
     {
-        $discussions = Discussion::with(['user', 'course', 'lesson'])
+        $discussions = Discussion::with(['user', 'course', 'replies.user'])
             ->when($request->course_id, fn ($q) => $q->where('course_id', $request->course_id))
             ->latest()
             ->paginate(15);
@@ -25,16 +25,18 @@ class DiscussionController extends Controller
     public function store(Request $request)
     {
         $valid = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
             'body' => 'required|string',
             'course_id' => 'nullable|exists:courses,id',
             'lesson_id' => 'nullable|exists:lessons,id',
         ]);
 
         $valid['user_id'] = $request->user()->id;
+        $valid['title'] = $valid['title'] ?: \Str::limit($valid['body'], 80);
+
         Discussion::create($valid);
 
-        return redirect()->route('discussions.index')->with('success', 'Question posted!');
+        return redirect()->route('discussions.index')->with('success', 'Discussion posted!');
     }
 
     public function show(Discussion $discussion): View

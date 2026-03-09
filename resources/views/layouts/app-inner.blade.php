@@ -121,7 +121,19 @@
 
     <div class="inner-wrap">
         <aside class="inner-sidebar" id="innerSidebar">
-            <div class="role-label">{{ $roleLabel ?? 'STUDENT' }}</div>
+            <div class="role-label">
+                @auth
+                    @if(auth()->user()->isHeadOfDept())
+                        HEAD OF DEPARTMENT
+                    @elseif(auth()->user()->isInstructor())
+                        INSTRUCTOR
+                    @else
+                        STUDENT
+                    @endif
+                @else
+                    STUDENT
+                @endauth
+            </div>
             <nav class="nav flex-column">
                 @yield('sidebar-nav')
             </nav>
