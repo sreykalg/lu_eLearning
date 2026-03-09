@@ -19,6 +19,7 @@ class QuizController extends Controller
         $user = $request->user();
         $quizzes = Quiz::whereHas('course', fn ($q) => $q->whereHas('enrollments', fn ($e) => $e->where('user_id', $user->id)))
             ->with('course')
+            ->withCount('questions')
             ->orderBy('created_at')
             ->get();
         $attempts = $user->quizAttempts()->get()->keyBy('quiz_id');
