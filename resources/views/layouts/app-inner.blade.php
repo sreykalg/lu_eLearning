@@ -27,15 +27,30 @@
         body { font-family: 'DM Sans', sans-serif; background: #f1f5f9; margin: 0; }
         .inner-wrap { display: flex; min-height: 100vh; }
         .inner-sidebar {
+            position: relative;
             width: 260px;
             flex-shrink: 0;
             background: var(--lu-sidebar);
             color: #94a3b8;
             padding: 1.25rem 0;
-            transition: transform 0.2s;
+            transition: width 0.25s ease, padding 0.25s ease;
             display: flex;
             flex-direction: column;
+            overflow-x: visible;
+            overflow-y: auto;
         }
+        .inner-sidebar.collapsed {
+            width: 72px;
+            padding: 1rem 0;
+        }
+        .inner-sidebar.collapsed .role-label,
+        .inner-sidebar.collapsed .nav-link span,
+        .inner-sidebar.collapsed .user-block .name,
+        .inner-sidebar.collapsed .user-block .role { display: none; }
+        .inner-sidebar.collapsed .nav-link { justify-content: center; padding: 0.6rem 1rem; }
+        .inner-sidebar.collapsed .nav-link[title] { cursor: pointer; }
+        .inner-sidebar.collapsed .user-block { justify-content: center; flex-direction: column; gap: 0.25rem; padding: 1rem 0.5rem; }
+        .inner-sidebar .nav-link span { white-space: nowrap; }
         .inner-sidebar .role-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 1.25rem; margin-bottom: 1rem; color: #64748b; }
         .inner-sidebar .nav-link {
             color: #94a3b8;
@@ -101,6 +116,29 @@
             z-index: 1038;
         }
         .inner-drawer-backdrop.show { display: block; }
+        .inner-sidebar-toggle {
+            position: absolute;
+            right: -18px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            color: var(--lu-sidebar);
+            border: 2px solid var(--lu-sidebar);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .inner-sidebar-toggle:hover { transform: translateY(-50%) scale(1.08); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+        .inner-sidebar.collapsed .inner-sidebar-toggle { right: -12px; }
+        .inner-sidebar-toggle svg { transition: transform 0.25s; width: 18px; height: 18px; }
+        .inner-sidebar.collapsed .inner-sidebar-toggle svg { transform: rotate(180deg); }
         .inner-drawer-toggle {
             display: none;
             position: fixed;
@@ -116,8 +154,10 @@
             box-shadow: 0 4px 12px rgba(15,23,42,0.4);
         }
         @media (max-width: 991.98px) {
-            .inner-sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 1040; transform: translateX(-100%); width: 260px; }
+            .inner-sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 1040; transform: translateX(-100%); width: 260px !important; }
+            .inner-sidebar.collapsed { width: 260px !important; }
             .inner-sidebar.drawer-open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
+            .inner-sidebar-toggle { display: none; }
             .inner-drawer-toggle { display: flex; align-items: center; justify-content: center; }
         }
     </style>
@@ -131,6 +171,9 @@
 
     <div class="inner-wrap">
         <aside class="inner-sidebar" id="innerSidebar">
+            <button type="button" class="inner-sidebar-toggle" id="innerSidebarToggle" aria-label="Toggle sidebar">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
             <div class="role-label">
                 @auth
                     @if(auth()->user()->isHeadOfDept())
@@ -195,12 +238,25 @@ $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         (function(){
-            var s=document.getElementById('innerSidebar'),t=document.getElementById('innerDrawerToggle'),b=document.getElementById('innerDrawerBackdrop');
+            var s=document.getElementById('innerSidebar'),t=document.getElementById('innerDrawerToggle'),b=document.getElementById('innerDrawerBackdrop'),toggle=document.getElementById('innerSidebarToggle');
+            var STORAGE_KEY='lu-sidebar-collapsed';
             function open(){s.classList.add('drawer-open');b.classList.add('show');document.body.style.overflow='hidden';}
             function close(){s.classList.remove('drawer-open');b.classList.remove('show');document.body.style.overflow='';}
             t&&t.addEventListener('click',function(){s.classList.contains('drawer-open')?close():open();});
             b&&b.addEventListener('click',close);
             document.querySelectorAll('[data-drawer-close]').forEach(function(el){el.addEventListener('click',close);});
+            if(toggle&&s){
+                var collapsed=localStorage.getItem(STORAGE_KEY)==='1';
+                if(collapsed)s.classList.add('collapsed');
+                toggle.addEventListener('click',function(){
+                    s.classList.toggle('collapsed');
+                    localStorage.setItem(STORAGE_KEY,s.classList.contains('collapsed')?'1':'0');
+                });
+                s.querySelectorAll('.nav-link').forEach(function(link){
+                    var span=link.querySelector('span');
+                    if(span)link.setAttribute('title',span.textContent.trim());
+                });
+            }
         })();
     </script>
     @vite(['resources/js/app.js'])
