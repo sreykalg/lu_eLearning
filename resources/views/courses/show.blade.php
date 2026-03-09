@@ -90,9 +90,18 @@ $layout = auth()->check()
             @if ($course->quizzes->isNotEmpty())
                 <div class="p-3 border-top" style="background: #f9fafb;">
                     <h6 class="small fw-semibold mb-2">Quizzes</h6>
-                    <ul class="small text-muted mb-0 ps-3">
+                    <ul class="small mb-0 ps-0 list-unstyled">
                         @foreach ($course->quizzes as $quiz)
-                            <li>{{ $quiz->title }} @if($quiz->type !== 'practice') ({{ $quiz->type }}) @endif</li>
+                            <li class="py-1">
+                                @auth
+                                    <a href="{{ route('student.quizzes.show', [$course, $quiz]) }}" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
+                                        <span class="flex-grow-1">{{ $quiz->title }} @if($quiz->type !== 'practice') ({{ $quiz->type }}) @endif</span>
+                                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+                                    </a>
+                                @else
+                                    <a href="{{ route('login') }}" class="text-muted text-decoration-none">{{ $quiz->title }} @if($quiz->type !== 'practice') ({{ $quiz->type }}) @endif</a>
+                                @endauth
+                            </li>
                         @endforeach
                     </ul>
                 </div>

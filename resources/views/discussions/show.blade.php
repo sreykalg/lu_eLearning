@@ -24,7 +24,7 @@ $layout = auth()->check()
     <h1 class="h3 fw-bold mb-0" style="color: #0f172a;">{{ $discussion->title }}</h1>
 </div>
 
-<div class="card border-0 shadow-sm mb-4">
+<div class="card border-0 shadow-sm mb-2">
     <div class="card-body">
         <p class="mb-3">{{ $discussion->body }}</p>
         @if($discussion->attachments->isNotEmpty())
@@ -41,6 +41,11 @@ $layout = auth()->check()
             @if($discussion->course) · {{ $discussion->course->title }} @endif
             · {{ $discussion->created_at->diffForHumans() }}
         </div>
+        @auth
+            <div class="mt-3 pt-3 border-top">
+                @include('discussions.partials.reply-form', ['discussion' => $discussion, 'parentId' => null])
+            </div>
+        @endauth
     </div>
 </div>
 
@@ -48,52 +53,31 @@ $layout = auth()->check()
     $initialRepliesShown = 5;
     $topReplies = $discussion->replies;
     $totalReplies = $topReplies->count();
+    $totalCount = $discussion->allReplies->count();
 @endphp
-<h5 class="mb-3 fw-semibold">Replies ({{ $discussion->allReplies->count() }})</h5>
-@foreach ($topReplies as $index => $reply)
-    <div class="discussion-reply-item {{ $index >= $initialRepliesShown ? 'discussion-reply-hidden' : '' }}" style="{{ $index >= $initialRepliesShown ? 'display: none;' : '' }}">
-        @include('discussions.partials.reply', ['reply' => $reply])
-    </div>
-@endforeach
-@if($totalReplies > $initialRepliesShown)
-    <div class="mt-2">
+<div class="d-flex align-items-center gap-2 flex-wrap mb-3">
+    <h5 class="mb-0 fw-semibold">Replies ({{ $totalCount }})</h5>
+    @if($totalReplies > $initialRepliesShown)
         <button type="button" class="btn btn-link p-0 text-primary text-decoration-none small" id="discussion-see-more-btn" data-shown="0" data-total-hidden="{{ $totalReplies - $initialRepliesShown }}">
             See more ({{ $totalReplies - $initialRepliesShown }} more)
         </button>
+    @endif
+</div>
+@foreach ($topReplies as $index => $reply)
+    <div class="discussion-reply-item {{ $index >= $initialRepliesShown ? 'discussion-reply-hidden' : '' }}" style="{{ $index >= $initialRepliesShown ? 'display: none;' : '' }}">
+        @include('discussions.partials.reply', ['reply' => $reply, 'discussion' => $discussion])
     </div>
-@endif
-
-@auth
-    <div class="card border-0 shadow-sm mt-4">
-        <div class="card-body">
-            <form method="POST" action="{{ route('discussions.reply') }}" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="discussion_id" value="{{ $discussion->id }}">
-                <div class="mb-3">
-                    <label class="form-label">Your Reply</label>
-                    <textarea name="body" class="form-control" rows="3" required placeholder="Help your peers or ask a follow-up..."></textarea>
-                </div>
-                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                    <label class="mb-0 d-flex align-items-center gap-1 text-muted small" style="cursor: pointer;">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        <span>Attach image</span>
-                        <input type="file" name="attachments[]" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" multiple class="d-none">
-                    </label>
-                    <span class="text-muted small" id="reply-files-label">No file chosen</span>
-                </div>
-                <button type="submit" class="btn btn-lu-primary">Post Reply</button>
-            </form>
-        </div>
-    </div>
-@endauth
+@endforeach
 
 @push('scripts')
 <script>
 (function() {
-    document.querySelector('input[name="attachments[]"]')?.addEventListener('change', function() {
-        var n = this.files.length;
-        var el = document.getElementById('reply-files-label');
-        if (el) el.textContent = n ? n + ' file(s) chosen' : 'No file chosen';
+    document.querySelectorAll('.reply-attach-input').forEach(function(input) {
+        input.addEventListener('change', function() {
+            var n = this.files.length;
+            var label = this.closest('form').querySelector('.reply-files-label');
+            if (label) label.textContent = n ? n + ' file(s) chosen' : '';
+        });
     });
     var seeMoreBtn = document.getElementById('discussion-see-more-btn');
     if (seeMoreBtn) {

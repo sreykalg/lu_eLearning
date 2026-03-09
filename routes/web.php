@@ -59,6 +59,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
     Route::get('/courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
+    Route::get('/courses/{course:slug}/quizzes/{quiz}', [StudentQuizController::class, 'show'])->name('student.quizzes.show');
+    Route::post('/courses/{course:slug}/quizzes/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('student.quizzes.submit');
     Route::get('/lesson-attachments/{attachment}/download', [LessonController::class, 'downloadAttachment'])->name('lesson-attachments.download');
     Route::post('/lessons/progress', [LessonController::class, 'updateProgress'])->name('lessons.progress');
 

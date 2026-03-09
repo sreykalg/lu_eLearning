@@ -56,15 +56,20 @@
                 @error('type')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="row">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Full score (total points)</label>
+                    <input type="number" name="total_points" id="quizTotalPoints" class="form-control" min="0" value="{{ old('total_points') }}" placeholder="Auto from questions">
+                    <small class="text-muted">Leave blank to use sum of question points</small>
+                </div>
+                <div class="col-md-3 mb-3">
                     <label class="form-label">Duration (minutes)</label>
                     <input type="number" name="duration_minutes" class="form-control" min="1" value="{{ old('duration_minutes') }}">
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <label class="form-label">Passing score (%)</label>
                     <input type="number" name="passing_score" class="form-control" min="0" max="100" value="{{ old('passing_score', 70) }}" required>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <label class="form-label">Max attempts</label>
                     <input type="number" name="max_attempts" class="form-control" min="1" value="{{ old('max_attempts') }}">
                 </div>
@@ -75,24 +80,42 @@
             </div>
 
             <hr>
-            <h5 class="mb-3">Questions</h5>
+            <h5 class="mb-3">Questions <span class="text-muted small fw-normal">(Total: <span id="questionsTotalPoints">0</span> pts)</span></h5>
             <div id="questionsContainer">
                 @for($i = 0; $i < 3; $i++)
                     <div class="card mb-3 question-block">
                         <div class="card-body">
-                            <div class="mb-2">
-                                <label class="form-label">Question {{ $i + 1 }}</label>
-                                <input type="text" name="questions[{{ $i }}][question]" class="form-control" placeholder="Question text">
-                            </div>
-                            <label class="form-label small">Options (select correct)</label>
-                            @foreach(range(0,3) as $j)
-                                <div class="input-group input-group-sm mb-1">
-                                    <span class="input-group-text">
-                                        <input type="radio" name="questions[{{ $i }}][correct]" value="{{ $j }}">
-                                    </span>
-                                    <input type="text" name="questions[{{ $i }}][options][{{ $j }}][text]" class="form-control" placeholder="Option {{ $j+1 }}">
+                            <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
+                                <div class="flex-grow-1">
+                                    <label class="form-label">Question {{ $i + 1 }}</label>
+                                    <input type="text" name="questions[{{ $i }}][question]" class="form-control q-text" placeholder="Question text">
                                 </div>
-                            @endforeach
+                                <div style="width: 100px;">
+                                    <label class="form-label">Points</label>
+                                    <input type="number" name="questions[{{ $i }}][points]" class="form-control q-points" min="0" value="1">
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Question type</label>
+                                <select name="questions[{{ $i }}][type]" class="form-select form-select-sm q-type">
+                                    <option value="multiple_choice">Multiple choice</option>
+                                    <option value="short_answer">Q&amp;A / Short answer</option>
+                                    <option value="code">Code writing</option>
+                                </select>
+                            </div>
+                            <div class="q-options-wrap">
+                                <label class="form-label small">Options (select correct)</label>
+                                @foreach(range(0,3) as $j)
+                                    <div class="input-group input-group-sm mb-1">
+                                        <span class="input-group-text"><input type="radio" name="questions[{{ $i }}][correct]" value="{{ $j }}"></span>
+                                        <input type="text" name="questions[{{ $i }}][options][{{ $j }}][text]" class="form-control" placeholder="Option {{ $j+1 }}">
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="q-expected-wrap d-none">
+                                <label class="form-label small">Expected answer (for auto-grading)</label>
+                                <input type="text" name="questions[{{ $i }}][expected_answer]" class="form-control" placeholder="Expected answer (optional)">
+                            </div>
                         </div>
                     </div>
                 @endfor
@@ -109,26 +132,78 @@
 @push('scripts')
 <script>
     let qIndex = 3;
+    function updateTotalPoints() {
+        let total = 0;
+        document.querySelectorAll('.q-points').forEach(function(inp) {
+            total += parseInt(inp.value || 0, 10);
+        });
+        var el = document.getElementById('questionsTotalPoints');
+        if (el) el.textContent = total;
+    }
+    function toggleQuestionType(block) {
+        var type = block.querySelector('.q-type')?.value;
+        var opts = block.querySelector('.q-options-wrap');
+        var exp = block.querySelector('.q-expected-wrap');
+        if (type === 'multiple_choice') {
+            if (opts) opts.classList.remove('d-none');
+            if (exp) exp.classList.add('d-none');
+        } else {
+            if (opts) opts.classList.add('d-none');
+            if (exp) exp.classList.remove('d-none');
+        }
+    }
+    document.getElementById('questionsContainer')?.addEventListener('change', function(e) {
+        if (e.target.classList.contains('q-type')) {
+            toggleQuestionType(e.target.closest('.question-block'));
+        }
+        if (e.target.classList.contains('q-points')) updateTotalPoints();
+    });
+    document.getElementById('questionsContainer')?.addEventListener('input', function(e) {
+        if (e.target.classList.contains('q-points')) updateTotalPoints();
+    });
     document.getElementById('addQuestion')?.addEventListener('click', function() {
         const html = `
             <div class="card mb-3 question-block">
                 <div class="card-body">
-                    <div class="mb-2">
-                        <label class="form-label">Question ${qIndex + 1}</label>
-                        <input type="text" name="questions[${qIndex}][question]" class="form-control" placeholder="Question text">
-                    </div>
-                    <label class="form-label small">Options (select correct)</label>
-                    ${[0,1,2,3].map(j => `
-                        <div class="input-group input-group-sm mb-1">
-                            <span class="input-group-text"><input type="radio" name="questions[${qIndex}][correct]" value="${j}"></span>
-                            <input type="text" name="questions[${qIndex}][options][${j}][text]" class="form-control" placeholder="Option ${j+1}">
+                    <div class="d-flex flex-wrap gap-2 align-items-start mb-2">
+                        <div class="flex-grow-1">
+                            <label class="form-label">Question ${qIndex + 1}</label>
+                            <input type="text" name="questions[${qIndex}][question]" class="form-control q-text" placeholder="Question text">
                         </div>
-                    `).join('')}
+                        <div style="width: 100px;">
+                            <label class="form-label">Points</label>
+                            <input type="number" name="questions[${qIndex}][points]" class="form-control q-points" min="0" value="1">
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Question type</label>
+                        <select name="questions[${qIndex}][type]" class="form-select form-select-sm q-type">
+                            <option value="multiple_choice">Multiple choice</option>
+                            <option value="short_answer">Q&amp;A / Short answer</option>
+                            <option value="code">Code writing</option>
+                        </select>
+                    </div>
+                    <div class="q-options-wrap">
+                        <label class="form-label small">Options (select correct)</label>
+                        ${[0,1,2,3].map(j => `
+                            <div class="input-group input-group-sm mb-1">
+                                <span class="input-group-text"><input type="radio" name="questions[${qIndex}][correct]" value="${j}"></span>
+                                <input type="text" name="questions[${qIndex}][options][${j}][text]" class="form-control" placeholder="Option ${j+1}">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="q-expected-wrap d-none">
+                        <label class="form-label small">Expected answer (for auto-grading)</label>
+                        <input type="text" name="questions[${qIndex}][expected_answer]" class="form-control" placeholder="Expected answer (optional)">
+                    </div>
                 </div>
             </div>`;
         document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
         qIndex++;
+        updateTotalPoints();
     });
+    document.querySelectorAll('.question-block').forEach(toggleQuestionType);
+    updateTotalPoints();
 </script>
 @endpush
 @endsection

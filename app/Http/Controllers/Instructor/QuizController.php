@@ -26,12 +26,14 @@ class QuizController extends Controller
             'type' => 'required|in:practice,midterm,final',
             'duration_minutes' => 'nullable|integer|min:1',
             'passing_score' => 'required|integer|min:0|max:100',
+            'total_points' => 'nullable|integer|min:0',
             'max_attempts' => 'nullable|integer|min:1',
             'is_required' => 'boolean',
             'module_id' => 'nullable|exists:modules,id',
         ]);
 
         $valid['course_id'] = $course->id;
+        $valid['total_points'] = $valid['total_points'] ?? null;
         if (empty($valid['module_id']) || !\App\Models\Module::where('id', $valid['module_id'])->where('course_id', $course->id)->exists()) {
             $valid['module_id'] = null;
         }
@@ -62,10 +64,12 @@ class QuizController extends Controller
             'type' => 'required|in:practice,midterm,final',
             'duration_minutes' => 'nullable|integer|min:1',
             'passing_score' => 'required|integer|min:0|max:100',
+            'total_points' => 'nullable|integer|min:0',
             'max_attempts' => 'nullable|integer|min:1',
             'is_required' => 'boolean',
         ]);
         $valid['is_required'] = $request->boolean('is_required');
+        $valid['total_points'] = $valid['total_points'] ?? null;
 
         $quiz->update($valid);
         $this->syncQuestions($request, $quiz);
@@ -85,30 +89,37 @@ class QuizController extends Controller
         $questions = $request->input('questions', []);
         $ids = [];
         foreach ($questions as $i => $q) {
-            if (empty(trim($q['question'] ?? '')) || empty($q['options'] ?? [])) continue;
+            if (empty(trim($q['question'] ?? ''))) continue;
 
-            $rawOptions = $q['options'] ?? [];
-            $correctIdx = isset($q['correct']) ? (int) $q['correct'] : null;
+            $type = in_array($q['type'] ?? '', ['multiple_choice', 'short_answer', 'code']) ? $q['type'] : 'multiple_choice';
+            $points = max(0, (int) ($q['points'] ?? 1));
 
-            $options = [];
-            foreach ($rawOptions as $j => $o) {
-                $text = trim($o['text'] ?? '');
-                if ($text === '') continue;
-                $options[] = [
-                    'text' => $text,
-                    'is_correct' => $correctIdx !== null && (int) $j === $correctIdx,
-                ];
+            if ($type === 'multiple_choice') {
+                $rawOptions = $q['options'] ?? [];
+                $correctIdx = isset($q['correct']) ? (int) $q['correct'] : null;
+                $options = [];
+                foreach ($rawOptions as $j => $o) {
+                    $text = trim($o['text'] ?? '');
+                    if ($text === '') continue;
+                    $options[] = [
+                        'text' => $text,
+                        'is_correct' => $correctIdx !== null && (int) $j === $correctIdx,
+                    ];
+                }
+                if (count($options) < 2) continue;
+                if ($correctIdx === null || count(array_filter($options, fn ($o) => $o['is_correct'])) !== 1) continue;
+            } else {
+                $expected = trim($q['expected_answer'] ?? '');
+                $options = $expected !== '' ? [['text' => $expected]] : [];
             }
-            if (count($options) < 2) continue;
-            if ($correctIdx === null || count(array_filter($options, fn ($o) => $o['is_correct'])) !== 1) continue;
 
             $data = [
                 'quiz_id' => $quiz->id,
                 'question' => trim($q['question']),
-                'type' => 'multiple_choice',
-                'options' => $options,
+                'type' => $type,
+                'options' => $type === 'multiple_choice' ? $options : $options,
                 'order' => $i,
-                'points' => 1,
+                'points' => $points,
             ];
             if (!empty($q['id'])) {
                 $question = QuizQuestion::where('quiz_id', $quiz->id)->find($q['id']);

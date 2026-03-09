@@ -19,6 +19,7 @@ class Quiz extends Model
         'order',
         'type',
         'passing_score',
+        'total_points',
         'max_attempts',
         'is_required',
     ];
