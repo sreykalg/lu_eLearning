@@ -1,13 +1,15 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="mb-0 fw-bold" style="color: var(--lu-deep-purple);">Edit Quiz: {{ $quiz->title }}</h2>
-    </x-slot>
+@extends('layouts.instructor-inner')
 
-    <div class="container">
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+@section('content')
+<div class="mb-4">
+    <h1 class="h3 fw-bold mb-1">Edit Quiz: {{ $quiz->title }}</h1>
+</div>
 
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+<div>
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <form action="{{ route('instructor.quizzes.update', [$course, $quiz]) }}" method="post" id="quizForm">
@@ -87,7 +89,7 @@
                 </form>
             </div>
         </div>
-    </div>
+</div>
 
     @push('scripts')
     <script>
@@ -114,4 +116,4 @@
         });
     </script>
     @endpush
-</x-app-layout>
+@endsection

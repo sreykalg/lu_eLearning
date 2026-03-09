@@ -1,9 +1,11 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="mb-0 fw-bold" style="color: var(--lu-deep-purple);">Add Assignment to {{ $course->title }}</h2>
-    </x-slot>
+@extends('layouts.instructor-inner')
 
-    <div class="container">
+@section('content')
+<div class="mb-4">
+    <h1 class="h3 fw-bold mb-1">Add Assignment to {{ $course->title }}</h1>
+</div>
+
+<div>
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <form action="{{ route('instructor.assignments.store', $course) }}" method="post">
@@ -46,5 +48,5 @@
                 </form>
             </div>
         </div>
-    </div>
-</x-app-layout>
+</div>
+@endsection

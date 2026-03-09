@@ -5,14 +5,24 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\Hod\ApprovalController as HodApprovalController;
+use App\Http\Controllers\Hod\DashboardController as HodDashboardController;
+use App\Http\Controllers\Hod\ReportsController as HodReportsController;
+use App\Http\Controllers\Hod\UserController as HodUserController;
 use App\Http\Controllers\Instructor\AssignmentController;
 use App\Http\Controllers\Instructor\CourseController as InstructorCourseController;
-use App\Http\Controllers\Instructor\DashboardController;
+use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Instructor\LessonController as InstructorLessonController;
+use App\Http\Controllers\Instructor\ProgressController as InstructorProgressController;
 use App\Http\Controllers\Instructor\QuizController as InstructorQuizController;
 use App\Http\Controllers\Instructor\VideoQuizController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Student\AssignmentController as StudentAssignmentController;
+use App\Http\Controllers\Student\CourseController as StudentCourseController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\GradeController as StudentGradeController;
+use App\Http\Controllers\Student\QuizController as StudentQuizController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,14 +36,22 @@ Route::get('/discussions/{discussion}', [DiscussionController::class, 'show'])->
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
-        if (auth()->user()->isAdmin()) {
-            return redirect()->route('admin.dashboard');
+        if (auth()->user()->isHeadOfDept()) {
+            return redirect()->route('hod.dashboard');
         }
         if (auth()->user()->isInstructor()) {
             return redirect()->route('instructor.dashboard');
         }
-        return view('dashboard');
+        return redirect()->route('student.dashboard');
     })->name('dashboard');
+
+    Route::prefix('student')->name('student.')->middleware('student')->group(function () {
+        Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/courses', [StudentCourseController::class, 'index'])->name('courses');
+        Route::get('/assignments', [StudentAssignmentController::class, 'index'])->name('assignments');
+        Route::get('/quizzes', [StudentQuizController::class, 'index'])->name('quizzes');
+        Route::get('/grades', [StudentGradeController::class, 'index'])->name('grades');
+    });
 
     Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
     Route::get('/courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
@@ -48,7 +66,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [InstructorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/progress', [InstructorProgressController::class, 'index'])->name('progress');
     Route::resource('courses', InstructorCourseController::class)->except(['show'])->parameters(['courses' => 'course']);
     Route::get('courses/{course}/lessons/create', [InstructorLessonController::class, 'create'])->name('lessons.create');
     Route::post('courses/{course}/lessons', [InstructorLessonController::class, 'store'])->name('lessons.store');
@@ -68,6 +87,14 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::get('courses/{course}/assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
     Route::put('courses/{course}/assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
     Route::delete('courses/{course}/assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
+});
+
+Route::middleware(['auth', 'verified', 'head_of_dept'])->prefix('hod')->name('hod.')->group(function () {
+    Route::get('/', [HodDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/approval', [HodApprovalController::class, 'index'])->name('approval');
+    Route::post('/approval/{course}/approve', [HodApprovalController::class, 'approve'])->name('approval.approve');
+    Route::get('/reports', [HodReportsController::class, 'index'])->name('reports');
+    Route::get('/users', [HodUserController::class, 'index'])->name('users');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {

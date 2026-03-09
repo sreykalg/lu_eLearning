@@ -1,16 +1,16 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h2 class="mb-0 fw-bold" style="color: var(--lu-deep-purple);">Edit Course: {{ $course->title }}</h2>
-            <div class="d-flex gap-2">
-                <a href="{{ route('instructor.lessons.create', $course) }}" class="btn btn-lu-primary">Add Lesson</a>
-                <a href="{{ route('instructor.quizzes.create', $course) }}" class="btn btn-outline-primary">Add Quiz</a>
-                <a href="{{ route('instructor.assignments.create', $course) }}" class="btn btn-outline-secondary">Add Assignment</a>
-            </div>
-        </div>
-    </x-slot>
+@extends('layouts.instructor-inner')
 
-    <div class="container">
+@section('content')
+<div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1 class="h3 fw-bold mb-0">Edit Course: {{ $course->title }}</h1>
+    <div class="d-flex gap-2">
+        <a href="{{ route('instructor.lessons.create', $course) }}" class="btn btn-primary btn-sm">Add Lesson</a>
+        <a href="{{ route('instructor.quizzes.create', $course) }}" class="btn btn-outline-primary btn-sm">Add Quiz</a>
+        <a href="{{ route('instructor.assignments.create', $course) }}" class="btn btn-outline-secondary btn-sm">Add Assignment</a>
+    </div>
+</div>
+
+<div>
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -141,4 +141,5 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

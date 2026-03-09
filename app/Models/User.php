@@ -39,6 +39,11 @@ class User extends Authenticatable
         return $this->role === 'student';
     }
 
+    public function isHeadOfDept(): bool
+    {
+        return $this->role === 'head_of_dept' || $this->role === 'admin';
+    }
+
     public function courses()
     {
         return $this->hasMany(Course::class, 'instructor_id');

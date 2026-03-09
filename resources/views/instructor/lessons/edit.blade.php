@@ -1,13 +1,15 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="mb-0 fw-bold" style="color: var(--lu-deep-purple);">Edit Lesson: {{ $lesson->title }}</h2>
-    </x-slot>
+@extends('layouts.instructor-inner')
 
-    <div class="container">
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+@section('content')
+<div class="mb-4">
+    <h1 class="h3 fw-bold mb-1">Edit Lesson: {{ $lesson->title }}</h1>
+</div>
 
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+<div>
         <div class="row">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">
@@ -129,5 +131,5 @@
                 </form>
             </div>
         </div>
-    </div>
-</x-app-layout>
+</div>
+@endsection

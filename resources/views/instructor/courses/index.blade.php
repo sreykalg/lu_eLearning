@@ -1,12 +1,12 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h2 class="mb-0 fw-bold" style="color: var(--lu-deep-purple);">My Courses</h2>
-            <a href="{{ route('instructor.courses.create') }}" class="btn btn-lu-primary">Create Course</a>
-        </div>
-    </x-slot>
+@extends('layouts.instructor-inner')
 
-    <div class="container">
+@section('content')
+<div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1 class="h3 fw-bold mb-0">My Courses</h1>
+    <a href="{{ route('instructor.courses.create') }}" class="btn btn-primary btn-sm">Create Course</a>
+</div>
+
+<div>
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -27,5 +27,5 @@
                 </div>
             @endforelse
         </div>
-    </div>
-</x-app-layout>
+</div>
+@endsection
