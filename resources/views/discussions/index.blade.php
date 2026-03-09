@@ -5,6 +5,18 @@ $layout = auth()->check()
 @endphp
 @extends($layout)
 
+@push('styles')
+<style>
+    .discussion-chip { padding: 0.35rem 0.75rem; font-size: 0.875rem; border-radius: 9999px; text-decoration: none; transition: all 0.15s; }
+    .discussion-chip.active { background: #0f172a; color: #fff; border: none; }
+    .discussion-chip.inactive { background: #e5e7eb; color: #374151; border: none; }
+    .discussion-chip.inactive:hover { background: #d1d5db; color: #111; }
+    .discussion-instructor-badge { background: #0f172a; color: #fff; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 500; }
+    .discussion-post-btn { background: #0f172a; color: #fff; border: none; padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; }
+    .discussion-post-btn:hover { background: #1e293b; color: #fff; }
+</style>
+@endpush
+
 @section('content')
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}
@@ -17,15 +29,15 @@ $layout = auth()->check()
     <p class="text-muted mb-0">{{ $discussions->total() }} {{ Str::plural('thread', $discussions->total()) }} across all courses</p>
 </div>
 
-{{-- Course filter tabs --}}
+{{-- Course filter chips --}}
 <div class="d-flex flex-wrap gap-2 mb-4">
     <a href="{{ route('discussions.index', array_merge(request()->except('course_id', 'page'), ['course_id' => null])) }}"
-       class="btn btn-sm {{ !request('course_id') ? 'btn-primary' : 'btn-outline-secondary' }}">
+       class="discussion-chip {{ !request('course_id') ? 'active' : 'inactive' }}">
         All Courses
     </a>
     @foreach($courses as $c)
         <a href="{{ route('discussions.index', array_merge(request()->except('course_id', 'page'), ['course_id' => $c->id])) }}"
-           class="btn btn-sm {{ (string)request('course_id') === (string)$c->id ? 'btn-primary' : 'btn-outline-secondary' }}">
+           class="discussion-chip {{ (string)request('course_id') === (string)$c->id ? 'active' : 'inactive' }}">
             {{ Str::limit($c->title, 28) }}
         </a>
     @endforeach
@@ -43,7 +55,7 @@ $layout = auth()->check()
                 @if(request('course_id'))
                     <input type="hidden" name="course_id" value="{{ request('course_id') }}">
                 @endif
-                <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center gap-2">
+                <button type="submit" class="discussion-post-btn d-flex align-items-center gap-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                     Post
                 </button>
@@ -101,7 +113,7 @@ $layout = auth()->check()
                             <div class="d-flex align-items-center gap-2 mb-1">
                                 <span class="fw-medium small">{{ $reply->user->name }}</span>
                                 @if($reply->is_instructor_answer)
-                                    <span class="badge bg-primary" style="font-size:0.65rem;">Instructor</span>
+                                    <span class="discussion-instructor-badge">Instructor</span>
                                 @endif
                                 <span class="text-muted small">{{ $reply->created_at->diffForHumans() }}</span>
                             </div>
