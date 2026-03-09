@@ -13,7 +13,11 @@ class UserController extends Controller
     {
         $query = User::query()->orderBy('name');
         if ($request->filled('role')) {
-            $query->where('role', $request->role);
+            if ($request->role === 'head_of_dept') {
+                $query->whereIn('role', ['head_of_dept', 'admin']);
+            } else {
+                $query->where('role', $request->role);
+            }
         }
         if ($request->filled('q')) {
             $q = $request->q;
