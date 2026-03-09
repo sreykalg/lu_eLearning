@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Announcement;
 use App\Models\Assignment;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -47,6 +48,12 @@ class DashboardController extends Controller
 
         $totalPoints = $user->totalPoints();
 
-        return view('student.dashboard', compact('enrollments', 'avgProgress', 'continueCourse', 'deadlines', 'totalPoints'));
+        $announcements = Announcement::whereIn('course_id', $courseIds)
+            ->with(['course', 'instructor'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        return view('student.dashboard', compact('enrollments', 'avgProgress', 'continueCourse', 'deadlines', 'totalPoints', 'announcements'));
     }
 }

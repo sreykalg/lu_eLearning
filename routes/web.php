@@ -9,6 +9,7 @@ use App\Http\Controllers\Hod\ApprovalController as HodApprovalController;
 use App\Http\Controllers\Hod\DashboardController as HodDashboardController;
 use App\Http\Controllers\Hod\ReportsController as HodReportsController;
 use App\Http\Controllers\Hod\UserController as HodUserController;
+use App\Http\Controllers\Instructor\AnnouncementController as InstructorAnnouncementController;
 use App\Http\Controllers\Instructor\AssignmentController;
 use App\Http\Controllers\Instructor\CourseController as InstructorCourseController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
@@ -80,6 +81,9 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::get('/', [InstructorDashboardController::class, 'index'])->name('dashboard');
     Route::get('/progress', [InstructorProgressController::class, 'index'])->name('progress');
     Route::get('/submissions', [InstructorSubmissionsController::class, 'index'])->name('submissions');
+    Route::get('/announcements', [InstructorAnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/announcements/create', [InstructorAnnouncementController::class, 'create'])->name('announcements.create');
+    Route::post('/announcements', [InstructorAnnouncementController::class, 'store'])->name('announcements.store');
     Route::resource('courses', InstructorCourseController::class)->except(['show'])->parameters(['courses' => 'course']);
     Route::post('courses/{course}/modules', [InstructorModuleController::class, 'store'])->name('modules.store');
     Route::put('courses/{course}/modules/{module}', [InstructorModuleController::class, 'update'])->name('modules.update');
