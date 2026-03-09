@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Instructor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
+use App\Models\AssignmentSubmission;
 use App\Models\Course;
 use Illuminate\Http\Request;
 
@@ -75,5 +76,31 @@ class AssignmentController extends Controller
         if ($assignment->course_id !== $course->id) abort(404);
         $assignment->delete();
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Assignment deleted.');
+    }
+
+    public function submissions(Course $course, Assignment $assignment)
+    {
+        $this->authorize('update', $course);
+        if ($assignment->course_id !== $course->id) abort(404);
+        $submissions = $assignment->submissions()->with('user')->orderBy('submitted_at', 'desc')->get();
+        return view('instructor.assignments.submissions', compact('course', 'assignment', 'submissions'));
+    }
+
+    public function gradeSubmission(Request $request, Course $course, Assignment $assignment, AssignmentSubmission $submission)
+    {
+        $this->authorize('update', $course);
+        if ($assignment->course_id !== $course->id || $submission->assignment_id !== $assignment->id) abort(404);
+        $valid = $request->validate([
+            'score' => 'required|integer|min:0|max:' . (int) $assignment->max_score,
+            'feedback' => 'nullable|string|max:2000',
+        ]);
+        $submission->update([
+            'score' => $valid['score'],
+            'feedback' => $valid['feedback'] ?? null,
+            'graded_by' => $request->user()->id,
+            'graded_at' => now(),
+        ]);
+        return redirect()->route('instructor.assignments.submissions', [$course, $assignment])
+            ->with('success', 'Submission graded.');
     }
 }

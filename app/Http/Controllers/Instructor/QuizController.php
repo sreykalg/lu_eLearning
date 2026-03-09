@@ -86,6 +86,14 @@ class QuizController extends Controller
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Quiz deleted.');
     }
 
+    public function attempts(Course $course, Quiz $quiz)
+    {
+        $this->authorize('update', $course);
+        if ($quiz->course_id !== $course->id) abort(404);
+        $attempts = $quiz->attempts()->with('user')->orderByDesc('submitted_at')->get();
+        return view('instructor.quizzes.attempts', compact('course', 'quiz', 'attempts'));
+    }
+
     private function syncQuestions(Request $request, Quiz $quiz): void
     {
         $questions = $request->input('questions', []);

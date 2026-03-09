@@ -1,8 +1,11 @@
 @extends('layouts.instructor-inner')
 
 @section('content')
-<div class="mb-4">
+<div class="mb-4 d-flex justify-content-between align-items-start flex-wrap gap-2">
     <h1 class="h3 fw-bold mb-1">Edit Assignment: {{ $assignment->title }}</h1>
+    <a href="{{ route('instructor.assignments.submissions', [$course, $assignment]) }}" class="btn btn-primary btn-sm">
+        View student submissions ({{ $assignment->submissions()->count() }})
+    </a>
 </div>
 
 <div>

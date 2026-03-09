@@ -16,6 +16,7 @@ use App\Http\Controllers\Instructor\LessonController as InstructorLessonControll
 use App\Http\Controllers\Instructor\ModuleController as InstructorModuleController;
 use App\Http\Controllers\Instructor\ProgressController as InstructorProgressController;
 use App\Http\Controllers\Instructor\QuizController as InstructorQuizController;
+use App\Http\Controllers\Instructor\SubmissionsController as InstructorSubmissionsController;
 use App\Http\Controllers\Instructor\VideoQuizController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\OverviewController;
@@ -78,6 +79,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/', [InstructorDashboardController::class, 'index'])->name('dashboard');
     Route::get('/progress', [InstructorProgressController::class, 'index'])->name('progress');
+    Route::get('/submissions', [InstructorSubmissionsController::class, 'index'])->name('submissions');
     Route::resource('courses', InstructorCourseController::class)->except(['show'])->parameters(['courses' => 'course']);
     Route::post('courses/{course}/modules', [InstructorModuleController::class, 'store'])->name('modules.store');
     Route::put('courses/{course}/modules/{module}', [InstructorModuleController::class, 'update'])->name('modules.update');
@@ -95,11 +97,14 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::get('courses/{course}/quizzes/{quiz}/edit', [InstructorQuizController::class, 'edit'])->name('quizzes.edit');
     Route::put('courses/{course}/quizzes/{quiz}', [InstructorQuizController::class, 'update'])->name('quizzes.update');
     Route::delete('courses/{course}/quizzes/{quiz}', [InstructorQuizController::class, 'destroy'])->name('quizzes.destroy');
+    Route::get('courses/{course}/quizzes/{quiz}/attempts', [InstructorQuizController::class, 'attempts'])->name('quizzes.attempts');
     Route::get('courses/{course}/assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');
     Route::post('courses/{course}/assignments', [AssignmentController::class, 'store'])->name('assignments.store');
     Route::get('courses/{course}/assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
     Route::put('courses/{course}/assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
     Route::delete('courses/{course}/assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
+    Route::get('courses/{course}/assignments/{assignment}/submissions', [AssignmentController::class, 'submissions'])->name('assignments.submissions');
+    Route::put('courses/{course}/assignments/{assignment}/submissions/{submission}', [AssignmentController::class, 'gradeSubmission'])->name('assignments.submissions.grade');
 });
 
 Route::middleware(['auth', 'verified', 'head_of_dept'])->prefix('hod')->name('hod.')->group(function () {

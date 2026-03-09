@@ -46,6 +46,21 @@
             Due: {{ $assignment->due_at?->format('M j, g:i A') ?? '—' }} · Max: {{ $assignment->max_score }} pts
         </div>
         @if($submission)
+            @if($submission->file_path)
+                <div class="mb-3">
+                    <h6 class="fw-semibold mb-2">Your submitted file</h6>
+                    <a href="{{ asset('storage/' . $submission->file_path) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Download submitted file
+                    </a>
+                </div>
+            @endif
+            @if($submission->content)
+                <div class="mb-3">
+                    <h6 class="fw-semibold mb-2">Your notes</h6>
+                    <p class="text-muted mb-0">{!! nl2br(e($submission->content)) !!}</p>
+                </div>
+            @endif
             @if($submission->feedback)
                 <div class="mt-3 p-3 rounded" style="background: #f8fafc;">
                     <h6 class="fw-semibold mb-2">Feedback</h6>
@@ -67,13 +82,14 @@
             <form action="{{ route('student.assignments.submit', [$course, $assignment]) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label">Your submission</label>
-                    <textarea name="content" class="form-control @error('content') is-invalid @enderror" rows="5" placeholder="Type your response here...">{{ old('content') }}</textarea>
+                    <label class="form-label">Your submission (optional)</label>
+                    <textarea name="content" class="form-control @error('content') is-invalid @enderror" rows="4" placeholder="Add notes or description (optional)...">{{ old('content') }}</textarea>
                     @error('content')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Attach file (optional)</label>
-                    <input type="file" name="file" class="form-control @error('file') is-invalid @enderror">
+                    <label class="form-label">Attach file <span class="text-danger">*</span></label>
+                    <input type="file" name="file" class="form-control @error('file') is-invalid @enderror" required accept=".pdf,.doc,.docx,.txt,.zip,.rar,image/*">
+                    <div class="form-text">A file attachment is required to submit. Accepted: PDF, Word, images, or ZIP.</div>
                     @error('file')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <button type="submit" class="btn btn-primary">Submit assignment</button>

@@ -66,12 +66,11 @@ class AssignmentController extends Controller
         }
         $valid = $request->validate([
             'content' => 'nullable|string',
-            'file' => 'nullable|file|max:10240',
+            'file' => 'required|file|max:10240',
+        ], [
+            'file.required' => 'Please attach your assignment file. A file attachment is required to submit.',
         ]);
-        $path = null;
-        if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('submissions', 'public');
-        }
+        $path = $request->file('file')->store('submissions', 'public');
         AssignmentSubmission::create([
             'user_id' => $request->user()->id,
             'assignment_id' => $assignment->id,
