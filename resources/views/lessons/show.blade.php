@@ -63,11 +63,28 @@ $layout = auth()->user()->isStudent()
                 @endif
             </div>
         </div>
-        @if ($lesson->content)
+        @if ($lesson->content || $lesson->attachments->isNotEmpty())
             <div class="lesson-card shadow-sm mt-4">
                 <div class="p-4">
                     <h5 class="fw-semibold mb-2">Lesson Notes</h5>
-                    <p class="text-muted mb-0">{{ $lesson->content }}</p>
+                    @if ($lesson->content)
+                        <p class="text-muted mb-0">{{ $lesson->content }}</p>
+                    @endif
+                    @if ($lesson->attachments->isNotEmpty())
+                        <div class="mt-3 pt-3 border-top">
+                            <p class="small fw-semibold mb-2 text-secondary">Attachments</p>
+                            <ul class="list-unstyled mb-0">
+                                @foreach ($lesson->attachments as $att)
+                                    <li class="mb-2">
+                                        <a href="{{ route('lesson-attachments.download', $att) }}" class="d-inline-flex align-items-center gap-2 text-decoration-none" style="color: #0f172a;">
+                                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                            {{ $att->original_name }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endif

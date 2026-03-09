@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Lesson;
+use App\Models\LessonAttachment;
 use App\Models\LessonProgress;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LessonController extends Controller
 {
@@ -28,7 +31,7 @@ class LessonController extends Controller
         }
 
         $course->load(['lessons']);
-        $lesson->load(['videoQuizzes']);
+        $lesson->load(['videoQuizzes', 'attachments']);
         $progress = $lesson->getProgressFor($request->user());
 
         $prevLesson = $course->lessons->where('order', '<', $lesson->order)->sortByDesc('order')->first();
@@ -63,5 +66,28 @@ class LessonController extends Controller
         $progress->save();
 
         return response()->json(['success' => true]);
+    }
+
+    public function downloadAttachment(Request $request, LessonAttachment $attachment): BinaryFileResponse|RedirectResponse
+    {
+        $attachment->load('lesson');
+        $lesson = $attachment->lesson;
+        if (!$lesson) {
+            abort(404);
+        }
+        $course = $lesson->course;
+        $enrollment = Enrollment::where('user_id', $request->user()->id)
+            ->where('course_id', $course->id)
+            ->first();
+        if (!$enrollment && !$lesson->is_free) {
+            return redirect()->route('courses.show', $course)
+                ->with('error', 'Please enroll in the course to access this file.');
+        }
+        $relativePath = Str::after($attachment->path, '/storage/');
+        $fullPath = storage_path('app/public/' . $relativePath);
+        if (!is_file($fullPath)) {
+            abort(404);
+        }
+        return response()->download($fullPath, $attachment->original_name);
     }
 }
