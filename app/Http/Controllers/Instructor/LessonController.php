@@ -13,6 +13,7 @@ class LessonController extends Controller
     public function create(Course $course)
     {
         $this->authorize('update', $course);
+        $course->load('modules');
         return view('instructor.lessons.create', compact('course'));
     }
 
@@ -26,9 +27,15 @@ class LessonController extends Controller
             'video_url' => 'nullable|string',
             'video_duration' => 'nullable|integer|min:0',
             'is_free' => 'boolean',
+            'module_id' => 'nullable|exists:modules,id',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|mimes:pdf,doc,docx,ppt,pptx|max:20480', // 20MB each
         ]);
 
         $valid['course_id'] = $course->id;
+        if (empty($valid['module_id']) || !\App\Models\Module::where('id', $valid['module_id'])->where('course_id', $course->id)->exists()) {
+            $valid['module_id'] = null;
+        }
         $valid['slug'] = Str::slug($valid['title']);
         $valid['is_free'] = $request->boolean('is_free');
         $valid['order'] = $course->lessons()->max('order') + 1;
@@ -44,7 +51,13 @@ class LessonController extends Controller
 
         $valid['video_duration'] = $valid['video_duration'] ?? null;
 
-        Lesson::create($valid);
+        $lesson = Lesson::create(collect($valid)->except('attachments')->all());
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('lesson-attachments', 'public');
+                $lesson->attachments()->create(['path' => '/storage/' . $path, 'original_name' => $file->getClientOriginalName()]);
+            }
+        }
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Lesson added.');
     }
 
@@ -52,7 +65,7 @@ class LessonController extends Controller
     {
         $this->authorize('update', $course);
         if ($lesson->course_id !== $course->id) abort(404);
-        $lesson->load('videoQuizzes');
+        $lesson->load(['videoQuizzes', 'attachments']);
         return view('instructor.lessons.edit', compact('course', 'lesson'));
     }
 
@@ -68,6 +81,8 @@ class LessonController extends Controller
             'video_url' => 'nullable|string',
             'video_duration' => 'nullable|integer|min:0',
             'is_free' => 'boolean',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|mimes:pdf,doc,docx,ppt,pptx|max:20480',
         ]);
 
         $valid['is_free'] = $request->boolean('is_free');
@@ -81,7 +96,13 @@ class LessonController extends Controller
         }
         unset($valid['video']);
 
-        $lesson->update($valid);
+        $lesson->update(collect($valid)->except('attachments')->all());
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('lesson-attachments', 'public');
+                $lesson->attachments()->create(['path' => '/storage/' . $path, 'original_name' => $file->getClientOriginalName()]);
+            }
+        }
         return redirect()->route('instructor.lessons.edit', [$course, $lesson])->with('success', 'Lesson updated.');
     }
 

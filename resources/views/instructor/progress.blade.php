@@ -24,9 +24,9 @@
 
 {{-- Search and course filter --}}
 <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-    <div class="position-relative flex-grow-1" style="min-width: 320px; max-width: 480px;">
-        <svg class="position-absolute top-50 start-3 translate-middle-y text-muted" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <form action="{{ route('instructor.progress') }}" method="GET" class="d-flex w-100">
+    <div class="position-relative flex-grow-1" style="max-width: 280px;">
+        <svg class="position-absolute top-50 start-3 translate-middle-y text-muted" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <form action="{{ route('instructor.progress') }}" method="GET" class="d-flex">
             @if(request('course_id'))
                 <input type="hidden" name="course_id" value="{{ request('course_id') }}">
             @endif

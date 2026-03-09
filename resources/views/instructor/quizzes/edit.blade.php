@@ -1,18 +1,49 @@
 @extends('layouts.instructor-inner')
 
-@section('content')
-<div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">Edit Quiz: {{ $quiz->title }}</h1>
-</div>
+@push('styles')
+<style>
+    .cb-wrap { display: flex; gap: 1.5rem; min-height: 560px; overflow-x: hidden; }
+    .cb-sidebar { width: 380px; min-width: 380px; max-width: 380px; flex-shrink: 0; background: #fff; border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 1rem; max-height: 85vh; overflow-y: auto; overflow-x: hidden; }
+    .cb-dropdown { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; }
+    .cb-add-module { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; text-align: left; width: 100%; }
+    .cb-add-module:hover { background: #f9fafb; }
+    .cb-module-header { padding: 0.35rem 0; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; }
+    .cb-module-title { color: #374151; }
+    .cb-drag { color: #9ca3af; font-size: 0.75rem; cursor: default; pointer-events: none; }
+    .cb-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; margin: 0.15rem 0; border-radius: 0.375rem; text-decoration: none; color: #374151; font-size: 0.875rem; border-left: 3px solid transparent; }
+    .cb-item:hover { background: #f3f4f6; }
+    .cb-item.active { background: #0f172a; color: #fff; border-left-color: #0f172a; }
+    .cb-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+@endpush
 
+@section('content')
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 @endif
 
-<div>
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
-                <form action="{{ route('instructor.quizzes.update', [$course, $quiz]) }}" method="post" id="quizForm">
+<div class="cb-wrap">
+    <div class="cb-sidebar">
+        @php $course->load(['modules', 'lessons', 'quizzes']); @endphp
+        @include('instructor.course-builder.sidebar', ['course' => $course, 'quiz' => $quiz])
+    </div>
+    <div class="cb-main">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0 fw-bold">Edit Quiz</h4>
+            <div class="d-flex gap-2">
+                <button type="submit" form="quizForm" class="btn btn-outline-secondary btn-sm">Draft</button>
+                <form action="{{ route('instructor.quizzes.destroy', [$course, $quiz]) }}" method="post" class="d-inline" onsubmit="return confirm('Delete this quiz?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-outline-secondary btn-sm text-danger">Delete</button>
+                </form>
+                <button type="submit" form="quizForm" class="btn btn-sm" style="background:#0f172a;color:#fff;border:none;">Publish</button>
+            </div>
+        </div>
+
+        <form action="{{ route('instructor.quizzes.update', [$course, $quiz]) }}" method="post" id="quizForm">
                     @csrf
                     @method('PUT')
                     <div class="mb-3">
@@ -79,16 +110,10 @@
                     <button type="button" class="btn btn-outline-secondary btn-sm mb-3" id="addQuestion">+ Add question</button>
 
                     <hr>
-                    <button type="submit" class="btn btn-lu-primary">Update Quiz</button>
+                    <button type="submit" class="btn btn-primary">Save Quiz</button>
                     <a href="{{ route('instructor.courses.edit', $course) }}" class="btn btn-outline-secondary">Cancel</a>
-                    <form action="{{ route('instructor.quizzes.destroy', [$course, $quiz]) }}" method="post" class="d-inline" onsubmit="return confirm('Delete this quiz?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-outline-danger">Delete</button>
-                    </form>
                 </form>
-            </div>
-        </div>
+    </div>
 </div>
 
     @push('scripts')

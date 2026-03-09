@@ -11,6 +11,7 @@ class Quiz extends Model
 
     protected $fillable = [
         'course_id',
+        'module_id',
         'lesson_id',
         'title',
         'description',
@@ -29,6 +30,11 @@ class Quiz extends Model
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
     }
 
     public function lesson()

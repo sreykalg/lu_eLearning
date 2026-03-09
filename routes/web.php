@@ -13,6 +13,7 @@ use App\Http\Controllers\Instructor\AssignmentController;
 use App\Http\Controllers\Instructor\CourseController as InstructorCourseController;
 use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Instructor\LessonController as InstructorLessonController;
+use App\Http\Controllers\Instructor\ModuleController as InstructorModuleController;
 use App\Http\Controllers\Instructor\ProgressController as InstructorProgressController;
 use App\Http\Controllers\Instructor\QuizController as InstructorQuizController;
 use App\Http\Controllers\Instructor\VideoQuizController;
@@ -69,6 +70,9 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::get('/', [InstructorDashboardController::class, 'index'])->name('dashboard');
     Route::get('/progress', [InstructorProgressController::class, 'index'])->name('progress');
     Route::resource('courses', InstructorCourseController::class)->except(['show'])->parameters(['courses' => 'course']);
+    Route::post('courses/{course}/modules', [InstructorModuleController::class, 'store'])->name('modules.store');
+    Route::put('courses/{course}/modules/{module}', [InstructorModuleController::class, 'update'])->name('modules.update');
+    Route::delete('courses/{course}/modules/{module}', [InstructorModuleController::class, 'destroy'])->name('modules.destroy');
     Route::get('courses/{course}/lessons/create', [InstructorLessonController::class, 'create'])->name('lessons.create');
     Route::post('courses/{course}/lessons', [InstructorLessonController::class, 'store'])->name('lessons.store');
     Route::get('courses/{course}/lessons/{lesson}/edit', [InstructorLessonController::class, 'edit'])->name('lessons.edit');

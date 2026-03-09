@@ -13,6 +13,7 @@ class QuizController extends Controller
     public function create(Course $course)
     {
         $this->authorize('update', $course);
+        $course->load('modules');
         return view('instructor.quizzes.create', compact('course'));
     }
 
@@ -27,9 +28,13 @@ class QuizController extends Controller
             'passing_score' => 'required|integer|min:0|max:100',
             'max_attempts' => 'nullable|integer|min:1',
             'is_required' => 'boolean',
+            'module_id' => 'nullable|exists:modules,id',
         ]);
 
         $valid['course_id'] = $course->id;
+        if (empty($valid['module_id']) || !\App\Models\Module::where('id', $valid['module_id'])->where('course_id', $course->id)->exists()) {
+            $valid['module_id'] = null;
+        }
         $valid['order'] = $course->quizzes()->max('order') + 1;
         $valid['is_required'] = $request->boolean('is_required');
 

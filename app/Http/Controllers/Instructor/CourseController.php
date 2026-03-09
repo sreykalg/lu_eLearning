@@ -45,7 +45,7 @@ class CourseController extends Controller
     public function edit(Course $course): View
     {
         $this->authorize('update', $course);
-        $course->load(['lessons.videoQuizzes', 'quizzes.questions', 'assignments']);
+        $course->load(['modules', 'lessons.videoQuizzes', 'quizzes.questions', 'assignments']);
         return view('instructor.courses.edit', compact('course'));
     }
 
