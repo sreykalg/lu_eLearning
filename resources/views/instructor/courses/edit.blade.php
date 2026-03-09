@@ -2,9 +2,9 @@
 
 @push('styles')
 <style>
-    .cb-wrap { display: flex; gap: 1.5rem; min-height: 560px; overflow-x: hidden; }
-    .cb-sidebar { width: 380px; min-width: 380px; max-width: 380px; flex-shrink: 0; background: #fff; border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 1rem; max-height: 85vh; overflow-y: auto; overflow-x: hidden; }
-    .cb-main { flex: 1; min-width: 0; background: #fff; border-radius: 0.5rem; border: 1px solid #e5e7eb; padding: 1.5rem; }
+    .cb-wrap { display: flex; min-height: 560px; overflow-x: hidden; background: #fff; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .cb-sidebar { width: 380px; min-width: 380px; max-width: 380px; flex-shrink: 0; padding: 1rem 1.5rem 1rem 1rem; max-height: 85vh; overflow-y: auto; overflow-x: hidden; border-right: 1px solid #e5e7eb; border-radius: 0.5rem 0 0 0.5rem; }
+    .cb-main { flex: 1; min-width: 0; padding: 1.5rem 2.5rem 1.5rem 2rem; overflow: auto; }
     .cb-dropdown { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; }
     .cb-add-module { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; text-align: left; }
     .cb-add-module:hover { background: #f9fafb; }

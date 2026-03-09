@@ -76,7 +76,7 @@ $layout = auth()->check()
                     $parts = array_filter(explode(' ', $name));
                     $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
                 @endphp
-                <div class="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center text-white fw-semibold" style="width:40px;height:40px;background:#2563eb;font-size:0.875rem;">{{ $initials }}</div>
+                <div class="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center text-white fw-semibold" style="width:40px;height:40px;background:#0f172a;font-size:0.875rem;">{{ $initials }}</div>
                 <div class="flex-grow-1 min-width-0">
                     <div class="text-muted small mb-1">
                         {{ $d->user->name }}

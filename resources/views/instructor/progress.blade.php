@@ -68,7 +68,7 @@
                                     $parts = array_filter(explode(' ', $name));
                                     $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
                                 @endphp
-                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-semibold flex-shrink-0" style="width:36px;height:36px;background:#2563eb;font-size:0.75rem;">{{ $initials }}</div>
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-semibold flex-shrink-0" style="width:36px;height:36px;background:#0f172a;font-size:0.75rem;">{{ $initials }}</div>
                                 <span>{{ $r->user->name }}</span>
                             </div>
                         </td>

@@ -11,9 +11,19 @@
         :root {
             --lu-sidebar: #0f172a;
             --lu-sidebar-hover: rgba(255,255,255,0.08);
-            --lu-sidebar-active: rgba(59, 130, 246, 0.2);
-            --lu-accent: #2563eb;
+            --lu-sidebar-active: rgba(15, 23, 42, 0.3);
+            --lu-accent: #0f172a;
         }
+        .btn-primary { background-color: #0f172a !important; border-color: #0f172a !important; }
+        .btn-primary:hover { background-color: #1e293b !important; border-color: #1e293b !important; }
+        .btn-lu-primary { background-color: #0f172a !important; border-color: #0f172a !important; color: #fff !important; }
+        .btn-lu-primary:hover { background-color: #1e293b !important; border-color: #1e293b !important; color: #fff !important; }
+        .bg-primary { background-color: #0f172a !important; }
+        .text-primary { color: #0f172a !important; }
+        .form-check-input:checked { background-color: #0f172a !important; border-color: #0f172a !important; }
+        .form-control:focus, .form-select:focus { border-color: #0f172a !important; box-shadow: 0 0 0 0.25rem rgba(15, 23, 42, 0.25) !important; }
+        .dropdown-item.active { background-color: #0f172a !important; }
+        .dropdown-toggle:focus, .cb-dropdown:focus, .btn.show { border-color: #0f172a !important; box-shadow: 0 0 0 0.25rem rgba(15, 23, 42, 0.25) !important; }
         body { font-family: 'DM Sans', sans-serif; background: #f1f5f9; margin: 0; }
         .inner-wrap { display: flex; min-height: 100vh; }
         .inner-sidebar {
