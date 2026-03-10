@@ -34,6 +34,7 @@ $layout = auth()->check()
     .discussion-card-reply .discussion-meta .avatar.regular { background: #e2e8f0; color: #0f172a; }
     .discussion-card-reply .name { font-weight: 600; color: #111; font-size: 0.9rem; }
     .discussion-card-reply .context { color: #64748b; font-size: 0.8125rem; }
+    .mention { color: #2563eb; font-weight: 600; }
     .discussion-reply-inline { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #e5e8f0; }
     .discussion-reply-inline .reply-input-wrap { flex: 1; min-width: 0; }
     .discussion-reply-inline .reply-input-wrap .form-control { border-radius: 0.5rem; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.6rem 1rem; }
@@ -165,8 +166,8 @@ $layout = auth()->check()
                 $truncateAt = 80;
                 $showSeeMore = $bodyLen > $truncateAt;
             @endphp
-            <div class="post-body mb-3" @if($showSeeMore) data-full="{{ e($d->body) }}" data-short="{{ e(Str::limit($d->body, $truncateAt)) }}" @endif>
-                <p class="mb-0 text-dark post-body-text">{{ $showSeeMore ? Str::limit($d->body, $truncateAt) : $d->body }}</p>
+            <div class="post-body mb-3" @if($showSeeMore) data-full="{{ \App\Support\MentionHelper::highlight($d->body) }}" data-short="{{ \App\Support\MentionHelper::highlight(Str::limit($d->body, $truncateAt)) }}" @endif>
+                <p class="mb-0 text-dark post-body-text">{!! \App\Support\MentionHelper::highlight($showSeeMore ? Str::limit($d->body, $truncateAt) : $d->body) !!}</p>
             </div>
                     @if($d->attachments->isNotEmpty())
                 <div class="d-flex flex-wrap gap-2 mb-3">
@@ -348,11 +349,11 @@ document.querySelectorAll('.see-more-btn').forEach(function(btn) {
         var textEl = postBody.querySelector('.post-body-text');
         var expanded = this.getAttribute('data-expanded') === '1';
         if (expanded) {
-            textEl.textContent = postBody.dataset.short;
+            textEl.innerHTML = postBody.dataset.short;
             this.textContent = 'See more';
             this.setAttribute('data-expanded', '0');
         } else {
-            textEl.textContent = postBody.dataset.full;
+            textEl.innerHTML = postBody.dataset.full;
             this.textContent = 'See less';
             this.setAttribute('data-expanded', '1');
         }

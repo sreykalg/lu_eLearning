@@ -14,7 +14,7 @@
             <span class="context">{{ $reply->created_at->diffForHumans() }}</span>
         </div>
     </div>
-    <p class="mb-2 text-body-secondary small">{{ $reply->body }}</p>
+    <p class="mb-2 text-body-secondary small">{!! \App\Support\MentionHelper::highlight($reply->body) !!}</p>
     <div class="reply-actions d-flex align-items-center gap-3 text-muted small">
         @auth
         <form action="{{ route('discussions.reply-like', $reply) }}" method="POST" class="d-inline mb-0">

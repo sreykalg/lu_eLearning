@@ -8,6 +8,7 @@ $layout = auth()->check()
 @push('styles')
 <style>
     .discussion-instructor-badge { background: #0f172a; color: #fff; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 500; }
+    .mention { color: #2563eb; font-weight: 600; }
     .discussion-reply-hidden { transition: opacity 0.2s; }
 </style>
 @endpush
@@ -26,7 +27,7 @@ $layout = auth()->check()
 
 <div class="card border-0 shadow-sm mb-2">
     <div class="card-body">
-        <p class="mb-3">{{ $discussion->body }}</p>
+        <p class="mb-3">{!! \App\Support\MentionHelper::highlight($discussion->body) !!}</p>
         @if($discussion->attachments->isNotEmpty())
             <div class="d-flex flex-wrap gap-2 mb-3">
                 @foreach($discussion->attachments as $att)

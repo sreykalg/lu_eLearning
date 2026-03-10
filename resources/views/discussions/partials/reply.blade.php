@@ -4,7 +4,7 @@
             @if($reply->is_instructor_answer)
                 <span class="badge bg-success mb-2">Instructor</span>
             @endif
-            <p class="mb-2">{{ $reply->body }}</p>
+            <p class="mb-2">{!! \App\Support\MentionHelper::highlight($reply->body) !!}</p>
             @if($reply->attachments->isNotEmpty())
                 <div class="d-flex flex-wrap gap-2 mb-2">
                     @foreach($reply->attachments as $att)

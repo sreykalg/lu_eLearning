@@ -20,6 +20,7 @@ use App\Http\Controllers\Instructor\QuizController as InstructorQuizController;
 use App\Http\Controllers\Instructor\SubmissionsController as InstructorSubmissionsController;
 use App\Http\Controllers\Instructor\VideoQuizController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\AssignmentController as StudentAssignmentController;
@@ -76,6 +77,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/discussions/{discussion}/pin', [DiscussionController::class, 'pin'])->name('discussions.pin');
     Route::delete('/discussions/{discussion}', [DiscussionController::class, 'destroy'])->name('discussions.destroy');
 
+    Route::get('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

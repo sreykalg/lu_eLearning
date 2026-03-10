@@ -117,7 +117,15 @@
         .inner-header .search-history-item svg { flex-shrink: 0; opacity: 0.6; }
         .inner-header .header-right { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
         .inner-header .header-right .notif { position: relative; }
-        .inner-header .header-right .notif .dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+        .inner-header .header-right .notif .dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; display: none; }
+        .inner-header .header-right .notif.has-unread .dot { display: block; }
+        .inner-header .notif-dropdown { min-width: 320px; max-width: 360px; max-height: 400px; overflow-y: auto; }
+        .inner-header .notif-item { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; display: block; color: inherit; text-decoration: none; font-size: 0.875rem; }
+        .inner-header .notif-item:hover { background: #f8fafc; }
+        .inner-header .notif-item:last-child { border-bottom: none; }
+        .inner-header .notif-item.unread { background: #f8fafc; }
+        .inner-header .notif-item .notif-text { color: #334155; }
+        .inner-header .notif-item .notif-time { font-size: 0.75rem; color: #94a3b8; }
         .inner-header .profile-dropdown .dropdown-toggle { border: none; background: transparent; padding: 0.25rem; border-radius: 0.5rem; transition: background 0.2s; }
         .inner-header .profile-dropdown .dropdown-toggle:hover { background: #f1f5f9; }
         .inner-header .profile-dropdown .dropdown-menu { min-width: 260px; padding: 0; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 10px 40px rgba(0,0,0,0.12); margin-top: 0.5rem; overflow: hidden; }
@@ -252,10 +260,38 @@
                 </form>
                 <div class="header-right">
                     @auth
-                    <a href="#" class="notif text-dark text-decoration-none">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                        <span class="dot"></span>
-                    </a>
+                    @php
+                        $unreadNotifications = auth()->user()->unreadNotifications()->take(20)->get();
+                        $hasUnread = $unreadNotifications->isNotEmpty();
+                    @endphp
+                    <div class="dropdown notif {{ $hasUnread ? 'has-unread' : '' }}">
+                        <button type="button" class="notif btn btn-link text-dark text-decoration-none p-0 border-0 bg-transparent dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <span class="dot"></span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end notif-dropdown">
+                            <div class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold small">Notifications</span>
+                                @if($hasUnread)
+                                <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="mb-0">
+                                    @csrf
+                                    <button type="submit" class="btn btn-link btn-sm p-0 text-primary text-decoration-none">Mark all read</button>
+                                </form>
+                                @endif
+                            </div>
+                            @forelse($unreadNotifications->filter(fn($n) => str_contains($n->type ?? '', 'MentionInDiscussion')) as $n)
+                                <a href="{{ route('notifications.read', $n->id) }}" class="notif-item unread">
+                                    <div class="notif-text">{{ $n->data['mentioner_name'] ?? 'Someone' }} mentioned you in a discussion</div>
+                                    @if(!empty($n->data['excerpt']))
+                                    <div class="notif-time mt-1">{{ Str::limit($n->data['excerpt'], 60) }}</div>
+                                    @endif
+                                    <div class="notif-time">{{ $n->created_at->diffForHumans() }}</div>
+                                </a>
+                            @empty
+                                <div class="px-3 py-4 text-center text-muted small">No new notifications</div>
+                            @endforelse
+                        </div>
+                    </div>
                     <div class="dropdown profile-dropdown">
                         <button class="dropdown-toggle btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="avatar d-flex align-items-center justify-content-center rounded-circle" style="width:40px;height:40px;font-size:0.875rem;font-weight:600;background:#0f172a;color:#fff;">{{ $initials ?? 'U' }}</div>

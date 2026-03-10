@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Discussion;
 use App\Models\DiscussionReply;
+use App\Notifications\MentionInDiscussionNotification;
+use App\Support\MentionParser;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -73,6 +75,16 @@ class DiscussionController extends Controller
             }
         }
 
+        $mentioned = MentionParser::parse($valid['body'], $request->user()->id);
+        foreach ($mentioned as $user) {
+            $user->notify(new MentionInDiscussionNotification(
+                $request->user()->name,
+                $discussion->load('user'),
+                null,
+                \Str::limit($valid['body'], 80)
+            ));
+        }
+
         return redirect()->route('discussions.index');
     }
 
@@ -128,6 +140,17 @@ class DiscussionController extends Controller
                     'original_name' => $file->getClientOriginalName(),
                 ]);
             }
+        }
+
+        $discussion = $reply->discussion;
+        $mentioned = MentionParser::parse($valid['body'], $request->user()->id);
+        foreach ($mentioned as $user) {
+            $user->notify(new MentionInDiscussionNotification(
+                $request->user()->name,
+                $discussion->load('user'),
+                $reply->id,
+                \Str::limit($valid['body'], 80)
+            ));
         }
 
         return back();
