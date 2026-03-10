@@ -29,8 +29,6 @@ $layout = auth()->user()->isAdmin() ? 'layouts.admin' : (auth()->user()->isStude
 
 @section('content')
 <div class="profile-page">
-    
-
     @php
         $name = $user->name ?? 'User';
         $parts = array_filter(explode(' ', $name));
