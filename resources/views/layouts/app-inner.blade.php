@@ -118,6 +118,18 @@
         .inner-header .header-right { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
         .inner-header .header-right .notif { position: relative; }
         .inner-header .header-right .notif .dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+        .inner-header .profile-dropdown .dropdown-toggle { border: none; background: transparent; padding: 0.25rem; border-radius: 0.5rem; transition: background 0.2s; }
+        .inner-header .profile-dropdown .dropdown-toggle:hover { background: #f1f5f9; }
+        .inner-header .profile-dropdown .dropdown-menu { min-width: 260px; padding: 0; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 10px 40px rgba(0,0,0,0.12); margin-top: 0.5rem; overflow: hidden; }
+        .inner-header .profile-dropdown .dropdown-header-custom { padding: 1rem 1.25rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; }
+        .inner-header .profile-dropdown .dropdown-header-custom .avatar { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 600; }
+        .inner-header .profile-dropdown .dropdown-header-custom .name { font-weight: 600; font-size: 0.9375rem; }
+        .inner-header .profile-dropdown .dropdown-header-custom .email { font-size: 0.75rem; opacity: 0.85; }
+        .inner-header .profile-dropdown .dropdown-item { padding: 0.65rem 1.25rem; display: flex; align-items: center; gap: 0.6rem; }
+        .inner-header .profile-dropdown .dropdown-item svg { width: 18px; height: 18px; opacity: 0.7; flex-shrink: 0; }
+        .inner-header .profile-dropdown .dropdown-item:hover { background: #f8fafc; }
+        .inner-header .profile-dropdown .dropdown-divider { margin: 0; }
+        .inner-header .profile-dropdown .dropdown-menu > li:first-child { list-style: none; }
         .inner-content { flex: 1; padding: 1.5rem; overflow-auto; }
         .inner-drawer-backdrop {
             display: none;
@@ -244,15 +256,37 @@
                         <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                         <span class="dot"></span>
                     </a>
-                    <div class="dropdown">
-                        <button class="btn btn-link p-0 text-decoration-none d-flex align-items-center" data-bs-toggle="dropdown">
-                            <div class="avatar" style="width:36px;height:36px;font-size:0.75rem;">{{ $initials ?? 'U' }}</div>
+                    <div class="dropdown profile-dropdown">
+                        <button class="dropdown-toggle btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar d-flex align-items-center justify-content-center rounded-circle" style="width:40px;height:40px;font-size:0.875rem;font-weight:600;background:#0f172a;color:#fff;">{{ $initials ?? 'U' }}</div>
+                            <span class="d-none d-md-inline text-dark fw-medium" style="font-size:0.9rem;">{{ auth()->user()->name ?? 'User' }}</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                            <li class="px-0">
+                                <div class="dropdown-header-custom d-flex align-items-center gap-3">
+                                    <div class="avatar">{{ $initials ?? 'U' }}</div>
+                                    <div class="min-w-0 flex-grow-1">
+                                        <div class="name text-truncate">{{ auth()->user()->name ?? 'User' }}</div>
+                                        <div class="email text-truncate">{{ auth()->user()->email ?? '' }}</div>
+                                        <div class="small mt-0" style="opacity:0.75;">{{ ucfirst(str_replace('_',' ', auth()->user()->role ?? 'student')) }}</div>
+                                    </div>
+                                </div>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="dropdown-item">Log out</button></form>
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                    Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}" class="mb-0">@csrf
+                                    <button type="submit" class="dropdown-item text-danger border-0 bg-transparent w-100 text-start d-flex align-items-center gap-2">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                        Log out
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </div>

@@ -1,7 +1,4 @@
 <section>
-    <h5 class="mb-2">{{ __('Update Password') }}</h5>
-    <p class="text-muted small mb-4">{{ __('Ensure your account is using a long, random password to stay secure.') }}</p>
-
     <form method="post" action="{{ route('password.update') }}">
         @csrf
         @method('put')
@@ -20,7 +17,7 @@
             <input id="update_password_password_confirmation" name="password_confirmation" type="password" class="form-control" autocomplete="new-password">
             @error('password_confirmation', 'updatePassword')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
         </div>
-        <button type="submit" class="btn btn-lu-primary">{{ __('Save') }}</button>
+        <button type="submit" class="btn btn-save">{{ __('Save') }}</button>
         @if (session('status') === 'password-updated')
             <span class="ms-2 text-success small">{{ __('Saved.') }}</span>
         @endif

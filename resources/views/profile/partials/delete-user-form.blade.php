@@ -1,6 +1,5 @@
 <section>
-    <h5 class="mb-2 text-danger">{{ __('Delete Account') }}</h5>
-    <p class="text-muted small mb-3">{{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}</p>
+    <p class="text-muted small mb-4">{{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting, download any data you wish to retain.') }}</p>
 
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">{{ __('Delete Account') }}</button>
 

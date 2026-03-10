@@ -1,7 +1,4 @@
 <section>
-    <h5 class="mb-2">{{ __('Profile Information') }}</h5>
-    <p class="text-muted small mb-4">{{ __("Update your account's profile information and email address.") }}</p>
-
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">@csrf</form>
 
     <form method="post" action="{{ route('profile.update') }}">
@@ -26,7 +23,7 @@
                 @endif
             @endif
         </div>
-        <button type="submit" class="btn btn-lu-primary">{{ __('Save') }}</button>
+        <button type="submit" class="btn btn-save">{{ __('Save') }}</button>
         @if (session('status') === 'profile-updated')
             <span class="ms-2 text-success small">{{ __('Saved.') }}</span>
         @endif
