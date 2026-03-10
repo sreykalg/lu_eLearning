@@ -68,9 +68,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lesson-attachments/{attachment}/download', [LessonController::class, 'downloadAttachment'])->name('lesson-attachments.download');
     Route::post('/lessons/progress', [LessonController::class, 'updateProgress'])->name('lessons.progress');
 
+    Route::get('/discussions/mention-users', [DiscussionController::class, 'mentionUsers'])->name('discussions.mention-users');
     Route::post('/discussions', [DiscussionController::class, 'store'])->name('discussions.store');
     Route::post('/discussions/{discussion}/like', [DiscussionController::class, 'like'])->name('discussions.like');
+    Route::post('/discussions/replies/{reply}/like', [DiscussionController::class, 'replyLike'])->name('discussions.reply-like');
     Route::post('/discussions/reply', [DiscussionController::class, 'reply'])->name('discussions.reply');
+    Route::post('/discussions/{discussion}/pin', [DiscussionController::class, 'pin'])->name('discussions.pin');
+    Route::delete('/discussions/{discussion}', [DiscussionController::class, 'destroy'])->name('discussions.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

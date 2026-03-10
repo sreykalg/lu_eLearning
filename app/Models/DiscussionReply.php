@@ -47,4 +47,14 @@ class DiscussionReply extends Model
     {
         return $this->hasMany(DiscussionReplyAttachment::class, 'discussion_reply_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(DiscussionReplyLike::class);
+    }
+
+    public function hasLiked(User $user): bool
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
+    }
 }

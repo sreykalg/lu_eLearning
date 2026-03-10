@@ -10,16 +10,41 @@ use Illuminate\View\View;
 
 class DiscussionController extends Controller
 {
+    public function mentionUsers(Request $request)
+    {
+        $q = $request->query('q', '');
+        $users = \App\Models\User::query()
+            ->where('id', '!=', $request->user()->id)
+            ->when($q !== '', fn ($query) => $query->where('name', 'like', '%' . $q . '%'))
+            ->orderBy('name')
+            ->limit(15)
+            ->get(['id', 'name'])
+            ->map(fn ($u) => ['id' => $u->id, 'name' => $u->name]);
+        return response()->json($users);
+    }
+
     public function index(Request $request): View
     {
-        $discussions = Discussion::with(['user', 'course', 'replies.user', 'likes', 'attachments'])
+        $discussions = Discussion::with(['user', 'course', 'replies.user', 'replies.likes', 'replies.replies.user', 'replies.replies.likes',  'likes', 'attachments'])
             ->when($request->course_id, fn ($q) => $q->where('course_id', $request->course_id))
-            ->latest()
+            ->orderByRaw('is_pinned DESC, created_at DESC')
             ->paginate(15);
 
         $courses = Course::where('is_published', true)->orderBy('title')->get();
 
-        return view('discussions.index', compact('discussions', 'courses'));
+        $mentionUsers = [];
+        if ($request->user()) {
+            $mentionUsers = \App\Models\User::query()
+                ->where('id', '!=', $request->user()->id)
+                ->orderBy('name')
+                ->limit(50)
+                ->get(['id', 'name'])
+                ->map(fn ($u) => ['id' => $u->id, 'name' => $u->name])
+                ->values()
+                ->all();
+        }
+
+        return view('discussions.index', compact('discussions', 'courses', 'mentionUsers'));
     }
 
     public function store(Request $request)
@@ -48,7 +73,7 @@ class DiscussionController extends Controller
             }
         }
 
-        return redirect()->route('discussions.index')->with('success', 'Discussion posted!');
+        return redirect()->route('discussions.index');
     }
 
     public function like(Request $request, Discussion $discussion)
@@ -60,6 +85,17 @@ class DiscussionController extends Controller
         } else {
             $discussion->likes()->create(['user_id' => $request->user()->id]);
             $liked = true;
+        }
+        return redirect()->back();
+    }
+
+    public function replyLike(Request $request, DiscussionReply $reply)
+    {
+        $like = $reply->likes()->where('user_id', $request->user()->id)->first();
+        if ($like) {
+            $like->delete();
+        } else {
+            $reply->likes()->create(['user_id' => $request->user()->id]);
         }
         return redirect()->back();
     }
@@ -94,6 +130,24 @@ class DiscussionController extends Controller
             }
         }
 
-        return back()->with('success', 'Reply posted!');
+        return back();
+    }
+
+    public function pin(Request $request, Discussion $discussion)
+    {
+        if (!$request->user()->isInstructor() && !$request->user()->isHeadOfDept()) {
+            abort(403);
+        }
+        $discussion->update(['is_pinned' => !$discussion->is_pinned]);
+        return redirect()->back();
+    }
+
+    public function destroy(Request $request, Discussion $discussion)
+    {
+        if (!$request->user()->isInstructor() && !$request->user()->isHeadOfDept() && $request->user()->id !== $discussion->user_id) {
+            abort(403);
+        }
+        $discussion->delete();
+        return redirect()->route('discussions.index');
     }
 }
