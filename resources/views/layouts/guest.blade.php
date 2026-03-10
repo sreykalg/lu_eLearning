@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.bunny.net/css?family=dm-sans:400,500,600,700&display=swap" rel="stylesheet">
     <style>
-        :root { --lu-deep-purple: #2d1b4e; --lu-purple: #4c1d95; --lu-purple-light: rgba(76, 29, 149, 0.08); }
+        :root { --lu-deep-purple: #0f172a; --lu-purple: #1e293b; --lu-purple-light: rgba(15, 23, 42, 0.08); }
         body { font-family: 'DM Sans', sans-serif; min-height: 100vh; margin: 0; overflow-x: hidden; }
         .auth-bg {
             position: fixed;
@@ -21,7 +21,7 @@
         .auth-overlay {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, rgba(45, 27, 78, 0.5) 0%, rgba(76, 29, 149, 0.3) 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.3) 100%);
             z-index: 0;
         }
         .auth-content {
@@ -43,14 +43,14 @@
             max-width: 420px;
             width: 100%;
         }
-        .auth-brand { border-bottom: 1px solid rgba(45, 27, 78, 0.08); padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
+        .auth-brand { border-bottom: 1px solid rgba(15, 23, 42, 0.08); padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
         .glass-card .auth-logo { width: 72px; height: 72px; object-fit: contain; }
         .auth-brand-text { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
         .auth-heading { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
         .auth-subheading { font-size: 0.9rem; color: #64748b; margin-bottom: 1.5rem; }
         .form-control-glass {
             background: #f8fafc;
-            border: 1px solid rgba(45, 27, 78, 0.1);
+            border: 1px solid rgba(15, 23, 42, 0.1);
             border-radius: 0.625rem;
             padding: 0.65rem 1rem;
             font-size: 0.95rem;
@@ -59,23 +59,23 @@
         .form-control-glass::placeholder { color: #94a3b8; }
         .form-control-glass:focus {
             background: #fff;
-            border-color: var(--lu-purple);
-            box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.12);
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
             outline: none;
         }
         .form-label { font-size: 0.85rem; font-weight: 500; color: #334155; margin-bottom: 0.35rem; }
         .btn-lu-primary {
-            background: linear-gradient(135deg, var(--lu-deep-purple) 0%, var(--lu-purple) 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #fff;
             border: none;
             padding: 0.7rem 1.5rem;
             border-radius: 0.625rem;
             font-weight: 600;
             font-size: 0.95rem;
-            box-shadow: 0 4px 14px rgba(45, 27, 78, 0.35);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35);
             transition: transform 0.15s, box-shadow 0.15s;
         }
-        .btn-lu-primary:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(45, 27, 78, 0.4); }
+        .btn-lu-primary:hover { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: #fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15, 23, 42, 0.4); }
         .auth-footer { font-size: 0.9rem; color: #64748b; }
         .auth-footer a { font-weight: 600; transition: color 0.15s; }
     </style>

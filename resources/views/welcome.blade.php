@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.bunny.net/css?family=dm-sans:400,500,600,700&display=swap" rel="stylesheet">
     <style>
-        :root { --lu-deep-purple: #2d1b4e; --lu-purple: #4c1d95; --lu-purple-light: rgba(76, 29, 149, 0.08); }
+        :root { --lu-deep-purple: #0f172a; --lu-purple: #1e293b; --lu-purple-light: rgba(15, 23, 42, 0.08); }
         body { font-family: 'DM Sans', sans-serif; min-height: 100vh; margin: 0; overflow-x: hidden; }
         .welcome-bg {
             position: fixed;
@@ -20,7 +20,7 @@
         .welcome-overlay {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, rgba(45, 27, 78, 0.5) 0%, rgba(76, 29, 149, 0.3) 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.3) 100%);
             z-index: 0;
         }
         .welcome-content {
@@ -57,31 +57,31 @@
             border-radius: 0.75rem;
             font-weight: 600;
         }
-        .glass-nav .btn-lu { background: var(--lu-deep-purple); color: #fff; border-color: var(--lu-deep-purple); }
-        .glass-nav .btn-lu:hover { background: var(--lu-purple); color: #fff; border-color: var(--lu-purple); }
+        .glass-nav .btn-lu { background: #0f172a; color: #fff; border-color: #0f172a; }
+        .glass-nav .btn-lu:hover { background: #1e293b; color: #fff; border-color: #1e293b; }
         .glass-card .logo { height: 96px; width: auto; }
         .glass-card h1 { color: var(--lu-deep-purple); font-weight: 700; font-size: 2rem; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
         .glass-card .lead { color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; }
         .glass-card .btn-lu {
-            background: linear-gradient(135deg, var(--lu-deep-purple) 0%, var(--lu-purple) 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #fff;
             border: none;
             padding: 0.7rem 1.75rem;
             border-radius: 0.625rem;
             font-weight: 600;
-            box-shadow: 0 4px 14px rgba(45, 27, 78, 0.35);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35);
             transition: transform 0.15s, box-shadow 0.15s;
         }
-        .glass-card .btn-lu:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(45, 27, 78, 0.4); }
+        .glass-card .btn-lu:hover { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: #fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15, 23, 42, 0.4); }
         .glass-card .btn-outline-glass {
             background: #fff;
-            border: 1px solid rgba(45, 27, 78, 0.2);
-            color: var(--lu-deep-purple);
+            border: 1px solid rgba(15, 23, 42, 0.2);
+            color: #0f172a;
             border-radius: 0.625rem;
             font-weight: 600;
             transition: border-color 0.15s, color 0.15s, background 0.15s;
         }
-        .glass-card .btn-outline-glass:hover { background: var(--lu-purple-light); border-color: var(--lu-purple); color: var(--lu-purple); }
+        .glass-card .btn-outline-glass:hover { background: var(--lu-purple-light); border-color: #0f172a; color: #0f172a; }
     </style>
 </head>
 <body>
