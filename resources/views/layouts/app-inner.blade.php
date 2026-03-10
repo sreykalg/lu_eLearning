@@ -105,7 +105,16 @@
         }
         .inner-header .search-form .search:focus { outline: none; border-color: #94a3b8; }
         .inner-header .search::placeholder { color: #94a3b8; }
-        .inner-header .search-form { flex: 1; max-width: 400px; min-width: 0; }
+        .inner-header .search-form { flex: 1; max-width: 400px; min-width: 0; position: relative; }
+        .inner-header .search-form .search { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+        .inner-header .search-form .search-btn { border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0.5rem 0.75rem; background: #0f172a; color: #fff; border: 1px solid #0f172a; }
+        .inner-header .search-form .search-btn:hover { background: #1e293b; color: #fff; border-color: #1e293b; }
+        .inner-header .search-history { position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.25rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 220px; overflow-y: auto; z-index: 1050; display: none; }
+        .inner-header .search-history.show { display: block; }
+        .inner-header .search-history-item { padding: 0.5rem 1rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: #334155; border-bottom: 1px solid #f1f5f9; }
+        .inner-header .search-history-item:last-child { border-bottom: none; }
+        .inner-header .search-history-item:hover { background: #f8fafc; }
+        .inner-header .search-history-item svg { flex-shrink: 0; opacity: 0.6; }
         .inner-header .header-right { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
         .inner-header .header-right .notif { position: relative; }
         .inner-header .header-right .notif .dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
@@ -220,8 +229,14 @@
                     <img src="/images/life-university-logo.png" alt="" height="32">
                     <span>Life University</span>
                 </a>
-                <form action="{{ auth()->check() && auth()->user()->isStudent() ? route('student.courses') : route('courses.index') }}" method="get" class="search-form d-flex align-items-center">
-                    <input type="search" name="{{ auth()->check() && auth()->user()->isStudent() ? 'search' : 'q' }}" class="search" placeholder="Search courses, lessons..." value="{{ auth()->check() && auth()->user()->isStudent() ? request('search') : request('q') }}" aria-label="Search">
+                <form action="{{ auth()->check() && auth()->user()->isStudent() ? route('student.courses') : route('courses.index') }}" method="get" class="search-form d-flex align-items-center" id="headerSearchForm">
+                    <input type="search" name="{{ auth()->check() && auth()->user()->isStudent() ? 'search' : 'q' }}" class="search" placeholder="Search courses, lessons..." value="{{ auth()->check() && auth()->user()->isStudent() ? request('search') : request('q') }}" aria-label="Search" id="headerSearchInput" autocomplete="off">
+                    <button type="submit" class="search-btn" aria-label="Search" title="Search">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </button>
+                    <div class="search-history" id="searchHistoryDropdown" role="listbox">
+                        <div class="search-history-item text-muted small px-3 py-2" id="searchHistoryEmpty" style="cursor:default;">No recent searches</div>
+                    </div>
                 </form>
                 <div class="header-right">
                     @auth
@@ -276,6 +291,24 @@
                 });
             }
         })();
+    </script>
+    <script>
+    (function(){
+        var STORAGE_KEY='lu-search-history', MAX=10, form=document.getElementById('headerSearchForm'), input=document.getElementById('headerSearchInput'), dropdown=document.getElementById('searchHistoryDropdown'), emptyEl=document.getElementById('searchHistoryEmpty');
+        function getHistory(){ try{ var j=localStorage.getItem(STORAGE_KEY); return j?JSON.parse(j):[]; }catch(e){ return []; } }
+        function saveHistory(arr){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(arr.slice(0,MAX))); }catch(e){} }
+        function addToHistory(q){ if(!q||!q.trim())return; var h=getHistory(); h=h.filter(function(x){ return x!==q.trim(); }); h.unshift(q.trim()); saveHistory(h); }
+        function renderHistory(){ var h=getHistory(); emptyEl.style.display=h.length?'none':'block'; dropdown.querySelectorAll('.search-history-item[data-query]').forEach(function(el){ el.remove(); }); h.forEach(function(q){ var a=document.createElement('div'); a.className='search-history-item'; a.setAttribute('data-query',q); a.setAttribute('role','option'); a.innerHTML='<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>'+q.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span>'; a.addEventListener('mousedown',function(e){ e.preventDefault(); input.value=q; dropdown.classList.remove('show'); form.submit(); }); dropdown.insertBefore(a,emptyEl); }); }
+        function showDropdown(){ renderHistory(); dropdown.classList.add('show'); }
+        function hideDropdown(){ setTimeout(function(){ dropdown.classList.remove('show'); },180); }
+        if(form&&input&&dropdown){
+            form.addEventListener('submit',function(){ addToHistory(input.value); });
+            input.addEventListener('focus',showDropdown);
+            input.addEventListener('blur',hideDropdown);
+            input.addEventListener('input',function(){ if(input.value)showDropdown(); else renderHistory(); });
+            document.addEventListener('click',function(e){ if(!form.contains(e.target))hideDropdown(); });
+        }
+    })();
     </script>
     @vite(['resources/js/app.js'])
     @stack('scripts')
