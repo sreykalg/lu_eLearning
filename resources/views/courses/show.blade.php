@@ -7,17 +7,18 @@ $layout = auth()->check()
 
 @push('styles')
 <style>
-    .course-back { color: #0f172a; text-decoration: none; font-size: 0.875rem; }
-    .course-back:hover { color: #1e293b; }
-    .course-card { border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background: #fff; }
+    :root { --lu-deep-purple: #2d1b4e; --lu-purple: #4c1d95; --lu-purple-light: rgba(76, 29, 149, 0.08); }
+    .course-back { color: var(--lu-deep-purple); text-decoration: none; font-size: 0.875rem; }
+    .course-back:hover { color: var(--lu-purple); }
+    .course-card { border: 0; border-radius: 0.5rem; overflow: hidden; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .course-content-list { max-height: 400px; overflow-y: auto; }
     .course-content-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; text-decoration: none; color: #374151; border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
-    .course-content-item:hover { background: #f9fafb; }
+    .course-content-item:hover { background: var(--lu-purple-light, #f9fafb); }
     .course-content-item .num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
     .course-content-item .num.done { background: #10b981; color: #fff; }
     .course-content-item .num.todo { background: #e5e7eb; color: #374151; }
-    .btn-enroll { background: #0f172a; color: #fff; border: none; }
-    .btn-enroll:hover { background: #1e293b; color: #fff; }
+    .btn-enroll { background: var(--lu-deep-purple); color: #fff; border: none; }
+    .btn-enroll:hover { background: var(--lu-purple); color: #fff; }
 </style>
 @endpush
 
@@ -29,13 +30,12 @@ $layout = auth()->check()
     <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
 @endif
 
-<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
-    <div>
-        <a href="{{ auth()->check() ? route('overview') : route('courses.index') }}" class="course-back d-inline-block mb-2">&larr; Back to courses</a>
-        <h1 class="h3 fw-bold mb-1" style="color: #0f172a;">{{ $course->title }}</h1>
+<div class="mb-4">
+    <a href="{{ auth()->check() ? route('overview') : route('courses.index') }}" class="course-back d-inline-block mb-2">&larr; Back to courses</a>
+    <h1 class="h3 fw-bold mb-2" style="color: var(--lu-deep-purple);">{{ $course->title }}</h1>
         @auth
             @if($enrollment)
-                <div class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded small mt-1" style="background: #e0f2fe; color: #0c4a6e;">
+                <div class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded small mt-1" style="background: rgba(45,27,78,0.1); color: var(--lu-deep-purple);">
                     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     <span class="fw-semibold">{{ $coursePoints ?? 0 }}</span> points in this course
                 </div>
@@ -46,7 +46,6 @@ $layout = auth()->check()
                 </form>
             @endif
         @endauth
-    </div>
 </div>
 
 <div class="row g-4">
@@ -60,7 +59,7 @@ $layout = auth()->check()
                 @endif
             </div>
             <div class="p-4">
-                <span class="badge bg-light text-dark mb-2">{{ $course->level }}</span>
+                <span class="badge rounded-pill mb-2" style="background: rgba(45,27,78,0.15); color: var(--lu-deep-purple);">{{ ucfirst($course->level) }}</span>
                 <p class="text-muted mb-2">{{ $course->description }}</p>
                 <p class="small text-muted mb-0"><strong>Instructor:</strong> {{ $course->instructor->name ?? '—' }}</p>
             </div>
@@ -69,7 +68,7 @@ $layout = auth()->check()
     <div class="col-lg-4">
         <div class="course-card shadow-sm">
             <div class="p-3 border-bottom" style="background: #f9fafb;">
-                <h5 class="mb-0 fw-semibold">Course Content</h5>
+                <h5 class="mb-0 fw-semibold" style="color: var(--lu-deep-purple);">Course Content</h5>
             </div>
             <div class="course-content-list">
                 @foreach ($course->lessons as $lesson)
@@ -95,7 +94,7 @@ $layout = auth()->check()
             </div>
             @if ($course->quizzes->isNotEmpty())
                 <div class="p-3 border-top" style="background: #f9fafb;">
-                    <h6 class="small fw-semibold mb-2">Quizzes</h6>
+                    <h6 class="small fw-semibold mb-2" style="color: var(--lu-deep-purple);">Quizzes</h6>
                     <ul class="small mb-0 ps-0 list-unstyled">
                         @foreach ($course->quizzes as $quiz)
                             <li class="py-1">
@@ -104,8 +103,8 @@ $layout = auth()->check()
                                         <span class="flex-grow-1">{{ $quiz->title }} @if($quiz->type !== 'practice') ({{ $quiz->type }}) @endif</span>
                                         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
                                     </a>
-                                @else
-                                    <a href="{{ route('login') }}" class="text-muted text-decoration-none">{{ $quiz->title }} @if($quiz->type !== 'practice') ({{ $quiz->type }}) @endif</a>
+@else
+                    <a href="{{ route('login') }}" class="text-muted text-decoration-none">{{ $quiz->title }} @if($quiz->type !== 'practice') ({{ $quiz->type }}) @endif</a>
                                 @endauth
                             </li>
                         @endforeach

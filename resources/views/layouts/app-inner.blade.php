@@ -184,40 +184,50 @@
                         STUDENT
                     @endif
                 @else
-                    STUDENT
+                    GUEST
                 @endauth
             </div>
             <nav class="nav flex-column">
                 @yield('sidebar-nav')
             </nav>
             <div class="user-block">
-                @php
-$name = auth()->user()->name ?? 'U';
-$parts = array_filter(explode(' ', $name));
-$initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
-@endphp
-                <div class="avatar">{{ $initials }}</div>
-                <div>
-                    <div class="name">{{ auth()->user()->name ?? 'User' }}</div>
-                    <div class="role">{{ ucfirst(str_replace('_', ' ', auth()->user()->role ?? 'student')) }}</div>
-                </div>
+                @auth
+                    @php
+                        $name = auth()->user()->name ?? 'U';
+                        $parts = array_filter(explode(' ', $name));
+                        $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
+                    @endphp
+                    <div class="avatar">{{ $initials }}</div>
+                    <div>
+                        <div class="name">{{ auth()->user()->name ?? 'User' }}</div>
+                        <div class="role">{{ ucfirst(str_replace('_', ' ', auth()->user()->role ?? 'student')) }}</div>
+                    </div>
+                @else
+                    @hasSection('sidebar-guest-block')
+                        @yield('sidebar-guest-block')
+                    @else
+                        <a href="{{ route('login') }}" class="nav-link py-2" data-drawer-close><span>Log in</span></a>
+                        <a href="{{ route('register') }}" class="nav-link py-2" data-drawer-close><span>Register</span></a>
+                    @endif
+                @endauth
             </div>
         </aside>
         <div class="inner-main">
             <header class="inner-header">
-                <a href="{{ auth()->user()->isStudent() ? route('student.dashboard') : (auth()->user()->isInstructor() ? route('instructor.dashboard') : (auth()->user()->isHeadOfDept() ? route('hod.dashboard') : url('/'))) }}" class="logo">
+                <a href="{{ auth()->check() ? (auth()->user()->isStudent() ? route('student.dashboard') : (auth()->user()->isInstructor() ? route('instructor.dashboard') : (auth()->user()->isHeadOfDept() ? route('hod.dashboard') : url('/')))) : route('courses.index') }}" class="logo">
                     <img src="/images/life-university-logo.png" alt="" height="32">
                     <span>Life University</span>
                 </a>
                 <input type="search" class="search" placeholder="Search courses, lessons..." aria-label="Search">
                 <div class="header-right">
+                    @auth
                     <a href="#" class="notif text-dark text-decoration-none">
                         <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                         <span class="dot"></span>
                     </a>
                     <div class="dropdown">
                         <button class="btn btn-link p-0 text-decoration-none d-flex align-items-center" data-bs-toggle="dropdown">
-                            <div class="avatar" style="width:36px;height:36px;font-size:0.75rem;">{{ $initials }}</div>
+                            <div class="avatar" style="width:36px;height:36px;font-size:0.75rem;">{{ $initials ?? 'U' }}</div>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
@@ -227,6 +237,10 @@ $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($
                             </li>
                         </ul>
                     </div>
+                    @else
+                    <a href="{{ route('login') }}" class="nav-link text-dark text-decoration-none">Log in</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Register</a>
+                    @endauth
                 </div>
             </header>
             <main class="inner-content">
