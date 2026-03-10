@@ -10,24 +10,36 @@
     <div class="row g-4">
         @forelse ($courses as $course)
             <div class="col-sm-6 col-lg-4 col-xl-3">
-                <a href="{{ route('courses.show', $course) }}" class="card text-decoration-none border-0 shadow-sm h-100 overflow-hidden">
-                    <div class="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center">
-                        @if ($course->thumbnail)
-                            <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" class="object-fit-cover">
-                        @else
-                            <svg class="text-secondary" width="48" height="48" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8l6-4 6 4V8H6z"/></svg>
-                        @endif
-                    </div>
-                    <div class="card-body">
-                        <span class="badge bg-light text-dark mb-2">{{ $course->level }}</span>
-                        <h5 class="card-title text-dark">{{ $course->title }}</h5>
-                        <p class="card-text text-muted small">{{ Str::limit($course->description, 80) }}</p>
-                        <p class="small text-muted mb-2">{{ $course->instructor->name }}</p>
+                <div class="card border-0 shadow-sm h-100 overflow-hidden d-flex flex-column">
+                    <a href="{{ route('courses.show', $course) }}" class="text-decoration-none text-dark">
+                        <div class="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center">
+                            @if ($course->thumbnail)
+                                <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" class="object-fit-cover">
+                            @else
+                                <svg class="text-secondary" width="48" height="48" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8l6-4 6 4V8H6z"/></svg>
+                            @endif
+                        </div>
+                        <div class="card-body">
+                            <span class="badge bg-light text-dark mb-2">{{ $course->level }}</span>
+                            <h5 class="card-title text-dark">{{ $course->title }}</h5>
+                            <p class="card-text text-muted small">{{ Str::limit($course->description, 80) }}</p>
+                            <p class="small text-muted mb-2">{{ $course->instructor->name }}</p>
+                        </div>
+                    </a>
+                    <div class="card-body pt-0 mt-auto">
                         @if ($enrolledIds->contains($course->id))
-                            <span class="badge rounded-pill bg-primary">Enrolled</span>
+                            <a href="{{ route('courses.show', $course) }}" class="btn btn-outline-primary btn-sm w-100">View Course</a>
+                        @elseif (auth()->check())
+                            <form action="{{ route('courses.enroll', $course) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary btn-sm w-100">Enroll</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login', ['intended' => route('courses.show', $course)]) }}" class="btn btn-primary btn-sm w-100">Enroll</a>
+                            <p class="small text-muted text-center mt-1 mb-0">Log in or register to enroll</p>
                         @endif
                     </div>
-                </a>
+                </div>
             </div>
         @empty
             <div class="col-12 text-center py-5 text-muted">
