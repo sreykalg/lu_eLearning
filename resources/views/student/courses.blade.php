@@ -26,25 +26,16 @@
     </div>
 </div>
 
-{{-- Filters + Search --}}
-<div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-    <div class="d-flex flex-wrap gap-2">
-        <a href="{{ route('student.courses', request()->except('level', 'search', 'page')) }}" class="filter-pill {{ !request('level') ? 'active' : '' }}">
-            All
+{{-- Level filters only (search is in header) --}}
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="{{ route('student.courses', request()->except('level', 'search', 'page')) }}" class="filter-pill {{ !request('level') ? 'active' : '' }}">
+        All
+    </a>
+    @foreach($levels as $key => $label)
+        <a href="{{ route('student.courses', array_merge(request()->except('level', 'page'), ['level' => $key])) }}" class="filter-pill {{ request('level') === $key ? 'active' : '' }}">
+            {{ $label }}
         </a>
-        @foreach($levels as $key => $label)
-            <a href="{{ route('student.courses', array_merge(request()->except('level', 'page'), ['level' => $key])) }}" class="filter-pill {{ request('level') === $key ? 'active' : '' }}">
-                {{ $label }}
-            </a>
-        @endforeach
-    </div>
-    <form action="{{ route('student.courses') }}" method="GET" class="d-flex gap-2 ms-auto">
-        @if(request('level'))<input type="hidden" name="level" value="{{ request('level') }}">@endif
-        <div class="input-group" style="max-width: 260px;">
-            <span class="input-group-text bg-white border-end-0"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></span>
-            <input type="search" name="search" class="form-control border-start-0" placeholder="Search courses..." value="{{ request('search') }}">
-        </div>
-    </form>
+    @endforeach
 </div>
 
 <div class="row g-4">

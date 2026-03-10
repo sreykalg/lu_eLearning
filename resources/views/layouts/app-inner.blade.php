@@ -105,10 +105,11 @@
         }
         .inner-header .search-form .search:focus { outline: none; border-color: #94a3b8; }
         .inner-header .search::placeholder { color: #94a3b8; }
-        .inner-header .search-form { flex: 1; max-width: 400px; min-width: 0; position: relative; }
+        .inner-header .search-form { max-width: 400px; width: 100%; min-width: 0; position: relative; }
         .inner-header .search-form .search { border-top-right-radius: 0; border-bottom-right-radius: 0; }
         .inner-header .search-form .search-btn { border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0.5rem 0.75rem; background: #0f172a; color: #fff; border: 1px solid #0f172a; }
         .inner-header .search-form .search-btn:hover { background: #1e293b; color: #fff; border-color: #1e293b; }
+        .inner-header .header-center { flex: 1; display: flex; justify-content: center; min-width: 0; }
         .inner-header .search-history { position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.25rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 220px; overflow-y: auto; z-index: 1050; display: none; }
         .inner-header .search-history.show { display: block; }
         .inner-header .search-history-item { padding: 0.5rem 1rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: #334155; border-bottom: 1px solid #f1f5f9; }
@@ -245,10 +246,11 @@
         </aside>
         <div class="inner-main">
             <header class="inner-header">
-                <a href="{{ auth()->check() ? (auth()->user()->isStudent() ? route('student.dashboard') : (auth()->user()->isInstructor() ? route('instructor.dashboard') : (auth()->user()->isHeadOfDept() ? route('hod.dashboard') : url('/')))) : route('courses.index') }}" class="logo">
+                <a href="{{ auth()->check() ? (auth()->user()->isStudent() ? route('student.dashboard') : (auth()->user()->isInstructor() ? route('instructor.dashboard') : (auth()->user()->isHeadOfDept() ? route('hod.dashboard') : url('/')))) : route('courses.index') }}" class="logo flex-shrink-0">
                     <img src="/images/life-university-logo.png" alt="" height="32">
                     <span>Life University</span>
                 </a>
+                <div class="header-center">
                 <form action="{{ auth()->check() && auth()->user()->isStudent() ? route('student.courses') : route('courses.index') }}" method="get" class="search-form d-flex align-items-center" id="headerSearchForm">
                     <input type="search" name="{{ auth()->check() && auth()->user()->isStudent() ? 'search' : 'q' }}" class="search" placeholder="Search courses, lessons..." value="{{ auth()->check() && auth()->user()->isStudent() ? request('search') : request('q') }}" aria-label="Search" id="headerSearchInput" autocomplete="off">
                     <button type="submit" class="search-btn" aria-label="Search" title="Search">
@@ -258,7 +260,8 @@
                         <div class="search-history-item text-muted small px-3 py-2" id="searchHistoryEmpty" style="cursor:default;">No recent searches</div>
                     </div>
                 </form>
-                <div class="header-right">
+                </div>
+                <div class="header-right flex-shrink-0">
                     @auth
                     @php
                         $unreadNotifications = auth()->user()->unreadNotifications()->take(20)->get();
