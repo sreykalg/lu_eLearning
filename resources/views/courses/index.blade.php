@@ -32,7 +32,8 @@
         @empty
             <div class="col-12 text-center py-5 text-muted">
                 <svg class="mb-2" width="48" height="48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
-                <p class="mb-0">No courses yet. Courses will appear here once published.</p>
+                <p class="mb-0">@if(request('q'))No courses match "{{ request('q') }}".@else No courses yet. Courses will appear here once published.@endif</p>
+                @if(request('q'))<a href="{{ route('courses.index') }}" class="text-primary small">Clear search</a>@endif
             </div>
         @endforelse
     </div>

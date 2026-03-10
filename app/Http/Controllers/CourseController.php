@@ -11,10 +11,18 @@ class CourseController extends Controller
 {
     public function index(Request $request): View
     {
-        $courses = Course::with('instructor')
-            ->where('is_published', true)
-            ->orderBy('order')
-            ->paginate(12);
+        $query = Course::with('instructor')
+            ->where('is_published', true);
+
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where(function ($qry) use ($q) {
+                $qry->where('title', 'like', '%' . $q . '%')
+                    ->orWhere('description', 'like', '%' . $q . '%');
+            });
+        }
+
+        $courses = $query->orderBy('order')->paginate(12)->withQueryString();
 
         $enrolledIds = collect();
         if ($request->user()) {

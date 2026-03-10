@@ -95,15 +95,17 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
         .inner-header .logo { display: flex; align-items: center; gap: 0.5rem; color: #0f172a; font-weight: 700; text-decoration: none; }
-        .inner-header .search {
+        .inner-header .search-form .search {
             flex: 1;
-            max-width: 400px;
+            min-width: 0;
             padding: 0.5rem 1rem;
             border: 1px solid #e2e8f0;
             border-radius: 0.5rem;
             font-size: 0.875rem;
         }
+        .inner-header .search-form .search:focus { outline: none; border-color: #94a3b8; }
         .inner-header .search::placeholder { color: #94a3b8; }
+        .inner-header .search-form { flex: 1; max-width: 400px; min-width: 0; }
         .inner-header .header-right { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
         .inner-header .header-right .notif { position: relative; }
         .inner-header .header-right .notif .dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
@@ -218,7 +220,9 @@
                     <img src="/images/life-university-logo.png" alt="" height="32">
                     <span>Life University</span>
                 </a>
-                <input type="search" class="search" placeholder="Search courses, lessons..." aria-label="Search">
+                <form action="{{ auth()->check() && auth()->user()->isStudent() ? route('student.courses') : route('courses.index') }}" method="get" class="search-form d-flex align-items-center">
+                    <input type="search" name="{{ auth()->check() && auth()->user()->isStudent() ? 'search' : 'q' }}" class="search" placeholder="Search courses, lessons..." value="{{ auth()->check() && auth()->user()->isStudent() ? request('search') : request('q') }}" aria-label="Search">
+                </form>
                 <div class="header-right">
                     @auth
                     <a href="#" class="notif text-dark text-decoration-none">

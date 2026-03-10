@@ -1,7 +1,7 @@
 @php
 $layout = auth()->check()
     ? (auth()->user()->isStudent() ? 'layouts.student-inner' : (auth()->user()->isInstructor() ? 'layouts.instructor-inner' : (auth()->user()->isHeadOfDept() ? 'layouts.hod-inner' : 'layouts.app-inner')))
-    : 'layouts.app-simple';
+    : 'layouts.public-inner';
 @endphp
 @extends($layout)
 
