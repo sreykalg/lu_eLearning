@@ -19,6 +19,7 @@
     @stack('styles')
 </head>
 <body>
+    @include('layouts.partials.screen-size-restriction')
     @include('layouts.navigation')
 
     @isset($header)

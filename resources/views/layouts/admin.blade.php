@@ -76,6 +76,7 @@
     @stack('styles')
 </head>
 <body>
+    @include('layouts.partials.screen-size-restriction')
     @include('layouts.navigation')
 
     <div class="admin-drawer-backdrop" id="adminDrawerBackdrop" aria-hidden="true"></div>

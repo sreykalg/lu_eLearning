@@ -204,6 +204,7 @@
     @stack('styles')
 </head>
 <body>
+    @include('layouts.partials.screen-size-restriction')
     <div class="inner-drawer-backdrop" id="innerDrawerBackdrop"></div>
 
     <div class="inner-wrap">

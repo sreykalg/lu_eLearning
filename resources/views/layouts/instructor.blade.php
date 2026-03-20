@@ -74,6 +74,7 @@
     @stack('styles')
 </head>
 <body>
+    @include('layouts.partials.screen-size-restriction')
     @include('layouts.navigation')
 
     <div class="instructor-drawer-backdrop" id="instructorDrawerBackdrop" aria-hidden="true"></div>
