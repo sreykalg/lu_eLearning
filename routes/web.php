@@ -8,6 +8,7 @@ use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\Hod\ApprovalController as HodApprovalController;
 use App\Http\Controllers\Hod\DashboardController as HodDashboardController;
 use App\Http\Controllers\Hod\ReportsController as HodReportsController;
+use App\Http\Controllers\Hod\StudentEnrollmentController as HodStudentEnrollmentController;
 use App\Http\Controllers\Hod\UserController as HodUserController;
 use App\Http\Controllers\Instructor\AnnouncementController as InstructorAnnouncementController;
 use App\Http\Controllers\Instructor\AssignmentController;
@@ -127,6 +128,9 @@ Route::middleware(['auth', 'verified', 'head_of_dept'])->prefix('hod')->name('ho
     Route::post('/approval/{course}/approve', [HodApprovalController::class, 'approve'])->name('approval.approve');
     Route::post('/approval/{course}/request-changes', [HodApprovalController::class, 'requestChanges'])->name('approval.request-changes');
     Route::get('/reports', [HodReportsController::class, 'index'])->name('reports');
+    Route::get('/students', [HodStudentEnrollmentController::class, 'index'])->name('students.index');
+    Route::post('/students/remove', [HodStudentEnrollmentController::class, 'remove'])->name('students.remove');
+    Route::get('/students/{course}', [HodStudentEnrollmentController::class, 'show'])->name('students.show');
     Route::get('/users', [HodUserController::class, 'index'])->name('users');
 });
 

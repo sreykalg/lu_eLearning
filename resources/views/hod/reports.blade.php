@@ -90,7 +90,7 @@
                             <span class="badge-students {{ $badgeClass }}">{{ $students }}</span>
                         </td>
                         <td class="px-4 py-3 text-end">
-                            <a href="{{ route('courses.show', $c) }}" class="view-link">
+                            <a href="{{ route('hod.students.show', $c) }}" class="view-link">
                                 View
                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </a>
