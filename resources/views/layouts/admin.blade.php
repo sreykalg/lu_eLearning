@@ -103,17 +103,43 @@
             </nav>
         </aside>
         <main class="admin-main">
-            <div class="d-lg-none mb-3">
-                <button type="button" class="btn btn-outline-secondary btn-sm" id="adminDrawerToggleTop" aria-label="Open menu">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    Menu
-                </button>
+            <div id="pageContent">
+                <div class="d-lg-none mb-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="adminDrawerToggleTop" aria-label="Open menu">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        Menu
+                    </button>
+                </div>
+                @if(in_array(session('status'), ['profile-updated', 'password-updated']))
+                    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                        {{ __('Saved.') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @yield('content')
             </div>
-            @yield('content')
+            <div id="profileContent" style="display:none;">
+                <button type="button" class="btn btn-link text-secondary text-decoration-none mb-2 p-0" data-action="hide-profile" aria-label="Back">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1 align-text-bottom"><path stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    {{ __('Back') }}
+                </button>
+                @include('profile.partials.panel-content', ['user' => auth()->user()])
+            </div>
         </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function(){
+            var pageContent=document.getElementById('pageContent'), profileContent=document.getElementById('profileContent');
+            document.querySelectorAll('[data-action="show-profile"]').forEach(function(btn){
+                btn.addEventListener('click',function(e){ e.preventDefault(); if(pageContent){ pageContent.style.display='none'; } if(profileContent){ profileContent.style.display='block'; } });
+            });
+            document.querySelectorAll('[data-action="hide-profile"]').forEach(function(btn){
+                btn.addEventListener('click',function(){ if(pageContent){ pageContent.style.display='block'; } if(profileContent){ profileContent.style.display='none'; } });
+            });
+        })();
+    </script>
     <script>
         (function() {
             var sidebar = document.getElementById('adminSidebar');

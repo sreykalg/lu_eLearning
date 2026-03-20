@@ -4,6 +4,9 @@
     <form method="post" action="{{ route('profile.update') }}">
         @csrf
         @method('patch')
+        @if(!empty($inModal))
+            <input type="hidden" name="redirect" value="{{ url()->current() }}">
+        @endif
         <div class="mb-3">
             <label for="name" class="form-label">{{ __('Name') }}</label>
             <input id="name" name="name" type="text" class="form-control" value="{{ old('name', $user->name) }}" required>

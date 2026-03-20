@@ -30,7 +30,11 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{{ Auth::user()->name }}</a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                            @if(request()->routeIs('admin.*'))
+                                <li><a class="dropdown-item" href="#" data-action="show-profile">Profile</a></li>
+                            @else
+                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                            @endif
                             @if(Auth::user()->isInstructor())
                                 <li><a class="dropdown-item" href="{{ route('instructor.dashboard') }}">Manage courses</a></li>
                             @endif
