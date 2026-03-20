@@ -22,20 +22,41 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="rounded-3 p-4 bg-white shadow-sm border">
-            <h3 class="mb-0 fw-bold">{{ $stats['students'] }}</h3>
-            <p class="text-muted small mb-0">Students</p>
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2" style="background: rgba(37,99,235,0.1);">
+                    <svg width="28" height="28" fill="none" stroke="#0f172a" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">{{ $stats['students'] }}</h3>
+                    <p class="text-muted small mb-0">Students</p>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="rounded-3 p-4 bg-white shadow-sm border">
-            <h3 class="mb-0 fw-bold">{{ $stats['instructors'] }}</h3>
-            <p class="text-muted small mb-0">Instructors</p>
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2" style="background: rgba(37,99,235,0.1);">
+                    <svg width="28" height="28" fill="none" stroke="#0f172a" viewBox="0 0 24 24"><path stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">{{ $stats['instructors'] }}</h3>
+                    <p class="text-muted small mb-0">Instructors</p>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-6 col-md-3">
         <div class="rounded-3 p-4 bg-white shadow-sm border">
-            <h3 class="mb-0 fw-bold">{{ $stats['pending'] }}</h3>
-            <p class="text-muted small mb-0">Pending Approvals</p>
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 p-2" style="background: rgba(37,99,235,0.1);">
+                    <svg width="28" height="28" fill="none" stroke="#0f172a" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">{{ $stats['pending'] }}</h3>
+                    <p class="text-muted small mb-0">Pending Approvals</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
