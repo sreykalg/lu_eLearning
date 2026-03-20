@@ -97,6 +97,18 @@
             </div>
 
             <div class="mb-4">
+                <label class="form-label fw-medium">Subtitles (CC)</label>
+                <input type="hidden" name="uploaded_subtitle_path" id="uploadedSubtitlePath" value="{{ old('uploaded_subtitle_path') }}">
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <input type="file" id="subtitleInput" class="form-control form-control-sm" accept=".vtt" style="max-width:200px">
+                    <span class="text-muted small">or</span>
+                    <input type="text" name="subtitle_url" class="form-control form-control-sm" placeholder="Paste subtitle URL (.vtt)" value="{{ old('subtitle_url', $lesson->subtitle_url) }}" style="max-width:280px">
+                </div>
+                <p class="small text-muted mt-1 mb-0">WebVTT (.vtt) format. Enables CC button in the video player.</p>
+                <div id="subtitleFileInfo" class="small text-success mt-1 {{ $lesson->subtitle_url ? '' : 'd-none' }}">{{ $lesson->subtitle_url ? 'Current: ' . Str::limit($lesson->subtitle_url, 40) : '' }}</div>
+            </div>
+
+            <div class="mb-4">
                 <label class="form-label fw-medium">Description</label>
                 <textarea name="content" class="form-control @error('content') is-invalid @enderror" rows="4" placeholder="This lesson covers the fundamentals...">{{ old('content', $lesson->content) }}</textarea>
                 @error('content')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -203,6 +215,7 @@
 (function() {
     var uploadVideoUrl = @json(route('instructor.lessons.upload-video', $course));
     var uploadAttachmentUrl = @json(route('instructor.lessons.upload-attachment', $course));
+    var uploadSubtitleUrl = @json(route('instructor.lessons.upload-subtitle', $course));
     var csrf = document.querySelector('input[name="_token"]')?.value;
 
     function fmt(size) { return (size / 1024).toFixed(0) + ' KB'; }
@@ -327,6 +340,22 @@
             if (nameInp) nameInp.name = 'uploaded_attachments[' + i + '][original_name]';
         });
     }
+
+    document.getElementById('subtitleInput')?.addEventListener('change', function() {
+        var f = this.files?.[0];
+        if (!f || !f.name.toLowerCase().endsWith('.vtt')) return;
+        var fd = new FormData();
+        fd.append('subtitle', f);
+        fd.append('_token', csrf);
+        var info = document.getElementById('subtitleFileInfo');
+        info.textContent = 'Uploading...';
+        info.classList.remove('d-none');
+        fetch(uploadSubtitleUrl, { method: 'POST', body: fd }).then(function(r) { return r.json(); }).then(function(res) {
+            document.getElementById('uploadedSubtitlePath').value = res.path || '';
+            document.querySelector('input[name="subtitle_url"]').value = '';
+            info.textContent = 'Uploaded: ' + (res.path || '').split('/').pop();
+        }).catch(function() { info.textContent = 'Upload failed'; });
+    });
 
     document.getElementById('videoDropzone')?.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
     document.getElementById('videoDropzone')?.addEventListener('dragleave', function() { this.classList.remove('dragover'); });

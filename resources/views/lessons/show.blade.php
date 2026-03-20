@@ -36,6 +36,9 @@ $layout = auth()->user()->isStudent()
                     <video id="lesson-video" class="w-100 h-100" controls preload="metadata"
                            data-lesson-id="{{ $lesson->id }}" data-duration="{{ $lesson->video_duration ?? 0 }}">
                         <source src="{{ $lesson->video_url }}" type="video/mp4">
+                        @if($lesson->subtitle_url)
+                            <track kind="subtitles" src="{{ $lesson->subtitle_url }}" srclang="en" label="English" default>
+                        @endif
                     </video>
                     @if($lesson->videoQuizzes->isNotEmpty())
                         <div id="video-quiz-overlay" class="position-absolute top-0 start-0 end-0 bottom-0 d-none flex-column align-items-center justify-content-center p-4" style="background: rgba(0,0,0,0.85); z-index: 10;">

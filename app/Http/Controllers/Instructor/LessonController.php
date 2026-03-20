@@ -27,6 +27,8 @@ class LessonController extends Controller
             'video_url' => 'nullable|string',
             'uploaded_video_path' => 'nullable|string',
             'video_duration' => 'nullable|integer|min:0',
+            'subtitle_url' => 'nullable|string',
+            'uploaded_subtitle_path' => 'nullable|string',
             'is_free' => 'boolean',
             'module_id' => 'nullable|exists:modules,id',
             'attachments' => 'nullable|array',
@@ -56,6 +58,14 @@ class LessonController extends Controller
         unset($valid['video'], $valid['uploaded_video_path']);
 
         $valid['video_duration'] = $valid['video_duration'] ?? null;
+        if (!empty(trim($valid['uploaded_subtitle_path'] ?? ''))) {
+            $valid['subtitle_url'] = trim($valid['uploaded_subtitle_path']);
+        } elseif (!empty(trim($valid['subtitle_url'] ?? ''))) {
+            $valid['subtitle_url'] = trim($valid['subtitle_url']);
+        } else {
+            $valid['subtitle_url'] = null;
+        }
+        unset($valid['uploaded_subtitle_path']);
 
         $lesson = Lesson::create(collect($valid)->except(['attachments', 'uploaded_attachments'])->all());
         if ($request->hasFile('attachments')) {
@@ -92,6 +102,8 @@ class LessonController extends Controller
             'video_url' => 'nullable|string',
             'uploaded_video_path' => 'nullable|string',
             'video_duration' => 'nullable|integer|min:0',
+            'subtitle_url' => 'nullable|string',
+            'uploaded_subtitle_path' => 'nullable|string',
             'is_free' => 'boolean',
             'attachments' => 'nullable|array',
             'attachments.*' => 'file|mimes:pdf,doc,docx,ppt,pptx|max:20480',
@@ -112,6 +124,15 @@ class LessonController extends Controller
             unset($valid['video_url']);
         }
         unset($valid['video'], $valid['uploaded_video_path']);
+
+        if (!empty(trim($valid['uploaded_subtitle_path'] ?? ''))) {
+            $valid['subtitle_url'] = trim($valid['uploaded_subtitle_path']);
+        } elseif (!empty(trim($valid['subtitle_url'] ?? ''))) {
+            $valid['subtitle_url'] = trim($valid['subtitle_url']);
+        } else {
+            $valid['subtitle_url'] = null;
+        }
+        unset($valid['uploaded_subtitle_path']);
 
         $lesson->update(collect($valid)->except(['attachments', 'uploaded_attachments'])->all());
         if ($request->hasFile('attachments')) {
@@ -151,5 +172,24 @@ class LessonController extends Controller
         $file = $request->file('attachment');
         $path = $file->store('lesson-attachments', 'public');
         return response()->json(['path' => '/storage/' . $path, 'original_name' => $file->getClientOriginalName()]);
+    }
+
+    public function uploadSubtitle(Request $request, Course $course)
+    {
+        $this->authorize('update', $course);
+        $request->validate([
+            'subtitle' => [
+                'required',
+                'file',
+                'max:1024',
+                function ($attribute, $value, $fail) {
+                    if (! str_ends_with(strtolower($value->getClientOriginalName()), '.vtt')) {
+                        $fail('The subtitle must be a WebVTT (.vtt) file.');
+                    }
+                },
+            ],
+        ]);
+        $path = $request->file('subtitle')->store('subtitles', 'public');
+        return response()->json(['path' => '/storage/' . $path]);
     }
 }

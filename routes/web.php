@@ -99,6 +99,7 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::delete('courses/{course}/modules/{module}', [InstructorModuleController::class, 'destroy'])->name('modules.destroy');
     Route::post('courses/{course}/upload-video', [InstructorLessonController::class, 'uploadVideo'])->name('lessons.upload-video');
     Route::post('courses/{course}/upload-attachment', [InstructorLessonController::class, 'uploadAttachment'])->name('lessons.upload-attachment');
+    Route::post('courses/{course}/upload-subtitle', [InstructorLessonController::class, 'uploadSubtitle'])->name('lessons.upload-subtitle');
     Route::get('courses/{course}/lessons/create', [InstructorLessonController::class, 'create'])->name('lessons.create');
     Route::post('courses/{course}/lessons', [InstructorLessonController::class, 'store'])->name('lessons.store');
     Route::get('courses/{course}/lessons/{lesson}/edit', [InstructorLessonController::class, 'edit'])->name('lessons.edit');

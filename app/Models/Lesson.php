@@ -18,6 +18,7 @@ class Lesson extends Model
         'content',
         'video_url',
         'video_duration',
+        'subtitle_url',
         'order',
         'is_free',
     ];
