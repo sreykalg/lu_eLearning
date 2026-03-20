@@ -35,20 +35,20 @@
         .instructor-sidebar .nav-link svg { opacity: 0.7; margin-right: 0.5rem; vertical-align: -0.2em; flex-shrink: 0; }
         .instructor-main { flex: 1; padding: 2rem; overflow-auto; min-width: 0; }
         .instructor-drawer-toggle {
+            display: none;
             position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
+            top: 5.75rem;
+            left: 1rem;
             z-index: 1020;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 0.5rem;
             background: var(--lu-deep-purple);
             color: #fff;
             border: none;
-            box-shadow: 0 4px 14px rgba(45, 27, 78, 0.35);
-            display: none;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 10px rgba(45, 27, 78, 0.25);
         }
         .instructor-drawer-toggle:hover { background: var(--lu-purple); color: #fff; }
         .instructor-drawer-backdrop {
@@ -66,6 +66,9 @@
             .instructor-sidebar.drawer-open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.08); }
             .instructor-drawer-toggle { display: flex; }
             .instructor-main { padding: 1.25rem; }
+        }
+        @media (min-width: 992px) {
+            .instructor-drawer-toggle { display: none !important; }
         }
     </style>
     @stack('styles')

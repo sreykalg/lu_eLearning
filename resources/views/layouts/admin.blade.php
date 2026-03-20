@@ -37,20 +37,20 @@
         .admin-main .admin-course-row:hover { background: var(--lu-purple-soft); }
         .admin-main .admin-course-row { border-radius: 0.5rem; }
         .admin-drawer-toggle {
+            display: none;
             position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
+            top: 5.75rem;
+            left: 1rem;
             z-index: 1020;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 0.5rem;
             background: var(--lu-deep-purple);
             color: #fff;
             border: none;
-            box-shadow: 0 4px 14px rgba(45, 27, 78, 0.35);
-            display: none;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 10px rgba(45, 27, 78, 0.25);
         }
         .admin-drawer-toggle:hover { background: var(--lu-purple); color: #fff; }
         .admin-drawer-backdrop {
@@ -66,8 +66,11 @@
         @media (max-width: 991.98px) {
             .admin-sidebar { position: fixed; top: 76px; left: 0; bottom: 0; z-index: 1040; transform: translateX(-100%); width: 280px; }
             .admin-sidebar.drawer-open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.08); }
-            .admin-drawer-toggle { display: flex; }
             .admin-main { padding: 1.25rem; }
+            .admin-drawer-toggle { display: flex; }
+        }
+        @media (min-width: 992px) {
+            .admin-drawer-toggle { display: none !important; }
         }
     </style>
     @stack('styles')

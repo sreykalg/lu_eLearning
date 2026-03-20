@@ -174,33 +174,37 @@
         .inner-sidebar.collapsed .inner-sidebar-toggle svg { transform: rotate(180deg); }
         .inner-drawer-toggle {
             display: none;
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 1040;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: var(--lu-sidebar);
-            color: #fff;
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            background: transparent;
+            color: #0f172a;
             border: none;
-            box-shadow: 0 4px 12px rgba(15,23,42,0.4);
+            align-items: center;
+            justify-content: center;
         }
+        .inner-drawer-toggle:hover { background: #f1f5f9; color: #0f172a; }
         @media (max-width: 991.98px) {
             .inner-sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 1040; transform: translateX(-100%); width: 260px !important; }
             .inner-sidebar.collapsed { width: 260px !important; }
             .inner-sidebar.drawer-open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
             .inner-sidebar-toggle { display: none; }
-            .inner-drawer-toggle { display: flex; align-items: center; justify-content: center; }
+            .inner-header { position: relative; padding-left: 3rem; }
+            .inner-drawer-toggle { display: flex; }
+        }
+        @media (min-width: 992px) {
+            .inner-drawer-toggle { display: none !important; }
         }
     </style>
     @stack('styles')
 </head>
 <body>
     <div class="inner-drawer-backdrop" id="innerDrawerBackdrop"></div>
-    <button type="button" class="inner-drawer-toggle" id="innerDrawerToggle" aria-label="Menu">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-    </button>
 
     <div class="inner-wrap">
         <aside class="inner-sidebar" id="innerSidebar">
@@ -247,6 +251,9 @@
         </aside>
         <div class="inner-main">
             <header class="inner-header">
+                <button type="button" class="inner-drawer-toggle" id="innerDrawerToggle" aria-label="Menu">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
                 <a href="{{ auth()->check() ? (auth()->user()->isStudent() ? route('student.dashboard') : (auth()->user()->isInstructor() ? route('instructor.dashboard') : (auth()->user()->isHeadOfDept() ? route('hod.dashboard') : url('/')))) : route('courses.index') }}" class="logo flex-shrink-0">
                     <img src="/images/life-university-logo.png" alt="" height="32">
                     <span>Life University</span>
