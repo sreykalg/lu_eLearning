@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">Overview</h1>
+    <h1 class="h3 fw-bold mb-1"> Course Overview</h1>
     <p class="text-muted mb-0">All published courses</p>
 </div>
 
