@@ -13,6 +13,56 @@
     .quiz-type-practice { background: #dbeafe; color: #1e40af; }
     .quiz-type-midterm { background: #fef3c7; color: #b45309; }
     .quiz-type-final { background: #fce7f3; color: #9d174d; }
+    .upcoming-card {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 0.9rem !important;
+        background: #fff;
+        overflow: hidden;
+    }
+    .upcoming-card .card-body {
+        padding: 0.95rem 1rem !important;
+    }
+    .upcoming-card .upcoming-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.2rem;
+    }
+    .upcoming-card .upcoming-course {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    .upcoming-card .upcoming-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+        color: #475569;
+        font-size: 0.82rem;
+        font-weight: 500;
+    }
+    .upcoming-card .upcoming-meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 9999px;
+        padding: 0.18rem 0.5rem;
+    }
+    .upcoming-card .upcoming-cta {
+        border-radius: 0.55rem;
+        border-color: #cbd5e1;
+        color: #0f172a;
+        font-weight: 600;
+        padding: 0.35rem 0.65rem;
+    }
+    .upcoming-card .upcoming-cta:hover {
+        background: #0f172a;
+        border-color: #0f172a;
+        color: #fff;
+    }
 </style>
 @endpush
 
@@ -42,27 +92,27 @@
         <div class="d-flex flex-column gap-3">
             @foreach($upcoming as $q)
                 <a href="{{ route('student.quizzes.show', [$q->course, $q]) }}" class="text-decoration-none text-dark">
-                    <div class="card border-0 shadow-sm quiz-card">
+                    <div class="card border-0 shadow-sm quiz-card upcoming-card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
                                         <svg width="20" height="20" fill="none" stroke="#64748b" viewBox="0 0 24 24" class="flex-shrink-0"><path stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                        <h6 class="mb-0 fw-semibold">{{ $q->title }}</h6>
+                                        <h6 class="upcoming-title">{{ $q->title }}</h6>
                                         <span class="quiz-type-pill quiz-type-{{ $q->type ?? 'practice' }}">{{ ucfirst($q->type ?? 'Quiz') }}</span>
                                     </div>
-                                    <p class="text-muted small mb-2">{{ $q->course->title }}</p>
-                                    <div class="d-flex align-items-center gap-3 small text-muted flex-wrap">
+                                    <p class="upcoming-course">{{ $q->course->title }}</p>
+                                    <div class="upcoming-meta">
                                         @if($q->duration_minutes)
-                                            <span><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="d-inline-block align-text-bottom me-1"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $q->duration_minutes }} min</span>
+                                            <span class="upcoming-meta-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $q->duration_minutes }} min</span>
                                         @endif
-                                        <span><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="d-inline-block align-text-bottom me-1"><path stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $q->questions_count ?? 0 }} questions</span>
+                                        <span class="upcoming-meta-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $q->questions_count ?? 0 }} questions</span>
                                         @if($q->total_points > 0)
-                                            <span>{{ $q->total_points }} pts</span>
+                                            <span class="upcoming-meta-item">{{ $q->total_points }} pts</span>
                                         @endif
                                     </div>
                                 </div>
-                                <span class="btn btn-outline-secondary btn-sm">View Details</span>
+                                <span class="btn btn-outline-secondary btn-sm upcoming-cta">View Details</span>
                             </div>
                         </div>
                     </div>
