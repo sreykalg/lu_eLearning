@@ -1,17 +1,46 @@
 @extends('layouts.instructor-inner')
 
+@push('styles')
+<style>
+    .page-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+        border-radius: 1rem;
+        padding: 1.25rem 1.4rem;
+        color: #fff;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+    .hero-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .hero-actions .btn { border: 1px solid rgba(255,255,255,0.35); color: #fff; }
+    .hero-actions .btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.5); }
+</style>
+@endpush
+
 @section('content')
-<div class="mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
-    <div>
-        <h1 class="h3 fw-bold mb-1">Instructor Dashboard</h1>
-        <p class="text-muted mb-0">Welcome back, {{ auth()->user()->name }}</p>
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 13h8V3H3v10zm10 8h8V3h-8v18zM3 21h8v-6H3v6z"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 hero-title">Instructor Dashboard</h1>
+            <p class="hero-subtitle">Welcome back, {{ auth()->user()->name }}</p>
+        </div>
     </div>
-    <div class="d-flex align-items-center gap-2">
-        <a href="{{ route('instructor.announcements.create') }}" class="btn btn-outline-danger">
+    <div class="hero-actions">
+        <a href="{{ route('instructor.announcements.create') }}" class="btn btn-sm">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
             Announcement
         </a>
-        <a href="{{ route('instructor.courses.create') }}" class="btn btn-primary">
+        <a href="{{ route('instructor.courses.create') }}" class="btn btn-sm">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M12 5v14M5 12h14"/></svg>
             Create course
         </a>

@@ -2,6 +2,24 @@
 
 @push('styles')
 <style>
+    .page-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+        border-radius: 1rem;
+        padding: 1.25rem 1.4rem;
+        color: #fff;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+    .page-hero .hero-btn { border: 1px solid rgba(255,255,255,0.35); color: #fff; }
+    .page-hero .hero-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.5); }
     .course-card-inner { transition: box-shadow 0.2s; }
     .course-card-inner:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
     .course-card-top { min-height: 120px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -13,9 +31,17 @@
 @endpush
 
 @section('content')
-<div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-    <h1 class="h3 fw-bold mb-0">My Courses</h1>
-    <a href="{{ route('instructor.courses.create') }}" class="btn btn-primary btn-sm">Create Course</a>
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 hero-title">My Courses</h1>
+            <p class="hero-subtitle">Manage and edit your published course content</p>
+        </div>
+    </div>
+    <a href="{{ route('instructor.courses.create') }}" class="btn btn-sm hero-btn">Create Course</a>
 </div>
 
 @if(session('success'))

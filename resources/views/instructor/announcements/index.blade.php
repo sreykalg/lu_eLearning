@@ -2,6 +2,34 @@
 
 @push('styles')
 <style>
+    .ann-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+        border-radius: 1rem;
+        padding: 1.4rem 1.5rem;
+        color: #fff;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .ann-hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .ann-hero-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 0.75rem;
+        background: rgba(255,255,255,0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        flex-shrink: 0;
+    }
+    .ann-hero-title { margin: 0; font-weight: 700; }
+    .ann-hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.78); font-size: 0.9rem; }
+    .ann-hero-btn { border-color: rgba(255,255,255,0.35); color: #fff; }
+    .ann-hero-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.5); }
     .ann-card { border: 1px solid #e2e8f0; border-radius: 0.75rem; background: #fff; max-width: 1000px; }
     .ann-card + .ann-card { margin-top: 0.75rem; }
     .ann-header-title { font-weight: 700; color: #0f172a; margin-bottom: 0.25rem; }
@@ -16,12 +44,17 @@
 @endpush
 
 @section('content')
-<div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-    <div>
-        <h1 class="h3 fw-bold mb-1">Announcements</h1>
-        <p class="text-muted mb-0">All announcements you've posted</p>
+<div class="ann-hero">
+    <div class="ann-hero-left">
+        <div class="ann-hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 ann-hero-title">Announcements</h1>
+            <p class="ann-hero-subtitle">Create and manage course announcements for your students</p>
+        </div>
     </div>
-    <a href="{{ route('instructor.announcements.create') }}" class="btn btn-outline-danger">
+    <a href="{{ route('instructor.announcements.create') }}" class="btn ann-hero-btn">
         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
         New Announcement
     </a>
