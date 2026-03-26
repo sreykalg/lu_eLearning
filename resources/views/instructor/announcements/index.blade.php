@@ -26,7 +26,19 @@
                     <h5 class="mb-1 fw-semibold">{{ $a->title }}</h5>
                     <p class="text-muted small mb-2">{{ $a->course->title }}</p>
                     <p class="mb-0 text-secondary" style="white-space: pre-wrap;">{{ $a->body }}</p>
-                    <small class="text-muted">{{ $a->created_at->format('M j, Y \a\t g:i A') }}</small>
+                    <div class="mt-2 d-flex flex-wrap align-items-center gap-2">
+                        <small class="text-muted">{{ $a->created_at->format('M j, Y \a\t g:i A') }}</small>
+                        @if($a->expires_at)
+                            <small class="text-muted">· Expires {{ $a->expires_at->format('M j, Y \a\t g:i A') }}</small>
+                            @if($a->expires_at->isPast())
+                                <span class="badge bg-secondary">Expired</span>
+                            @else
+                                <span class="badge bg-success">Active</span>
+                            @endif
+                        @else
+                            <span class="badge bg-info text-dark">No Expiry</span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

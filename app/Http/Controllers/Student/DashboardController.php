@@ -49,6 +49,9 @@ class DashboardController extends Controller
         $totalPoints = $user->totalPoints();
 
         $announcements = Announcement::whereIn('course_id', $courseIds)
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
             ->with(['course', 'instructor'])
             ->latest()
             ->limit(10)

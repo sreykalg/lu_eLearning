@@ -24,8 +24,13 @@ class AnnouncementController extends Controller
     public function create(Request $request): View
     {
         $courses = $request->user()->courses()->orderBy('title')->get();
+        $recentAnnouncements = Announcement::where('instructor_id', $request->user()->id)
+            ->with('course')
+            ->latest()
+            ->limit(8)
+            ->get();
 
-        return view('instructor.announcements.create', compact('courses'));
+        return view('instructor.announcements.create', compact('courses', 'recentAnnouncements'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -34,6 +39,7 @@ class AnnouncementController extends Controller
             'course_id' => ['required', 'exists:courses,id'],
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string', 'max:5000'],
+            'expires_at' => ['nullable', 'date', 'after:now'],
         ]);
 
         $course = Course::findOrFail($valid['course_id']);
@@ -46,6 +52,7 @@ class AnnouncementController extends Controller
             'instructor_id' => $request->user()->id,
             'title' => $valid['title'],
             'body' => $valid['body'],
+            'expires_at' => $valid['expires_at'] ?? null,
         ]);
 
         return redirect()->route('instructor.announcements.index')->with('success', 'Announcement posted successfully.');

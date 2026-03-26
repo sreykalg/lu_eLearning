@@ -14,6 +14,11 @@ class Announcement extends Model
         'instructor_id',
         'title',
         'body',
+        'expires_at',
+    ];
+
+    protected $casts = [
+        'expires_at' => 'datetime',
     ];
 
     public function course()
