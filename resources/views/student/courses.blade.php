@@ -2,6 +2,11 @@
 
 @push('styles')
 <style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .course-card-top { min-height: 80px; background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .course-level-badge { font-size: 0.65rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; text-transform: uppercase; }
     .course-level-beginner { background: #dbeafe; color: #1e40af; }
@@ -14,10 +19,15 @@
 @endpush
 
 @section('content')
-<div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
-    <div>
-        <h1 class="h3 fw-bold mb-1">My Courses</h1>
-        <p class="text-muted mb-0">{{ $courses->count() }} enrolled courses</p>
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 hero-title">My Courses</h1>
+            <p class="hero-subtitle">{{ $courses->count() }} enrolled courses</p>
+        </div>
     </div>
     <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3" style="background: #0f172a; color: #fff;">
         <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>

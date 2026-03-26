@@ -2,6 +2,11 @@
 
 @push('styles')
 <style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .quiz-card { transition: box-shadow 0.2s; }
     .quiz-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
     .quiz-type-pill { font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 0.25rem; }
@@ -12,13 +17,20 @@
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">Quizzes & Exams</h1>
-    @php
-        $upcoming = $quizzes->filter(fn($q) => !$attempts->has($q->id));
-        $completed = $quizzes->filter(fn($q) => $attempts->has($q->id));
-    @endphp
-    <p class="text-muted mb-0">{{ $upcoming->count() }} upcoming · {{ $completed->count() }} completed</p>
+@php
+    $upcoming = $quizzes->filter(fn($q) => !$attempts->has($q->id));
+    $completed = $quizzes->filter(fn($q) => $attempts->has($q->id));
+@endphp
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 hero-title">Quizzes & Exams</h1>
+            <p class="hero-subtitle">{{ $upcoming->count() }} upcoming · {{ $completed->count() }} completed</p>
+        </div>
+    </div>
 </div>
 
 @if($upcoming->isNotEmpty())

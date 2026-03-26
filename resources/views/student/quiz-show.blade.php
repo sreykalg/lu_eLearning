@@ -5,13 +5,38 @@ $layout = auth()->user()->isStudent()
 @endphp
 @extends($layout)
 
+@push('styles')
+<style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+    .page-hero .back-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.85rem; }
+    .page-hero .back-link:hover { color: #fff; }
+</style>
+@endpush
+
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('courses.show', $course) }}" class="text-decoration-none small text-muted d-inline-block mb-1">&larr; {{ $course->title }}</a>
-    <h1 class="h3 fw-bold mb-0" style="color: #0f172a;">{{ $quiz->title }}</h1>
-    @if($quiz->type !== 'practice')
-        <span class="badge bg-secondary mt-1">{{ ucfirst($quiz->type) }}</span>
-    @endif
+<div class="page-hero">
+    <div class="hero-row">
+        <div class="hero-left">
+            <div class="hero-icon">
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg>
+            </div>
+            <div>
+                <h1 class="h3 hero-title">{{ $quiz->title }}</h1>
+                <p class="hero-subtitle">
+                    {{ $course->title }}
+                    @if($quiz->type !== 'practice')
+                        · {{ ucfirst($quiz->type) }}
+                    @endif
+                </p>
+            </div>
+        </div>
+        <a href="{{ route('courses.show', $course) }}" class="back-link">&larr; {{ $course->title }}</a>
+    </div>
 </div>
 
 @if (session('success'))

@@ -2,6 +2,11 @@
 
 @push('styles')
 <style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .continue-card { background: #0f172a; color: #fff; border-radius: 0.75rem; overflow: hidden; }
     .continue-card .progress { height: 8px; background: rgba(255,255,255,0.2); }
     .continue-card .progress-bar { background: #fff; }
@@ -20,10 +25,15 @@
 @endpush
 
 @section('content')
-<div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
-    <div>
-        <h1 class="h4 fw-bold mb-1">Welcome back, {{ auth()->user()->name }}!</h1>
-        <p class="text-muted mb-0">@if($deadlines->count() > 0)You have {{ $deadlines->count() }} upcoming {{ Str::plural('deadline', $deadlines->count()) }}.@else Continue learning or explore new courses.@endif</p>
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        </div>
+        <div>
+            <h1 class="h4 hero-title">Welcome back, {{ auth()->user()->name }}!</h1>
+            <p class="hero-subtitle">@if($deadlines->count() > 0)You have {{ $deadlines->count() }} upcoming {{ Str::plural('deadline', $deadlines->count()) }}.@else Continue learning or explore new courses.@endif</p>
+        </div>
     </div>
     <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3" style="background: #0f172a; color: #fff;">
         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>

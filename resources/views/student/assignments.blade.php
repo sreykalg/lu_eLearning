@@ -2,6 +2,11 @@
 
 @push('styles')
 <style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .assignment-card { transition: box-shadow 0.2s; }
     .assignment-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
     .filter-tab { padding: 0.4rem 1rem; font-size: 0.9rem; border-radius: 0.375rem; text-decoration: none; color: #64748b; border: 1px solid #e5e7eb; background: #fff; transition: all 0.15s; }
@@ -11,21 +16,29 @@
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">Assignments</h1>
-    @php
-        $pendingCount = $assignments->filter(fn($a) => !$submissions->has($a->id))->count();
-        $submittedCount = $assignments->filter(fn($a) => $submissions->has($a->id) && !($submissions->get($a->id)?->isGraded()))->count();
-        $gradedCount = $assignments->filter(fn($a) => ($submissions->get($a->id)?->isGraded() ?? false))->count();
-        $filter = request('filter', 'all');
-        $filtered = match($filter) {
-            'pending' => $assignments->filter(fn($a) => !$submissions->has($a->id)),
-            'submitted' => $assignments->filter(fn($a) => $submissions->has($a->id) && !($submissions->get($a->id)?->isGraded())),
-            'graded' => $assignments->filter(fn($a) => ($submissions->get($a->id)?->isGraded() ?? false)),
-            default => $assignments,
-        };
-    @endphp
-    <p class="text-muted mb-3">{{ $pendingCount }} pending · {{ $gradedCount }} graded</p>
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 hero-title">Assignments</h1>
+            @php
+                $pendingCount = $assignments->filter(fn($a) => !$submissions->has($a->id))->count();
+                $submittedCount = $assignments->filter(fn($a) => $submissions->has($a->id) && !($submissions->get($a->id)?->isGraded()))->count();
+                $gradedCount = $assignments->filter(fn($a) => ($submissions->get($a->id)?->isGraded() ?? false))->count();
+                $filter = request('filter', 'all');
+                $filtered = match($filter) {
+                    'pending' => $assignments->filter(fn($a) => !$submissions->has($a->id)),
+                    'submitted' => $assignments->filter(fn($a) => $submissions->has($a->id) && !($submissions->get($a->id)?->isGraded())),
+                    'graded' => $assignments->filter(fn($a) => ($submissions->get($a->id)?->isGraded() ?? false)),
+                    default => $assignments,
+                };
+            @endphp
+            <p class="hero-subtitle">{{ $pendingCount }} pending · {{ $gradedCount }} graded</p>
+        </div>
+    </div>
+    
     <div class="d-flex flex-wrap gap-2">
         <a href="{{ route('student.assignments', array_merge(request()->except('filter'), ['filter' => 'all'])) }}" class="filter-tab {{ $filter === 'all' ? 'active' : '' }}">All ({{ $assignments->count() }})</a>
         <a href="{{ route('student.assignments', array_merge(request()->except('filter'), ['filter' => 'pending'])) }}" class="filter-tab {{ $filter === 'pending' ? 'active' : '' }}">Pending ({{ $pendingCount }})</a>
