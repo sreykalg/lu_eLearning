@@ -15,6 +15,20 @@ $layout = auth()->user()->isStudent()
     .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .page-hero .back-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.85rem; }
     .page-hero .back-link:hover { color: #fff; }
+    .quiz-shell { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.9rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .quiz-shell .quiz-intro { padding: 1rem 1.2rem; border-bottom: 1px solid #f1f5f9; background: #fcfdff; }
+    .quiz-shell .quiz-content { padding: 1rem 1.2rem 1.2rem; }
+    .question-card { border: 1px solid #e5e7eb; border-radius: 0.75rem; background: #fff; padding: 0.9rem; margin-bottom: 0.85rem; }
+    .question-title { font-weight: 700; color: #0f172a; margin-bottom: 0.65rem; }
+    .question-pts { color: #64748b; font-weight: 500; font-size: 0.82rem; }
+    .option-item { border: 1px solid #e2e8f0; border-radius: 0.55rem; padding: 0.5rem 0.6rem; margin-bottom: 0.5rem; background: #f8fafc; }
+    .option-item:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    .quiz-submit-row { border-top: 1px solid #e5e7eb; margin-top: 0.8rem; padding-top: 0.9rem; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .quiz-submit-btn { background: #0f172a; color: #fff; border-radius: 0.6rem; padding: 0.5rem 1rem; font-weight: 600; border: none; }
+    .quiz-submit-btn:hover { background: #1e293b; color: #fff; }
+    .attempts-card { border: 1px solid #e5e7eb; border-radius: 0.75rem; background: #fff; }
+    .attempts-list li { padding: 0.5rem 0.25rem; border-bottom: 1px solid #f1f5f9; }
+    .attempts-list li:last-child { border-bottom: none; }
 </style>
 @endpush
 
@@ -47,10 +61,10 @@ $layout = auth()->user()->isStudent()
 @endif
 
 @if($attempts->isNotEmpty())
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border-0 shadow-sm mb-3 attempts-card">
         <div class="card-body">
             <h5 class="fw-semibold mb-2">Previous attempts</h5>
-            <ul class="list-unstyled mb-0 small">
+            <ul class="list-unstyled mb-0 small attempts-list">
                 @foreach($attempts->take(5) as $a)
                     <li class="py-1">{{ $a->submitted_at?->diffForHumans() }} — {{ $a->score }}/{{ $a->total_points }} @if($a->passed !== null) ({{ $a->passed ? 'Passed' : 'Not passed' }}) @endif</li>
                 @endforeach
@@ -59,15 +73,17 @@ $layout = auth()->user()->isStudent()
     </div>
 @endif
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
+<div class="quiz-shell">
+    <div class="quiz-intro">
         @if($quiz->description)
-            <p class="text-muted mb-4">{{ $quiz->description }}</p>
+            <p class="text-muted mb-2">{{ $quiz->description }}</p>
         @endif
         @php $totalPts = $quiz->total_points ?? $quiz->questions->sum('points'); @endphp
         @if($totalPts > 0)
-            <p class="text-muted small mb-3">Total: {{ $totalPts }} points</p>
+            <p class="text-muted small mb-0">Total: {{ $totalPts }} points</p>
         @endif
+    </div>
+    <div class="quiz-content">
         <form method="POST" action="{{ route('student.quizzes.submit', [$course, $quiz]) }}">
             @csrf
             @foreach($quiz->questions as $index => $q)
@@ -75,11 +91,11 @@ $layout = auth()->user()->isStudent()
                     $qType = $q->type ?? 'multiple_choice';
                     $opts = $q->options ?? [];
                 @endphp
-                <div class="mb-4 pb-4 border-bottom">
-                    <p class="fw-semibold mb-2">{{ $index + 1 }}. {{ $q->question }} <span class="text-muted small fw-normal">({{ (int)($q->points ?? 1) }} pt{{ (int)($q->points ?? 1) !== 1 ? 's' : '' }})</span></p>
+                <div class="question-card">
+                    <p class="question-title mb-2">{{ $index + 1 }}. {{ $q->question }} <span class="question-pts">({{ (int)($q->points ?? 1) }} pt{{ (int)($q->points ?? 1) !== 1 ? 's' : '' }})</span></p>
                     @if($qType === 'multiple_choice')
                         @foreach($opts as $i => $opt)
-                            <label class="d-flex align-items-center gap-2 mb-2 small cursor-pointer" style="cursor: pointer;">
+                            <label class="d-flex align-items-center gap-2 small cursor-pointer option-item" style="cursor: pointer;">
                                 <input type="radio" name="answers[{{ $q->id }}]" value="{{ $i }}" class="form-check-input">
                                 <span>{{ $opt['text'] ?? '' }}</span>
                             </label>
@@ -94,7 +110,10 @@ $layout = auth()->user()->isStudent()
             @if($quiz->questions->isEmpty())
                 <p class="text-muted mb-0">No questions in this quiz yet.</p>
             @else
-                <button type="submit" class="btn mt-2" style="background: #0f172a; color: #fff;">Submit quiz</button>
+                <div class="quiz-submit-row">
+                    <span class="text-muted small">Review your answers before submitting.</span>
+                    <button type="submit" class="btn quiz-submit-btn">Submit quiz</button>
+                </div>
             @endif
         </form>
     </div>
