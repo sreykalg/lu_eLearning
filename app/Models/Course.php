@@ -21,6 +21,7 @@ class Course extends Model
         'assignment_weight',
         'midterm_weight',
         'final_weight',
+        'attendance_weight',
         'order',
         'is_published',
         'approval_status',

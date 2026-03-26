@@ -43,15 +43,15 @@
                             <div class="col-md-6">
                                 <label class="form-label">Quiz</label>
                                 <select name="quiz_weight" class="form-select">
-                                    <option value="10" {{ old('quiz_weight', 20) == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="20" {{ old('quiz_weight', 20) == 20 ? 'selected' : '' }}>20</option>
+                                    <option value="10" {{ old('quiz_weight', 10) == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ old('quiz_weight', 10) == 20 ? 'selected' : '' }}>20</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Assignment</label>
                                 <select name="assignment_weight" class="form-select">
-                                    <option value="10" {{ old('assignment_weight', 20) == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="20" {{ old('assignment_weight', 20) == 20 ? 'selected' : '' }}>20</option>
+                                    <option value="10" {{ old('assignment_weight', 10) == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="20" {{ old('assignment_weight', 10) == 20 ? 'selected' : '' }}>20</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -64,9 +64,16 @@
                             <div class="col-md-6">
                                 <label class="form-label">Final</label>
                                 <select name="final_weight" class="form-select">
-                                    <option value="30" {{ old('final_weight', 30) == 30 ? 'selected' : '' }}>30</option>
-                                    <option value="40" {{ old('final_weight', 30) == 40 ? 'selected' : '' }}>40</option>
+                                    <option value="30" {{ old('final_weight', 40) == 30 ? 'selected' : '' }}>30</option>
+                                    <option value="40" {{ old('final_weight', 40) == 40 ? 'selected' : '' }}>40</option>
                                 </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Attendance</label>
+                                <select class="form-select" disabled>
+                                    <option value="10" selected>10</option>
+                                </select>
+                                <input type="hidden" name="attendance_weight" value="10">
                             </div>
                         </div>
                         <div id="gradingTotalMessage" class="small mt-3"></div>
@@ -82,7 +89,7 @@
     (function () {
         const form = document.querySelector('form[action="{{ route('instructor.courses.store') }}"]');
         if (!form) return;
-        const fields = ['quiz_weight', 'assignment_weight', 'midterm_weight', 'final_weight']
+        const fields = ['quiz_weight', 'assignment_weight', 'midterm_weight', 'final_weight', 'attendance_weight']
             .map((name) => form.querySelector(`[name="${name}"]`));
         const msg = document.getElementById('gradingTotalMessage');
         function updateTotal() {

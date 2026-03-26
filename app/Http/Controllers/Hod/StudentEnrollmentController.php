@@ -93,18 +93,31 @@ class StudentEnrollmentController extends Controller
                 $finalScore = $attempt ? (int) round(($attempt->score / $attempt->total_points) * 100) : null;
             }
 
+            // Attendance score (% lessons completed)
+            $attendanceScore = null;
+            $totalLessons = (int) $course->lessons()->count();
+            if ($totalLessons > 0) {
+                $completedLessons = (int) $user->lessonProgress()
+                    ->whereHas('lesson', fn ($q) => $q->where('course_id', $course->id))
+                    ->where('completed', true)
+                    ->count();
+                $attendanceScore = (int) round(($completedLessons / $totalLessons) * 100);
+            }
+
             // Overall: weighted average of available scores
             $weights = [
-                'quiz' => (int) ($course->quiz_weight ?? 20),
-                'assignment' => (int) ($course->assignment_weight ?? 20),
+                'quiz' => (int) ($course->quiz_weight ?? 10),
+                'assignment' => (int) ($course->assignment_weight ?? 10),
                 'midterm' => (int) ($course->midterm_weight ?? 30),
-                'final' => (int) ($course->final_weight ?? 30),
+                'final' => (int) ($course->final_weight ?? 40),
+                'attendance' => (int) ($course->attendance_weight ?? 10),
             ];
             $scores = [
                 'quiz' => $quizAvg,
                 'assignment' => $assignmentAvg,
                 'midterm' => $midtermScore,
                 'final' => $finalScore,
+                'attendance' => $attendanceScore,
             ];
             $weightedTotal = 0.0;
             $appliedWeight = 0;
@@ -124,6 +137,7 @@ class StudentEnrollmentController extends Controller
                 'assignment_avg' => $assignmentAvg,
                 'midterm' => $midtermScore,
                 'final' => $finalScore,
+                'attendance' => $attendanceScore,
                 'overall' => $overall,
             ];
         });
