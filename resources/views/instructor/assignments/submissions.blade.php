@@ -25,12 +25,6 @@
     <p class="text-muted small mb-0">{{ $course->title }}</p>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
-
 <div class="sub-summary">
     <div>
         <div class="label">Total Submissions</div>
