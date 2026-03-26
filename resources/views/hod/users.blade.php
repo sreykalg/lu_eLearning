@@ -41,6 +41,7 @@
     .hod-status-inactive { background: #f3f4f6; color: #6b7280; }
     .hod-user-cell { display: flex; align-items: center; gap: 0.75rem; }
     .hod-user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; flex-shrink: 0; }
+    .hod-user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 </style>
 @endpush
 
@@ -97,8 +98,15 @@
                                     $name = $u->name ?? 'U';
                                     $parts = array_filter(explode(' ', $name));
                                     $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
+                                    $photoUrl = !empty($u->profile_photo_path) ? asset('storage/' . $u->profile_photo_path) : null;
                                 @endphp
-                                <div class="hod-user-avatar">{{ $initials }}</div>
+                                <div class="hod-user-avatar">
+                                    @if($photoUrl)
+                                        <img src="{{ $photoUrl }}" alt="{{ $u->name }}">
+                                    @else
+                                        {{ $initials }}
+                                    @endif
+                                </div>
                                 <span>{{ $u->name }}</span>
                             </div>
                         </td>
