@@ -1,11 +1,21 @@
 <section>
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">@csrf</form>
 
-    <form method="post" action="{{ route('profile.update') }}">
+    <form id="profile-info-form" method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data">
         @csrf
         @method('patch')
         @if(!empty($inModal))
             <input type="hidden" name="redirect" value="{{ url()->current() }}">
+        @endif
+        <input id="profile_photo_input" name="photo" type="file" class="d-none" accept="image/*">
+        @error('photo')<div class="invalid-feedback d-block mb-2">{{ $message }}</div>@enderror
+        @if(!empty($user->profile_photo_path))
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="1" id="remove_photo" name="remove_photo">
+                <label class="form-check-label small text-muted" for="remove_photo">
+                    {{ __('Remove current picture') }}
+                </label>
+            </div>
         @endif
         <div class="mb-3">
             <label for="name" class="form-label">{{ __('Name') }}</label>
@@ -27,8 +37,8 @@
             @endif
         </div>
         <button type="submit" class="btn btn-save">{{ __('Save') }}</button>
-        @if (session('status') === 'profile-updated')
+        <!-- @if (session('status') === 'profile-updated')
             <span class="ms-2 text-success small">{{ __('Saved.') }}</span>
-        @endif
+        @endif -->
     </form>
 </section>

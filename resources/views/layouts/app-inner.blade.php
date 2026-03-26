@@ -84,6 +84,7 @@
             font-size: 0.875rem;
             font-weight: 600;
         }
+        .inner-sidebar .user-block .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         .inner-sidebar .user-block .name { color: #fff; font-size: 0.875rem; }
         .inner-sidebar .user-block .role { color: #64748b; font-size: 0.75rem; }
         .inner-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -133,6 +134,7 @@
         .inner-header .profile-dropdown .dropdown-menu { min-width: 260px; padding: 0; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 10px 40px rgba(0,0,0,0.12); margin-top: 0.5rem; overflow: hidden; }
         .inner-header .profile-dropdown .dropdown-header-custom { padding: 1rem 1.25rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; }
         .inner-header .profile-dropdown .dropdown-header-custom .avatar { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.2); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 600; }
+        .inner-header .profile-dropdown .dropdown-header-custom .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         .inner-header .profile-dropdown .dropdown-header-custom .name { font-weight: 600; font-size: 0.9375rem; }
         .inner-header .profile-dropdown .dropdown-header-custom .email { font-size: 0.75rem; opacity: 0.85; }
         .inner-header .profile-dropdown .dropdown-item { padding: 0.65rem 1.25rem; display: flex; align-items: center; gap: 0.6rem; }
@@ -234,8 +236,15 @@
                         $name = auth()->user()->name ?? 'U';
                         $parts = array_filter(explode(' ', $name));
                         $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
+                        $profilePhotoUrl = !empty(auth()->user()->profile_photo_path) ? asset('storage/' . auth()->user()->profile_photo_path) : null;
                     @endphp
-                    <div class="avatar">{{ $initials }}</div>
+                    <div class="avatar">
+                        @if($profilePhotoUrl)
+                            <img src="{{ $profilePhotoUrl }}" alt="{{ auth()->user()->name ?? 'User' }}">
+                        @else
+                            {{ $initials }}
+                        @endif
+                    </div>
                     <div>
                         <div class="name">{{ auth()->user()->name ?? 'User' }}</div>
                         <div class="role">{{ ucfirst(str_replace('_', ' ', auth()->user()->role ?? 'student')) }}</div>
@@ -306,13 +315,25 @@
                     </div>
                     <div class="dropdown profile-dropdown">
                         <button class="dropdown-toggle btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="avatar d-flex align-items-center justify-content-center rounded-circle" style="width:40px;height:40px;font-size:0.875rem;font-weight:600;background:#0f172a;color:#fff;">{{ $initials ?? 'U' }}</div>
+                            <div class="avatar d-flex align-items-center justify-content-center rounded-circle overflow-hidden" style="width:40px;height:40px;font-size:0.875rem;font-weight:600;background:#0f172a;color:#fff;">
+                                @if(!empty($profilePhotoUrl))
+                                    <img src="{{ $profilePhotoUrl }}" alt="{{ auth()->user()->name ?? 'User' }}" style="width:100%;height:100%;object-fit:cover;">
+                                @else
+                                    {{ $initials ?? 'U' }}
+                                @endif
+                            </div>
                             <span class="d-none d-md-inline text-dark fw-medium" style="font-size:0.9rem;">{{ auth()->user()->name ?? 'User' }}</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li class="px-0">
                                 <div class="dropdown-header-custom d-flex align-items-center gap-3">
-                                    <div class="avatar">{{ $initials ?? 'U' }}</div>
+                                    <div class="avatar">
+                                        @if(!empty($profilePhotoUrl))
+                                            <img src="{{ $profilePhotoUrl }}" alt="{{ auth()->user()->name ?? 'User' }}">
+                                        @else
+                                            {{ $initials ?? 'U' }}
+                                        @endif
+                                    </div>
                                     <div class="min-w-0 flex-grow-1">
                                         <div class="name text-truncate">{{ auth()->user()->name ?? 'User' }}</div>
                                         <div class="email text-truncate">{{ auth()->user()->email ?? '' }}</div>
@@ -346,12 +367,6 @@
             </header>
             <main class="inner-content">
                 <div id="pageContent">
-                    @if(in_array(session('status'), ['profile-updated', 'password-updated']))
-                        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-                            {{ __('Saved.') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
                     @yield('content')
                 </div>
                 <div id="profileContent" style="display:none;">

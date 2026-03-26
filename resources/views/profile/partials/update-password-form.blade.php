@@ -18,8 +18,8 @@
             @error('password_confirmation', 'updatePassword')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
         </div>
         <button type="submit" class="btn btn-save">{{ __('Save') }}</button>
-        @if (session('status') === 'password-updated')
+        <!-- @if (session('status') === 'password-updated')
             <span class="ms-2 text-success small">{{ __('Saved.') }}</span>
-        @endif
+        @endif -->
     </form>
 </section>
