@@ -2,6 +2,11 @@
 
 @push('styles')
 <style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .approval-tab { padding: 0.5rem 1rem; font-size: 0.9375rem; font-weight: 500; color: #64748b; text-decoration: none; border-bottom: 2px solid transparent; transition: color 0.15s; }
     .approval-tab:hover { color: #0f172a; }
     .approval-tab.active { color: #0f172a; border-bottom-color: #0f172a; }
@@ -15,9 +20,16 @@
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">Course Approval</h1>
-    <p class="text-muted mb-0">Review and approve courses submitted by instructors</p>
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 hero-title">Course Approval</h1>
+            <p class="hero-subtitle">Review and approve courses submitted by instructors</p>
+        </div>
+    </div>
 </div>
 
 @if(session('success'))

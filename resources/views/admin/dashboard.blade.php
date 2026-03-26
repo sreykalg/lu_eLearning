@@ -1,8 +1,28 @@
 @extends('layouts.admin')
 
+@push('styles')
+<style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+</style>
+@endpush
+
 @section('content')
 <div class="admin-overview">
-    <p class="text-muted mb-4">Welcome back. Here’s what’s happening across LU Academy.</p>
+    <div class="page-hero">
+        <div class="hero-left">
+            <div class="hero-icon">
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 13h8V3H3v10zm10 8h8V3h-8v18zM3 21h8v-6H3v6z"/></svg>
+            </div>
+            <div>
+                <h1 class="h3 hero-title">Admin Dashboard</h1>
+                <p class="hero-subtitle">Welcome back. Here’s what’s happening across LU Academy.</p>
+            </div>
+        </div>
+    </div>
 
     <div class="mb-4">
         <div class="d-flex flex-wrap align-items-center gap-3 text-muted" style="font-size: 0.9375rem;">

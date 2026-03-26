@@ -2,6 +2,11 @@
 
 @push('styles')
 <style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .hod-users-search {
         background: #f9fafb;
         border: 1px solid #e5e7eb;
@@ -40,9 +45,16 @@
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">User Management</h1>
-    <p class="text-muted mb-0">{{ $users->total() }} users on platform</p>
+<div class="page-hero">
+    <div class="hero-left">
+        <div class="hero-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m20 0v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div>
+            <h1 class="h3 hero-title">User Management</h1>
+            <p class="hero-subtitle">{{ $users->total() }} users on platform</p>
+        </div>
+    </div>
 </div>
 
 <form method="get" class="mb-4">

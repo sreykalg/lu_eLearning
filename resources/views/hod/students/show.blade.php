@@ -2,6 +2,14 @@
 
 @push('styles')
 <style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+    .page-hero .back-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.85rem; }
+    .page-hero .back-link:hover { color: #fff; }
     .hod-students-table thead th { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; background: #f8fafc; }
     .hod-students-table tbody tr:hover { background: rgba(15,23,42,0.03); }
     .hod-students-table .student-cell { display: flex; align-items: center; gap: 0.75rem; }
@@ -15,13 +23,22 @@
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('hod.students.index') }}" class="btn btn-link text-secondary text-decoration-none ps-0 mb-2 d-inline-flex align-items-center gap-1">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        Back to courses
-    </a>
-    <h1 class="h3 fw-bold mb-1">{{ $course->title }}</h1>
-    <p class="text-muted mb-0">Enrolled students and performance · {{ $students->count() }} students</p>
+<div class="page-hero">
+    <div class="hero-row">
+        <div class="hero-left">
+            <div class="hero-icon">
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/></svg>
+            </div>
+            <div>
+                <h1 class="h3 hero-title">{{ $course->title }}</h1>
+                <p class="hero-subtitle">Enrolled students and performance · {{ $students->count() }} students</p>
+            </div>
+        </div>
+        <a href="{{ route('hod.students.index') }}" class="back-link d-inline-flex align-items-center gap-1">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Back to courses
+        </a>
+    </div>
 </div>
 
 <div class="rounded-3 bg-white shadow-sm border overflow-hidden">

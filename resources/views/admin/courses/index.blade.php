@@ -1,8 +1,28 @@
 @extends('layouts.admin')
 
+@push('styles')
+<style>
+    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
+    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
+    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+</style>
+@endpush
+
 @section('content')
 <div class="admin-page">
-    <p class="text-muted mb-4">All courses on the platform. View and monitor activity.</p>
+    <div class="page-hero">
+        <div class="hero-left">
+            <div class="hero-icon">
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+            </div>
+            <div>
+                <h1 class="h3 hero-title">Courses</h1>
+                <p class="hero-subtitle">All courses on the platform. View and monitor activity.</p>
+            </div>
+        </div>
+    </div>
 
     <div class="rounded-3 p-4 mb-4" style="background: #fff; border: 1px solid rgba(45,27,78,0.08);">
         <form method="get" action="{{ route('admin.courses.index') }}" class="row g-2 align-items-end">
