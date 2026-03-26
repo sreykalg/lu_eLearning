@@ -8,6 +8,7 @@ use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\Hod\ApprovalController as HodApprovalController;
 use App\Http\Controllers\Hod\DashboardController as HodDashboardController;
 use App\Http\Controllers\Hod\ReportsController as HodReportsController;
+use App\Http\Controllers\Hod\CourseMonitoringController as HodCourseMonitoringController;
 use App\Http\Controllers\Hod\StudentEnrollmentController as HodStudentEnrollmentController;
 use App\Http\Controllers\Hod\UserController as HodUserController;
 use App\Http\Controllers\Instructor\AnnouncementController as InstructorAnnouncementController;
@@ -129,6 +130,9 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
 
 Route::middleware(['auth', 'verified', 'head_of_dept'])->prefix('hod')->name('hod.')->group(function () {
     Route::get('/', [HodDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/monitoring', [HodCourseMonitoringController::class, 'index'])->name('monitoring.index');
+    Route::get('/monitoring/{course}', [HodCourseMonitoringController::class, 'show'])->name('monitoring.show');
+    Route::get('/monitoring/{course}/students/{student}', [HodCourseMonitoringController::class, 'student'])->name('monitoring.student');
     Route::get('/approval', [HodApprovalController::class, 'index'])->name('approval');
     Route::post('/approval/{course}/approve', [HodApprovalController::class, 'approve'])->name('approval.approve');
     Route::post('/approval/{course}/request-changes', [HodApprovalController::class, 'requestChanges'])->name('approval.request-changes');

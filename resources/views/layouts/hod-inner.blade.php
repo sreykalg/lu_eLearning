@@ -19,6 +19,10 @@
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         <span>Reports</span>
     </a>
+    <a class="nav-link {{ request()->routeIs('hod.monitoring.*') ? 'active' : '' }}" href="{{ route('hod.monitoring.index') }}" data-drawer-close>
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 7a2 2 0 012-2h11a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/><path stroke-width="2" d="M7 11h7M7 15h4"/><path stroke-width="2" d="M19 8v8M15 12h8"/></svg>
+        <span>Course Monitoring</span>
+    </a>
     <a class="nav-link {{ request()->routeIs('hod.students.*') ? 'active' : '' }}" href="{{ route('hod.students.index') }}" data-drawer-close>
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         <span>Student Enrollment</span>
