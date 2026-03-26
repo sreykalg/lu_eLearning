@@ -93,9 +93,29 @@ class StudentEnrollmentController extends Controller
                 $finalScore = $attempt ? (int) round(($attempt->score / $attempt->total_points) * 100) : null;
             }
 
-            // Overall: average of available scores
-            $scores = array_filter([$quizAvg, $assignmentAvg, $midtermScore, $finalScore], fn ($v) => $v !== null);
-            $overall = count($scores) > 0 ? (int) round(array_sum($scores) / count($scores)) : null;
+            // Overall: weighted average of available scores
+            $weights = [
+                'quiz' => (int) ($course->quiz_weight ?? 20),
+                'assignment' => (int) ($course->assignment_weight ?? 20),
+                'midterm' => (int) ($course->midterm_weight ?? 30),
+                'final' => (int) ($course->final_weight ?? 30),
+            ];
+            $scores = [
+                'quiz' => $quizAvg,
+                'assignment' => $assignmentAvg,
+                'midterm' => $midtermScore,
+                'final' => $finalScore,
+            ];
+            $weightedTotal = 0.0;
+            $appliedWeight = 0;
+            foreach ($scores as $key => $score) {
+                if ($score === null) {
+                    continue;
+                }
+                $weightedTotal += $score * $weights[$key];
+                $appliedWeight += $weights[$key];
+            }
+            $overall = $appliedWeight > 0 ? (int) round($weightedTotal / $appliedWeight) : null;
 
             return (object) [
                 'enrollment' => $enrollment,

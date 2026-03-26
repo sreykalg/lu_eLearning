@@ -28,7 +28,21 @@ class CourseController extends Controller
             'description' => 'nullable|string',
             'level' => 'required|in:beginner,intermediate,advanced',
             'thumbnail' => 'nullable|image|max:2048',
+            'quiz_weight' => 'required|integer|in:10,20',
+            'assignment_weight' => 'required|integer|in:10,20',
+            'midterm_weight' => 'required|integer|in:30,40',
+            'final_weight' => 'required|integer|in:30,40',
         ]);
+
+        $totalWeight = (int) $valid['quiz_weight']
+            + (int) $valid['assignment_weight']
+            + (int) $valid['midterm_weight']
+            + (int) $valid['final_weight'];
+        if ($totalWeight !== 100) {
+            return back()
+                ->withErrors(['grading' => 'Invalid grading setup. The total must be exactly 100.'])
+                ->withInput();
+        }
 
         $valid['instructor_id'] = $request->user()->id;
         $valid['slug'] = Str::slug($valid['title']);
@@ -65,7 +79,21 @@ class CourseController extends Controller
             'description' => 'nullable|string',
             'level' => 'required|in:beginner,intermediate,advanced',
             'thumbnail' => 'nullable|image|max:2048',
+            'quiz_weight' => 'required|integer|in:10,20',
+            'assignment_weight' => 'required|integer|in:10,20',
+            'midterm_weight' => 'required|integer|in:30,40',
+            'final_weight' => 'required|integer|in:30,40',
         ]);
+
+        $totalWeight = (int) $valid['quiz_weight']
+            + (int) $valid['assignment_weight']
+            + (int) $valid['midterm_weight']
+            + (int) $valid['final_weight'];
+        if ($totalWeight !== 100) {
+            return back()
+                ->withErrors(['grading' => 'Invalid grading setup. The total must be exactly 100.'])
+                ->withInput();
+        }
 
         if ($request->hasFile('thumbnail')) {
             $valid['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');

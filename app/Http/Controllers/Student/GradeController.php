@@ -38,6 +38,10 @@ class GradeController extends Controller
         foreach ($enrollments as $e) {
             $course = $e->course;
             $items = collect();
+            $quizPercents = collect();
+            $assignmentPercents = collect();
+            $midtermPct = null;
+            $finalPct = null;
 
             foreach ($course->assignments ?? [] as $a) {
                 $sub = $submissions->get($a->id);
@@ -45,6 +49,7 @@ class GradeController extends Controller
                     $earned = (float) $sub->score;
                     $max = (float) $a->max_score;
                     $pct = (int) round(($earned / $max) * 100);
+                    $assignmentPercents->push($pct);
                     $items->push([
                         'title' => $a->title,
                         'type' => 'Assignment',
@@ -62,6 +67,14 @@ class GradeController extends Controller
                     $earned = (float) $best->score;
                     $max = (float) $best->total_points;
                     $pct = (int) round(($earned / $max) * 100);
+                    $quizType = strtolower($q->type ?? 'practice');
+                    if ($quizType === 'midterm') {
+                        $midtermPct = $pct;
+                    } elseif ($quizType === 'final') {
+                        $finalPct = $pct;
+                    } else {
+                        $quizPercents->push($pct);
+                    }
                     $typeLabel = match (strtolower($q->type ?? 'practice')) {
                         'midterm' => 'Midterm',
                         'final' => 'Final',
@@ -78,7 +91,30 @@ class GradeController extends Controller
                 }
             }
 
-            $coursePct = $items->isEmpty() ? null : (int) round($items->avg('pct'));
+            $quizAvg = $quizPercents->isEmpty() ? null : (int) round($quizPercents->avg());
+            $assignmentAvg = $assignmentPercents->isEmpty() ? null : (int) round($assignmentPercents->avg());
+            $weights = [
+                'quiz' => (int) ($course->quiz_weight ?? 20),
+                'assignment' => (int) ($course->assignment_weight ?? 20),
+                'midterm' => (int) ($course->midterm_weight ?? 30),
+                'final' => (int) ($course->final_weight ?? 30),
+            ];
+            $componentScores = [
+                'quiz' => $quizAvg,
+                'assignment' => $assignmentAvg,
+                'midterm' => $midtermPct,
+                'final' => $finalPct,
+            ];
+            $weightedTotal = 0.0;
+            $appliedWeight = 0;
+            foreach ($componentScores as $key => $score) {
+                if ($score === null) {
+                    continue;
+                }
+                $weightedTotal += $score * $weights[$key];
+                $appliedWeight += $weights[$key];
+            }
+            $coursePct = $appliedWeight > 0 ? (int) round($weightedTotal / $appliedWeight) : null;
             $letter = $coursePct !== null ? $this->percentToLetter($coursePct) : null;
 
             $coursesData->push([
