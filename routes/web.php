@@ -87,6 +87,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/', [InstructorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/my-courses', [InstructorCourseController::class, 'myCourses'])->name('my-courses');
+    Route::delete('/my-courses/{course}/students/{student}', [InstructorCourseController::class, 'removeStudent'])->name('my-courses.students.remove');
     Route::get('/progress', [InstructorProgressController::class, 'index'])->name('progress');
     Route::get('/submissions', [InstructorSubmissionsController::class, 'index'])->name('submissions');
     Route::get('/announcements', [InstructorAnnouncementController::class, 'index'])->name('announcements.index');

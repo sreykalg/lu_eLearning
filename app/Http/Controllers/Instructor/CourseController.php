@@ -3,13 +3,94 @@
 namespace App\Http\Controllers\Instructor;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssignmentSubmission;
 use App\Models\Course;
+use App\Models\LessonProgress;
+use App\Models\QuizAttempt;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CourseController extends Controller
 {
+    public function myCourses(Request $request): View
+    {
+        $courses = $request->user()
+            ->courses()
+            ->withCount(['lessons', 'quizzes', 'assignments', 'enrollments'])
+            ->orderBy('title')
+            ->get();
+
+        $selectedCourse = null;
+        $students = collect();
+
+        $selected = $request->query('course');
+        if ($selected) {
+            $selectedCourse = $courses->firstWhere('slug', $selected);
+        }
+        if (! $selectedCourse && $courses->isNotEmpty()) {
+            $selectedCourse = $courses->first();
+        }
+        if ($selectedCourse) {
+            $students = $selectedCourse->enrollments()
+                ->with('user')
+                ->orderByDesc('created_at')
+                ->get()
+                ->filter(fn ($enrollment) => $enrollment->user && $enrollment->user->isStudent())
+                ->values()
+                ->map(function ($enrollment) use ($selectedCourse) {
+                    $studentId = $enrollment->user_id;
+                    $courseId = $selectedCourse->id;
+
+                    $lastQuizAt = QuizAttempt::query()
+                        ->where('user_id', $studentId)
+                        ->whereHas('quiz', fn ($q) => $q->where('course_id', $courseId))
+                        ->max('submitted_at');
+
+                    $lastAssignmentAt = AssignmentSubmission::query()
+                        ->where('user_id', $studentId)
+                        ->whereHas('assignment', fn ($q) => $q->where('course_id', $courseId))
+                        ->max('submitted_at');
+
+                    $lastLessonAt = LessonProgress::query()
+                        ->where('user_id', $studentId)
+                        ->whereHas('lesson', fn ($q) => $q->where('course_id', $courseId))
+                        ->max('updated_at');
+
+                    $candidates = collect([$lastQuizAt, $lastAssignmentAt, $lastLessonAt])
+                        ->filter()
+                        ->map(fn ($date) => \Illuminate\Support\Carbon::parse($date));
+
+                    $enrollment->last_activity_at = $candidates->isNotEmpty() ? $candidates->max() : null;
+
+                    return $enrollment;
+                });
+        }
+
+        return view('instructor/my-courses/index', compact('courses', 'selectedCourse', 'students'));
+    }
+
+    public function removeStudent(Request $request, Course $course, User $student): RedirectResponse
+    {
+        abort_unless($course->instructor_id === $request->user()->id, 403);
+
+        $enrollment = $course->enrollments()
+            ->where('user_id', $student->id)
+            ->first();
+
+        if (! $enrollment) {
+            return back()->with('error', 'Student is not enrolled in this course.');
+        }
+
+        $enrollment->delete();
+
+        return redirect()
+            ->route('instructor.my-courses', ['course' => $course->slug])
+            ->with('success', 'Student removed from course.');
+    }
+
     public function index(Request $request): View
     {
         $courses = $request->user()->courses()->withCount(['lessons', 'quizzes', 'assignments'])->orderBy('order')->get();
