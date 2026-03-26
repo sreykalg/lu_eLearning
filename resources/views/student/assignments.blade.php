@@ -12,6 +12,7 @@
     .filter-tab { padding: 0.4rem 1rem; font-size: 0.9rem; border-radius: 0.375rem; text-decoration: none; color: #64748b; border: 1px solid #e5e7eb; background: #fff; transition: all 0.15s; }
     .filter-tab:hover { background: #f9fafb; color: #0f172a; }
     .filter-tab.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .assignment-filter-row { display: flex; flex-wrap: wrap; column-gap: 0.65rem; row-gap: 0.6rem; margin-top: 0.85rem; }
     .assignment-list-card { border: 1px solid #e2e8f0; border-radius: 0.85rem; background: #fff; overflow: hidden; }
     .assignment-list-card .card-body { padding: 0.9rem 1rem; }
     .assignment-status-pill { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; }
@@ -48,7 +49,7 @@
         </div>
     </div>
     
-    <div class="d-flex flex-wrap gap-2">
+    <div class="assignment-filter-row">
         <a href="{{ route('student.assignments', array_merge(request()->except('filter'), ['filter' => 'all'])) }}" class="filter-tab {{ $filter === 'all' ? 'active' : '' }}">All ({{ $assignments->count() }})</a>
         <a href="{{ route('student.assignments', array_merge(request()->except('filter'), ['filter' => 'pending'])) }}" class="filter-tab {{ $filter === 'pending' ? 'active' : '' }}">Pending ({{ $pendingCount }})</a>
         <a href="{{ route('student.assignments', array_merge(request()->except('filter'), ['filter' => 'submitted'])) }}" class="filter-tab {{ $filter === 'submitted' ? 'active' : '' }}">Submitted ({{ $submittedCount }})</a>

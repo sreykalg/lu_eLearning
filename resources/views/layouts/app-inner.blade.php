@@ -100,16 +100,19 @@
         .inner-header .search-form .search {
             flex: 1;
             min-width: 0;
-            padding: 0.5rem 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
+            height: 40px;
+            padding: 0.55rem 0.95rem;
+            border: 1px solid #dbe3ee;
+            border-radius: 0.7rem;
             font-size: 0.875rem;
+            background: #f8fafc;
+            transition: all 0.2s ease;
         }
-        .inner-header .search-form .search:focus { outline: none; border-color: #94a3b8; }
+        .inner-header .search-form .search:focus { outline: none; border-color: #94a3b8; background: #fff; box-shadow: 0 0 0 3px rgba(15,23,42,0.08); }
         .inner-header .search::placeholder { color: #94a3b8; }
         .inner-header .search-form { max-width: 400px; width: 100%; min-width: 0; position: relative; }
-        .inner-header .search-form .search { border-top-right-radius: 0; border-bottom-right-radius: 0; }
-        .inner-header .search-form .search-btn { border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0.5rem 0.75rem; background: #0f172a; color: #fff; border: 1px solid #0f172a; }
+        .inner-header .search-form .search { border-top-right-radius: 0.65rem; border-bottom-right-radius: 0.65rem; }
+        .inner-header .search-form .search-btn { margin-left: 0.35rem; border-radius: 0.65rem; height: 40px; min-width: 40px; padding: 0.45rem 0.7rem; background: #0f172a; color: #fff; border: 1px solid #0f172a; }
         .inner-header .search-form .search-btn:hover { background: #1e293b; color: #fff; border-color: #1e293b; }
         .inner-header .header-center { flex: 1; display: flex; justify-content: center; min-width: 0; }
         .inner-header .search-history { position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.25rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 220px; overflow-y: auto; z-index: 1050; display: none; }
