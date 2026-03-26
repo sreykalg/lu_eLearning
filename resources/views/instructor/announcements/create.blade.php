@@ -84,6 +84,25 @@
                                 <div class="small text-muted mb-2">Expires {{ $a->expires_at->format('M j, Y g:i A') }}</div>
                             @endif
                             <div class="small text-secondary" style="white-space: pre-wrap;">{{ \Illuminate\Support\Str::limit($a->body, 220) }}</div>
+                            <form action="{{ route('instructor.announcements.update', $a) }}" method="POST" class="d-flex gap-2 align-items-end mt-3">
+                                @csrf
+                                @method('PATCH')
+                                <div class="flex-grow-1">
+                                    <label class="form-label small mb-1">Update expiry</label>
+                                    <input
+                                        type="datetime-local"
+                                        name="expires_at"
+                                        class="form-control form-control-sm"
+                                        value="{{ $a->expires_at ? $a->expires_at->format('Y-m-d\TH:i') : '' }}"
+                                    >
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
+                            </form>
+                            <form action="{{ route('instructor.announcements.destroy', $a) }}" method="POST" class="mt-2" onsubmit="return confirm('Remove this announcement?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                            </form>
                         </div>
                     @empty
                         <p class="text-muted mb-0">No announcement history yet.</p>

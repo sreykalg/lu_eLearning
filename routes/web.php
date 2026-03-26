@@ -92,6 +92,8 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::get('/announcements', [InstructorAnnouncementController::class, 'index'])->name('announcements.index');
     Route::get('/announcements/create', [InstructorAnnouncementController::class, 'create'])->name('announcements.create');
     Route::post('/announcements', [InstructorAnnouncementController::class, 'store'])->name('announcements.store');
+    Route::patch('/announcements/{announcement}', [InstructorAnnouncementController::class, 'update'])->name('announcements.update');
+    Route::delete('/announcements/{announcement}', [InstructorAnnouncementController::class, 'destroy'])->name('announcements.destroy');
     Route::resource('courses', InstructorCourseController::class)->except(['show'])->parameters(['courses' => 'course']);
     Route::post('courses/{course}/submit-approval', [InstructorCourseController::class, 'submitForApproval'])->name('courses.submit-approval');
     Route::post('courses/{course}/modules', [InstructorModuleController::class, 'store'])->name('modules.store');

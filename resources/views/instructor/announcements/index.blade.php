@@ -12,12 +12,6 @@
     </a>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
-
 <div class="card border-0 shadow-sm">
     @forelse($announcements as $a)
         <div class="border-bottom border-light p-4">
@@ -39,6 +33,25 @@
                             <span class="badge bg-info text-dark">No Expiry</span>
                         @endif
                     </div>
+                    <form action="{{ route('instructor.announcements.update', $a) }}" method="POST" class="d-flex gap-2 align-items-end mt-3">
+                        @csrf
+                        @method('PATCH')
+                        <div>
+                            <label class="form-label small mb-1">Update expiry</label>
+                            <input
+                                type="datetime-local"
+                                name="expires_at"
+                                class="form-control form-control-sm"
+                                value="{{ $a->expires_at ? $a->expires_at->format('Y-m-d\TH:i') : '' }}"
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
+                    </form>
+                    <form action="{{ route('instructor.announcements.destroy', $a) }}" method="POST" class="mt-2" onsubmit="return confirm('Remove this announcement?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                    </form>
                 </div>
             </div>
         </div>

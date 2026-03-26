@@ -11,6 +11,13 @@ use Illuminate\View\View;
 
 class AnnouncementController extends Controller
 {
+    protected function ensureOwner(Request $request, Announcement $announcement): void
+    {
+        if ($announcement->instructor_id !== $request->user()->id) {
+            abort(403);
+        }
+    }
+
     public function index(Request $request): View
     {
         $announcements = Announcement::whereHas('course', fn ($q) => $q->where('instructor_id', $request->user()->id))
@@ -56,5 +63,28 @@ class AnnouncementController extends Controller
         ]);
 
         return redirect()->route('instructor.announcements.index')->with('success', 'Announcement posted successfully.');
+    }
+
+    public function update(Request $request, Announcement $announcement): RedirectResponse
+    {
+        $this->ensureOwner($request, $announcement);
+
+        $valid = $request->validate([
+            'expires_at' => ['nullable', 'date', 'after:now'],
+        ]);
+
+        $announcement->update([
+            'expires_at' => $valid['expires_at'] ?? null,
+        ]);
+
+        return back()->with('success', 'Announcement expiration updated.');
+    }
+
+    public function destroy(Request $request, Announcement $announcement): RedirectResponse
+    {
+        $this->ensureOwner($request, $announcement);
+        $announcement->delete();
+
+        return back()->with('success', 'Announcement removed.');
     }
 }
