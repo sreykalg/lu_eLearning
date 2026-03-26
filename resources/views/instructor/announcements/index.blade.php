@@ -1,5 +1,20 @@
 @extends('layouts.instructor-inner')
 
+@push('styles')
+<style>
+    .ann-card { border: 1px solid #e2e8f0; border-radius: 0.75rem; background: #fff; max-width: 1000px; }
+    .ann-card + .ann-card { margin-top: 0.75rem; }
+    .ann-header-title { font-weight: 700; color: #0f172a; margin-bottom: 0.25rem; }
+    .ann-course { color: #64748b; font-size: 0.85rem; }
+    .ann-body { color: #334155; white-space: pre-wrap; margin: 0.5rem 0 0; font-size: 0.92rem; }
+    .ann-meta { color: #64748b; font-size: 0.82rem; display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+    .ann-meta-dot { width: 4px; height: 4px; border-radius: 999px; background: #cbd5e1; display: inline-block; }
+    .ann-action-wrap { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.65rem; padding: 0.55rem; margin-top: 0.7rem; }
+    .ann-action-title { font-size: 0.78rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .ann-expiry-input { max-width: 210px; }
+</style>
+@endpush
+
 @section('content')
 <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
     <div>
@@ -12,46 +27,52 @@
     </a>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm p-2 p-md-3">
     @forelse($announcements as $a)
-        <div class="border-bottom border-light p-4">
-            <div class="d-flex justify-content-between align-items-start gap-2">
-                <div class="min-w-0">
-                    <h5 class="mb-1 fw-semibold">{{ $a->title }}</h5>
-                    <p class="text-muted small mb-2">{{ $a->course->title }}</p>
-                    <p class="mb-0 text-secondary" style="white-space: pre-wrap;">{{ $a->body }}</p>
-                    <div class="mt-2 d-flex flex-wrap align-items-center gap-2">
-                        <small class="text-muted">{{ $a->created_at->format('M j, Y \a\t g:i A') }}</small>
+        <div class="ann-card p-3">
+            <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                <div class="min-w-0 flex-grow-1">
+                    <h5 class="ann-header-title">{{ $a->title }}</h5>
+                    <div class="ann-course">{{ $a->course->title }}</div>
+                    <p class="ann-body">{{ $a->body }}</p>
+                    <div class="ann-meta mt-2">
+                        <span>Posted {{ $a->created_at->format('M j, Y \a\t g:i A') }}</span>
+                        <span class="ann-meta-dot"></span>
                         @if($a->expires_at)
-                            <small class="text-muted">· Expires {{ $a->expires_at->format('M j, Y \a\t g:i A') }}</small>
+                            <span>Expires {{ $a->expires_at->format('M j, Y \a\t g:i A') }}</span>
                             @if($a->expires_at->isPast())
                                 <span class="badge bg-secondary">Expired</span>
                             @else
-                                <span class="badge bg-success">Active</span>
+                                <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">Active</span>
                             @endif
                         @else
-                            <span class="badge bg-info text-dark">No Expiry</span>
+                            <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">No Expiry</span>
                         @endif
                     </div>
-                    <form action="{{ route('instructor.announcements.update', $a) }}" method="POST" class="d-flex gap-2 align-items-end mt-3">
-                        @csrf
-                        @method('PATCH')
-                        <div>
-                            <label class="form-label small mb-1">Update expiry</label>
-                            <input
-                                type="datetime-local"
-                                name="expires_at"
-                                class="form-control form-control-sm"
-                                value="{{ $a->expires_at ? $a->expires_at->format('Y-m-d\TH:i') : '' }}"
-                            >
-                        </div>
-                        <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
-                    </form>
-                    <form action="{{ route('instructor.announcements.destroy', $a) }}" method="POST" class="mt-2" onsubmit="return confirm('Remove this announcement?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
-                    </form>
+                </div>
+                <div class="ann-action-wrap w-100">
+                    <div class="ann-action-title">Actions</div>
+                    <div class="d-flex gap-2 align-items-end flex-wrap">
+                        <form action="{{ route('instructor.announcements.update', $a) }}" method="POST" class="d-flex gap-2 align-items-end flex-wrap">
+                            @csrf
+                            @method('PATCH')
+                            <div>
+                                <label class="form-label small mb-1">Update Expiry</label>
+                                <input
+                                    type="datetime-local"
+                                    name="expires_at"
+                                    class="form-control form-control-sm ann-expiry-input"
+                                    value="{{ $a->expires_at ? $a->expires_at->format('Y-m-d\TH:i') : '' }}"
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                        </form>
+                        <form action="{{ route('instructor.announcements.destroy', $a) }}" method="POST" onsubmit="return confirm('Remove this announcement?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
