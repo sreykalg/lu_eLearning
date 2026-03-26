@@ -12,6 +12,15 @@
     .filter-tab { padding: 0.4rem 1rem; font-size: 0.9rem; border-radius: 0.375rem; text-decoration: none; color: #64748b; border: 1px solid #e5e7eb; background: #fff; transition: all 0.15s; }
     .filter-tab:hover { background: #f9fafb; color: #0f172a; }
     .filter-tab.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .assignment-list-card { border: 1px solid #e2e8f0; border-radius: 0.85rem; background: #fff; overflow: hidden; }
+    .assignment-list-card .card-body { padding: 0.9rem 1rem; }
+    .assignment-status-pill { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; }
+    .assignment-title { font-size: 1.02rem; font-weight: 700; color: #0f172a; margin-bottom: 0.18rem; }
+    .assignment-course { color: #64748b; font-size: 0.84rem; margin-bottom: 0.45rem; }
+    .assignment-preview { color: #475569; font-size: 0.88rem; margin-bottom: 0.55rem; }
+    .assignment-meta-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .assignment-meta-chip { font-size: 0.78rem; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 9999px; padding: 0.2rem 0.5rem; display: inline-flex; align-items: center; gap: 0.25rem; }
+    .assignment-action-btn { border-radius: 0.55rem; font-weight: 600; padding: 0.35rem 0.7rem; }
 </style>
 @endpush
 
@@ -51,7 +60,7 @@
     @forelse($filtered as $a)
         @php $sub = $submissions->get($a->id); $isGraded = $sub?->isGraded() ?? false; $isSubmitted = $sub !== null; $canSubmit = $a->canSubmit(); @endphp
         <a href="{{ route('student.assignments.show', [$a->course, $a]) }}" class="text-decoration-none text-dark">
-            <div class="card border-0 shadow-sm assignment-card">
+            <div class="card border-0 shadow-sm assignment-card assignment-list-card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                         <div class="flex-grow-1 min-w-0">
@@ -69,25 +78,25 @@
                                         <svg width="14" height="14" fill="none" stroke="#b45309" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </span>
                                 @endif
-                                <span class="badge {{ $isGraded ? 'bg-success' : ($isSubmitted ? 'bg-info' : (!$canSubmit ? 'bg-secondary' : 'bg-warning text-dark')) }}">
+                                <span class="badge assignment-status-pill {{ $isGraded ? 'bg-success' : ($isSubmitted ? 'bg-info' : (!$canSubmit ? 'bg-secondary' : 'bg-warning text-dark')) }}">
                                     {{ $isGraded ? 'Graded' : ($isSubmitted ? 'Submitted' : (!$canSubmit ? 'Closed' : 'Pending')) }}
                                 </span>
-                                <h6 class="mb-0 fw-semibold">{{ $a->title }}</h6>
+                                <h6 class="assignment-title mb-0">{{ $a->title }}</h6>
                             </div>
-                            <p class="text-muted small mb-1">{{ $a->course->title }}</p>
+                            <p class="assignment-course">{{ $a->course->title }}</p>
                             @if($a->instructions)
-                                <p class="small text-muted mb-2">{{ Str::limit($a->instructions, 120) }}</p>
+                                <p class="assignment-preview">{{ Str::limit($a->instructions, 120) }}</p>
                             @endif
-                            <div class="d-flex align-items-center gap-3 small text-muted flex-wrap">
-                                <span><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="d-inline-block align-text-bottom me-1"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Due: {{ $a->due_at?->format('M j, g:i A') ?? '—' }}</span>
-                                <span><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="d-inline-block align-text-bottom me-1"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>Max: {{ $a->max_score }} pts</span>
+                            <div class="assignment-meta-row">
+                                <span class="assignment-meta-chip"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Due: {{ $a->due_at?->format('M j, g:i A') ?? '—' }}</span>
+                                <span class="assignment-meta-chip"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>Max: {{ $a->max_score }} pts</span>
                                 @if($isGraded && $sub)
-                                    <span class="fw-semibold text-dark">Score: {{ $sub->score }}/{{ $a->max_score }}</span>
+                                    <span class="assignment-meta-chip fw-semibold text-dark">Score: {{ $sub->score }}/{{ $a->max_score }}</span>
                                 @endif
                             </div>
                         </div>
                         <div class="flex-shrink-0">
-                            <span class="btn btn-sm {{ ($isGraded || !$canSubmit) ? 'btn-outline-secondary' : 'btn-primary' }}">
+                            <span class="btn btn-sm assignment-action-btn {{ ($isGraded || !$canSubmit) ? 'btn-outline-secondary' : 'btn-primary' }}">
                                 {{ $isGraded ? 'View' : (!$canSubmit ? 'View' : 'Submit') }}
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" class="ms-1"><path d="M9 5l7 7-7 7"/></svg>
                             </span>
