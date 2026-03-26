@@ -21,6 +21,11 @@
     .course-level-advanced { background: #fce7f3; color: #9d174d; }
     .deadline-item { padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; margin-bottom: 0.5rem; background: #fff; }
     .deadline-item:hover { background: #f9fafb; }
+    .student-ann-card { border-left-width: 3px !important; padding: 0.9rem !important; }
+    .student-ann-title { margin-bottom: 0.85rem !important; font-size: 0.98rem; }
+    .student-ann-item { padding: 0.75rem !important; }
+    .student-ann-body { font-size: 0.875rem; margin-bottom: 0.45rem; }
+    .student-ann-meta { font-size: 0.75rem; }
 </style>
 @endpush
 
@@ -43,20 +48,20 @@
 </div>
 
 @if($announcements->isNotEmpty())
-<div class="rounded-3 bg-white border p-3 mb-4" style="border-left: 4px solid #dc3545 !important;">
-    <h5 class="fw-semibold mb-3 d-flex align-items-center gap-2">
+<div class="rounded-3 bg-white border p-2 mb-4 student-ann-card" style="border-left: 4px solid #dc3545 !important;">
+    <h5 class="fw-semibold mb-3 student-ann-title d-flex align-items-center gap-2">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
         Announcements
     </h5>
     <div class="d-flex flex-column gap-3">
         @foreach($announcements as $a)
-            <div class="p-3 rounded-2" style="background: #fef2f2;">
+            <div class="p-2 rounded-2 student-ann-item" style="background: #fef2f2;">
                 <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
-                    <span class="fw-semibold">{{ $a->title }}</span>
+                    <span class="fw-semibold" style="font-size: 0.95rem;">{{ $a->title }}</span>
                     <span class="badge bg-danger bg-opacity-10 text-danger small">{{ $a->course->title }}</span>
                 </div>
-                <p class="text-secondary small mb-1" style="white-space: pre-wrap;">{{ Str::limit($a->body, 200) }}</p>
-                <small class="text-muted">{{ $a->instructor->name ?? '—' }} · {{ $a->created_at->diffForHumans() }}</small>
+                <p class="text-secondary mb-1 student-ann-body" style="white-space: pre-wrap;">{{ Str::limit($a->body, 200) }}</p>
+                <small class="text-muted student-ann-meta">{{ $a->instructor->name ?? '—' }} · {{ $a->created_at->diffForHumans() }}</small>
             </div>
         @endforeach
     </div>
