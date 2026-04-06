@@ -373,11 +373,13 @@
                     @yield('content')
                 </div>
                 <div id="profileContent" style="display:none;">
+                    @auth
                     <button type="button" class="btn btn-link text-secondary text-decoration-none mb-2 p-0" data-action="hide-profile" aria-label="Back">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1 align-text-bottom"><path stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                         {{ __('Back') }}
                     </button>
                     @include('profile.partials.panel-content', ['user' => auth()->user()])
+                    @endauth
                 </div>
             </main>
         </div>

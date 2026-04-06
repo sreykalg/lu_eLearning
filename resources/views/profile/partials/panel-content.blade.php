@@ -1,11 +1,12 @@
 @php
     $user = $user ?? auth()->user();
-    $name = $user->name ?? 'User';
+    $name = $user?->name ?? 'User';
     $parts = array_filter(explode(' ', $name));
     $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
-    $roleLabel = ucfirst(str_replace('_', ' ', $user->role ?? 'student'));
-    $photoUrl = !empty($user->profile_photo_path) ? asset('storage/' . $user->profile_photo_path) : null;
+    $roleLabel = ucfirst(str_replace('_', ' ', $user?->role ?? 'student'));
+    $photoUrl = $user && !empty($user->profile_photo_path) ? asset('storage/' . $user->profile_photo_path) : null;
 @endphp
+@if($user)
 <style>
     .profile-panel .profile-shell { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.9rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .profile-panel .profile-hero { padding: 1.25rem 1.25rem 0.75rem; border-bottom: 1px solid #eef2f7; }
@@ -57,7 +58,7 @@
                     </div>
                     <div>
                         <h3 class="name">{{ $name }}</h3>
-                        <p class="email">{{ $user->email }}</p>
+                        <p class="email">{{ $user?->email }}</p>
                         <span class="role-chip">{{ $roleLabel }}</span>
                     </div>
                 </div>
@@ -113,6 +114,7 @@
         <div class="card-body">
             @include('profile.partials.delete-user-form')
         </div>
+    </div>
         </div>
     </div>
 </div>
@@ -135,3 +137,4 @@ document.getElementById('profile_photo_input')?.addEventListener('change', funct
 });
 </script>
 @endpush
+@endif
