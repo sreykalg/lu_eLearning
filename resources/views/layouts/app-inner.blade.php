@@ -148,7 +148,7 @@
         .inner-header .profile-dropdown .dropdown-item:hover { background: #f8fafc; }
         .inner-header .profile-dropdown .dropdown-divider { margin: 0; }
         .inner-header .profile-dropdown .dropdown-menu > li:first-child { list-style: none; }
-        .inner-content { flex: 1; padding: 1.5rem; overflow-auto; }
+        .inner-content { flex: 1; padding: 1.5rem; overflow: auto; }
         .inner-drawer-backdrop {
             display: none;
             position: fixed;

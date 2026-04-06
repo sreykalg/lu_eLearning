@@ -1,22 +1,6 @@
 @extends('layouts.instructor-inner')
 
-@push('styles')
-<style>
-    .cb-wrap { display: flex; min-height: 560px; overflow-x: hidden; background: #fff; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-    .cb-sidebar { width: 380px; min-width: 380px; max-width: 380px; flex-shrink: 0; padding: 1rem 1.5rem 1rem 1rem; max-height: 85vh; overflow-y: auto; overflow-x: hidden; border-right: 1px solid #e5e7eb; border-radius: 0.5rem 0 0 0.5rem; }
-    .cb-dropdown { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; }
-    .cb-add-module { background: #fff; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #374151; text-align: left; width: 100%; }
-    .cb-add-module:hover { background: #f9fafb; }
-    .cb-module-header { padding: 0.35rem 0; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem; }
-    .cb-module-title { color: #374151; }
-    .cb-drag { color: #9ca3af; font-size: 0.75rem; cursor: default; pointer-events: none; }
-    .cb-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; margin: 0.15rem 0; border-radius: 0.375rem; text-decoration: none; color: #374151; font-size: 0.875rem; border-left: 3px solid transparent; }
-    .cb-item:hover { background: #f3f4f6; }
-    .cb-item.active { background: #0f172a; color: #fff; border-left-color: #0f172a; }
-    .cb-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .cb-main { flex: 1; min-width: 0; padding: 1.5rem 2.5rem 1.5rem 2rem; overflow: auto; }
-</style>
-@endpush
+@include('instructor.course-builder.sidebar-styles')
 
 @section('content')
 <div class="cb-wrap">
