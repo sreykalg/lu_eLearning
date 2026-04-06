@@ -283,6 +283,7 @@
     </style>
 </head>
 <body>
+    @include('layouts.partials.screen-size-restriction')
     <div class="welcome-bg" aria-hidden="true"></div>
     <div class="welcome-overlay" aria-hidden="true"></div>
 

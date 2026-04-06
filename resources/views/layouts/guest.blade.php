@@ -251,6 +251,7 @@
     @stack('styles')
 </head>
 <body>
+    @include('layouts.partials.screen-size-restriction')
     <div class="auth-bg" aria-hidden="true"></div>
     <div class="auth-overlay" aria-hidden="true"></div>
 
