@@ -2,103 +2,180 @@
 
 @push('styles')
 <style>
-    .page-hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+    .cb-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
         border-radius: 1rem;
-        padding: 1.25rem 1.4rem;
+        padding: 1.35rem 1.5rem;
         color: #fff;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
         flex-wrap: wrap;
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
     }
-    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
-    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
-    .page-hero .hero-title { margin: 0; font-weight: 700; }
-    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
-    .page-hero .hero-btn { border: 1px solid rgba(255,255,255,0.35); color: #fff; }
-    .page-hero .hero-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.5); }
-    .course-card-inner { transition: box-shadow 0.2s; }
-    .course-card-inner:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-    .course-card-top { min-height: 120px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .course-level-badge { font-size: 0.65rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; text-transform: uppercase; }
-    .course-level-beginner { background: #dbeafe; color: #1e40af; }
-    .course-level-intermediate { background: #fef3c7; color: #b45309; }
-    .course-level-advanced { background: #fce7f3; color: #9d174d; }
+    .cb-hero .hero-left { display: flex; align-items: center; gap: 1rem; }
+    .cb-hero .hero-icon {
+        width: 48px; height: 48px; border-radius: 0.85rem;
+        background: rgba(255,255,255,0.14);
+        display: flex; align-items: center; justify-content: center;
+    }
+    .cb-hero .hero-title { margin: 0; font-weight: 800; letter-spacing: -0.02em; font-size: 1.35rem; }
+    .cb-hero .hero-subtitle { margin: 0.35rem 0 0; color: rgba(255,255,255,0.82); font-size: 0.9rem; max-width: 32rem; }
+    .cb-hero .btn-create {
+        border: 1px solid rgba(255,255,255,0.38);
+        color: #fff;
+        font-weight: 600;
+        border-radius: 0.65rem;
+        padding: 0.5rem 1rem;
+    }
+    .cb-hero .btn-create:hover { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.55); }
+    .cb-card {
+        border-radius: 0.95rem;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        height: 100%;
+    }
+    .cb-card:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(15,23,42,0.1); }
+    .cb-card-thumb {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        background: linear-gradient(145deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+        overflow: hidden;
+    }
+    .cb-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .cb-card-thumb .placeholder-icon {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: #94a3b8;
+    }
+    .cb-card-body { padding: 1rem 1.05rem 1.15rem; }
+    .cb-badges { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.65rem; }
+    .cb-level {
+        font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.25rem 0.5rem; border-radius: 0.35rem;
+    }
+    .cb-level-beginner { background: #dbeafe; color: #1e40af; }
+    .cb-level-intermediate { background: #fef3c7; color: #b45309; }
+    .cb-level-advanced { background: #fce7f3; color: #9d174d; }
+    .cb-status {
+        font-size: 0.72rem; font-weight: 700;
+        padding: 0.25rem 0.55rem; border-radius: 9999px;
+    }
+    .cb-status--approved { background: #dcfce7; color: #166534; }
+    .cb-status--pending { background: #fef9c3; color: #854d0e; }
+    .cb-status--revision { background: #fee2e2; color: #991b1b; }
+    .cb-status--draft { background: #f1f5f9; color: #64748b; }
+    .cb-title { font-size: 1.02rem; font-weight: 700; color: #0f172a; margin: 0 0 0.5rem; line-height: 1.35; }
+    .cb-meta { font-size: 0.8rem; color: #64748b; margin-bottom: 0.85rem; }
+    .cb-meta strong { color: #475569; font-weight: 600; }
+    .cb-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem; font-weight: 600;
+        border-radius: 0.65rem;
+        border: 1px solid #0f172a;
+        color: #0f172a;
+        background: #fff;
+        text-decoration: none;
+        transition: background 0.15s, color 0.15s;
+    }
+    .cb-btn:hover { background: #0f172a; color: #fff; }
+    .cb-btn:disabled, .cb-btn.disabled { opacity: 0.65; cursor: not-allowed; border-color: #cbd5e1; color: #94a3b8; background: #f8fafc; }
+    .cb-empty {
+        border: 1px dashed #cbd5e1;
+        border-radius: 1rem;
+        background: #fafbfc;
+        padding: 3rem 1.5rem;
+        text-align: center;
+    }
 </style>
 @endpush
 
 @section('content')
-<div class="page-hero">
+<div class="cb-hero">
     <div class="hero-left">
         <div class="hero-icon">
-            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
         </div>
         <div>
-            <h1 class="h3 hero-title">My Courses</h1>
-            <p class="hero-subtitle">Manage and edit your published course content</p>
+            <h1 class="hero-title">Course Builder</h1>
+            <p class="hero-subtitle">Manage and edit your courses — modules, lessons, quizzes, and assignments.</p>
         </div>
     </div>
-    <a href="{{ route('instructor.courses.create') }}" class="btn btn-sm hero-btn">Create Course</a>
+    <a href="{{ route('instructor.courses.create') }}" class="btn btn-sm btn-create">Create course</a>
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="alert alert-success border-0 rounded-3 shadow-sm alert-dismissible fade show mb-3" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 @if(session('error'))
-    <div class="alert alert-warning alert-dismissible fade show">{{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="alert alert-warning border-0 rounded-3 shadow-sm alert-dismissible fade show mb-3" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
 <div class="row g-4">
     @forelse($courses as $course)
         <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100 overflow-hidden course-card-inner">
+            <div class="cb-card h-100">
                 @if(($course->approval_status ?? 'draft') === 'pending')
-                <div class="text-decoration-none text-dark" style="cursor: default;">
+                <div class="text-decoration-none text-dark h-100 d-flex flex-column" style="cursor: default;">
                 @else
-                <a href="{{ route('instructor.courses.edit', $course) }}" class="text-decoration-none text-dark">
+                <a href="{{ route('instructor.courses.edit', $course) }}" class="text-decoration-none text-dark h-100 d-flex flex-column">
                 @endif
-                    <div class="course-card-top ratio ratio-16x9">
+                    <div class="cb-card-thumb">
                         @if($course->thumbnail)
-                            <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" class="object-fit-cover w-100 h-100">
+                            <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="">
                         @else
-                            <div class="d-flex align-items-center justify-content-center">
-                                <svg width="48" height="48" fill="none" stroke="#64748b" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <div class="placeholder-icon">
+                                <svg width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                             </div>
                         @endif
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="course-level-badge course-level-{{ $course->level ?? 'beginner' }}">{{ strtoupper($course->level ?? 'beginner') }}</span>
-                            @php
-                                $statusLabel = match($course->approval_status ?? 'draft') {
-                                    'pending' => 'Pending Review',
-                                    'approved' => 'Active',
-                                    'needs_revision' => 'Needs Revision',
-                                    default => 'Draft',
-                                };
-                                $statusClass = match($course->approval_status ?? 'draft') {
-                                    'approved' => 'bg-success',
-                                    'pending' => 'bg-warning text-dark',
-                                    'needs_revision' => 'bg-danger',
-                                    default => 'bg-secondary',
-                                };
-                            @endphp
-                            <span class="badge {{ $statusClass }}">{{ $statusLabel }}</span>
+                    <div class="cb-card-body flex-grow-1 d-flex flex-column">
+                        @php
+                            $statusLabel = match($course->approval_status ?? 'draft') {
+                                'pending' => 'Pending Review',
+                                'approved' => 'Active',
+                                'needs_revision' => 'Needs Revision',
+                                default => 'Draft',
+                            };
+                            $statusMod = match($course->approval_status ?? 'draft') {
+                                'approved' => 'approved',
+                                'pending' => 'pending',
+                                'needs_revision' => 'revision',
+                                default => 'draft',
+                            };
+                        @endphp
+                        <div class="cb-badges">
+                            <span class="cb-level cb-level-{{ $course->level ?? 'beginner' }}">{{ strtoupper($course->level ?? 'beginner') }}</span>
+                            <span class="cb-status cb-status--{{ $statusMod }}">{{ $statusLabel }}</span>
                         </div>
-                        <h5 class="card-title fw-semibold mb-2">{{ Str::limit($course->title, 50) }}</h5>
-                        <p class="text-muted small mb-3">{{ $course->lessons_count }} lessons · {{ $course->quizzes_count }} quizzes · {{ $course->assignments_count }} assignments</p>
-                        @if(($course->approval_status ?? 'draft') === 'pending')
-                        <span class="btn btn-sm btn-outline-secondary disabled">Under review — editing disabled</span>
-                        @else
-                        <span class="btn btn-sm btn-outline-dark">Edit Course</span>
-                        @endif
+                        <h2 class="cb-title">{{ Str::limit($course->title, 52) }}</h2>
+                        <p class="cb-meta mb-0">
+                            <strong>{{ $course->lessons_count }}</strong> {{ Str::plural('lesson', $course->lessons_count) }}
+                            ·
+                            <strong>{{ $course->quizzes_count }}</strong> {{ Str::plural('quiz', $course->quizzes_count) }}
+                            ·
+                            <strong>{{ $course->assignments_count }}</strong> {{ Str::plural('assignment', $course->assignments_count) }}
+                        </p>
+                        <div class="mt-auto pt-2">
+                            @if(($course->approval_status ?? 'draft') === 'pending')
+                                <span class="cb-btn disabled w-100 d-block text-center">Under review — editing disabled</span>
+                            @else
+                                <span class="cb-btn w-100">Edit course</span>
+                            @endif
+                        </div>
                     </div>
                 @if(($course->approval_status ?? 'draft') === 'pending')
                 </div>
@@ -109,12 +186,10 @@
         </div>
     @empty
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center py-5">
-                    <svg class="mb-3 text-muted" width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
-                    <p class="text-muted mb-4">No courses yet. Create your first course to get started.</p>
-                    <a href="{{ route('instructor.courses.create') }}" class="btn btn-primary">Create Course</a>
-                </div>
+            <div class="cb-empty">
+                <svg class="mb-3 text-muted opacity-50" width="56" height="56" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+                <p class="text-muted mb-3 mb-0">No courses yet. Create your first course to get started.</p>
+                <a href="{{ route('instructor.courses.create') }}" class="btn btn-dark rounded-3 px-4 mt-3">Create course</a>
             </div>
         </div>
     @endforelse
