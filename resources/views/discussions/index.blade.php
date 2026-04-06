@@ -8,24 +8,95 @@ $layout = auth()->check()
 @push('styles')
 <style>
     .page-hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
         border-radius: 1rem;
-        padding: 1.25rem 1.4rem;
+        padding: 1.35rem 1.5rem;
         color: #fff;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
     }
-    .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
-    .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .page-hero .hero-title { margin: 0; font-weight: 700; }
-    .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
-    .discussion-chip { padding: 0.35rem 0.75rem; font-size: 0.875rem; border-radius: 9999px; text-decoration: none; transition: all 0.15s; }
-    .discussion-chip.active { background: #0f172a; color: #fff; border: none; }
-    .discussion-chip.inactive { background: #e5e7eb; color: #374151; border: none; }
-    .discussion-chip.inactive:hover { background: #d1d5db; color: #111; }
+    .page-hero .hero-left { display: flex; align-items: center; gap: 1rem; }
+    .page-hero .hero-icon {
+        width: 48px; height: 48px; border-radius: 0.85rem;
+        background: rgba(255,255,255,0.14);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .page-hero .hero-title { margin: 0; font-weight: 800; letter-spacing: -0.02em; font-size: 1.35rem; }
+    .page-hero .hero-subtitle { margin: 0.35rem 0 0; color: rgba(255,255,255,0.85); font-size: 0.9rem; max-width: 36rem; line-height: 1.45; }
+    .disc-filter-toolbar {
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+    }
+    .disc-filter-toolbar__head {
+        padding: 0.85rem 1.15rem;
+        border-bottom: 1px solid #f1f5f9;
+        background: linear-gradient(180deg, #fafbfc 0%, #fff 100%);
+    }
+    .disc-filter-toolbar__head h2 {
+        margin: 0;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #64748b;
+    }
+    .disc-filter-toolbar__body { padding: 1rem 1.15rem 1.1rem; }
+    .disc-chips-scroll {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.45rem;
+        overflow-x: auto;
+        padding-bottom: 0.2rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+    }
+    .disc-chips-scroll::-webkit-scrollbar { height: 6px; }
+    .disc-chips-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .discussion-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.85rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .discussion-chip.active {
+        background: #0f172a;
+        color: #fff;
+        border: 1px solid #0f172a;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+    }
+    .discussion-chip.inactive {
+        background: #fff;
+        color: #334155;
+        border: 1px solid #e2e8f0;
+    }
+    .discussion-chip.inactive:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+    }
     .discussion-instructor-badge { background: #0f172a; color: #fff; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
     .discussion-post-btn { background: #0f172a; color: #fff; border: none; padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; }
     .discussion-post-btn:hover { background: #1e293b; color: #fff; }
-    .discussion-card-main { border-radius: 0.5rem; background: #fff; border: 1px solid #e5e7eb; overflow: hidden; }
+    .discussion-card-main {
+        border-radius: 1rem;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+        transition: box-shadow 0.2s;
+    }
+    .discussion-card-main:hover { box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08); }
     .discussion-card-main .discussion-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
     .discussion-card-main .discussion-meta .avatar { width: 44px; height: 44px; border-radius: 50%; background: #e2e8f0; color: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; flex-shrink: 0; }
     .discussion-card-main .discussion-meta .name { font-weight: 600; color: #111; }
@@ -52,20 +123,48 @@ $layout = auth()->check()
     .discussion-reply-inline .reply-input-wrap .form-control:focus { background: #fff; border-color: #0f172a; }
     .discussion-reply-inline .btn-send { width: 44px; height: 44px; border-radius: 50%; background: #0f172a; color: #fff; border: none; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .discussion-reply-inline .btn-send:hover { background: #1e293b; color: #fff; }
-    .discussion-composer { border-radius: 1rem; border: 2px solid #0f172a; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-    .discussion-composer .composer-inner { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.875rem 1rem; }
-    .discussion-composer .composer-avatar { width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; color: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600; flex-shrink: 0; }
+    .discussion-composer {
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+    }
+    .discussion-composer:focus-within {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08), 0 0 0 3px rgba(15, 23, 42, 0.06);
+    }
+    .discussion-composer .composer-inner { display: flex; align-items: flex-start; gap: 0.85rem; padding: 1rem 1.15rem 1.1rem; }
+    .discussion-composer .composer-avatar {
+        width: 44px; height: 44px; border-radius: 50%;
+        background: linear-gradient(145deg, #e2e8f0 0%, #f1f5f9 100%);
+        color: #0f172a;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.875rem; font-weight: 700; flex-shrink: 0;
+        border: 1px solid #e2e8f0;
+    }
     .discussion-composer .composer-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.5rem; }
     .discussion-composer .composer-textarea { border: none; resize: none; font-size: 0.9375rem; padding: 0.25rem 0; min-height: 2.5rem; }
     .discussion-composer .composer-textarea:focus { box-shadow: none; outline: none; }
     .discussion-composer .composer-textarea::placeholder { color: #94a3b8; }
-    .discussion-composer .composer-footer { display: flex; justify-content: space-between; align-items: center; }
-    .discussion-composer .composer-actions { display: flex; align-items: center; gap: 0.5rem; }
-    .discussion-composer .composer-actions .composer-icon { background: none; border: none; padding: 0.35rem; color: #64748b; cursor: pointer; border-radius: 0.375rem; display: inline-flex; align-items: center; justify-content: center; }
+    .discussion-composer .composer-footer { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .discussion-composer .composer-actions { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+    .discussion-composer .composer-actions .composer-icon { background: none; border: none; padding: 0.45rem; color: #64748b; cursor: pointer; border-radius: 0.5rem; display: inline-flex; align-items: center; justify-content: center; }
     .discussion-composer .composer-actions .composer-icon:hover { color: #0f172a; background: #f1f5f9; }
-    .discussion-composer .composer-send { width: 40px; height: 40px; border-radius: 50%; background: #0f172a; color: #fff; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-    .discussion-composer .composer-send:hover { background: #1e293b; color: #fff; }
-    .discussion-composer .composer-files-label { font-size: 0.75rem; color: #94a3b8; margin-left: 0.25rem; }
+    .discussion-composer .composer-send {
+        width: 44px; height: 44px; border-radius: 50%;
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        color: #fff; border: none;
+        display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.2);
+    }
+    .discussion-composer .composer-send:hover { background: #0f172a; color: #fff; }
+    .discussion-composer .composer-files-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #64748b;
+        margin-left: 0.15rem;
+        padding: 0.25rem 0;
+    }
     .composer-popover { position: fixed; z-index: 9999; background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,.15); padding: 0.5rem; display: none; }
     .composer-popover.show { display: block; }
     .composer-emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.25rem; max-height: 200px; overflow-y: auto; }
@@ -75,6 +174,15 @@ $layout = auth()->check()
     .composer-users-dropdown .user-item { padding: 0.5rem 0.75rem; cursor: pointer; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.5rem; }
     .composer-users-dropdown .user-item:hover { background: #f1f5f9; }
     .composer-body-wrap { position: relative; }
+    .disc-empty {
+        text-align: center;
+        padding: 3rem 1.5rem;
+        border-radius: 1rem;
+        border: 1px dashed #cbd5e1;
+        background: #fafbfc;
+        color: #64748b;
+    }
+    .disc-empty svg { opacity: 0.4; margin-bottom: 0.75rem; color: #94a3b8; }
 </style>
 @endpush
 
@@ -82,27 +190,31 @@ $layout = auth()->check()
 <div class="page-hero">
     <div class="hero-left">
         <div class="hero-icon">
-            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8 10h8M8 14h5M5 20l1.5-3H19a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8 10h8M8 14h5M5 20l1.5-3H19a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
         </div>
         <div>
-            <h1 class="h3 hero-title">Discussions</h1>
-            <p class="hero-subtitle">{{ $discussions->total() }} {{ Str::plural('thread', $discussions->total()) }} across all courses</p>
+            <h1 class="hero-title">Discussions</h1>
+            <p class="hero-subtitle">{{ $discussions->total() }} {{ Str::plural('thread', $discussions->total()) }} across your courses</p>
         </div>
     </div>
 </div>
 
-{{-- Course filter chips --}}
-<div class="d-flex flex-wrap gap-2 mb-4">
-    <a href="{{ route('discussions.index', array_merge(request()->except('course_id', 'page'), ['course_id' => null])) }}"
-       class="discussion-chip {{ !request('course_id') ? 'active' : 'inactive' }}">
-        All Courses
-    </a>
-    @foreach($courses as $c)
-        <a href="{{ route('discussions.index', array_merge(request()->except('course_id', 'page'), ['course_id' => $c->id])) }}"
-           class="discussion-chip {{ (string)request('course_id') === (string)$c->id ? 'active' : 'inactive' }}">
-            {{ Str::limit($c->title, 28) }}
-        </a>
-    @endforeach
+<div class="disc-filter-toolbar">
+    <div class="disc-filter-toolbar__head">
+        <h2>Filter by course</h2>
+    </div>
+    <div class="disc-filter-toolbar__body">
+        <div class="disc-chips-scroll">
+            <a href="{{ route('discussions.index', array_merge(request()->except('course_id', 'page'), ['course_id' => null])) }}"
+               class="discussion-chip {{ !request('course_id') ? 'active' : 'inactive' }}"
+               title="All courses">All courses</a>
+            @foreach($courses as $c)
+                <a href="{{ route('discussions.index', array_merge(request()->except('course_id', 'page'), ['course_id' => $c->id])) }}"
+                   class="discussion-chip {{ (string)request('course_id') === (string)$c->id ? 'active' : 'inactive' }}"
+                   title="{{ $c->title }}">{{ Str::limit($c->title, 40) }}</a>
+            @endforeach
+        </div>
+    </div>
 </div>
 
 @auth
@@ -161,7 +273,7 @@ $layout = auth()->check()
 
 {{-- Thread list --}}
 @forelse($discussions as $d)
-    <div class="discussion-card-main card border-0 shadow-sm mb-4">
+    <div class="discussion-card-main card border-0 mb-4">
         <div class="card-body p-4">
             @php
                 $name = $d->user->name ?? 'U';
@@ -172,7 +284,7 @@ $layout = auth()->check()
             {{-- Main post --}}
             <div class="discussion-meta">
                 <div class="avatar">{{ $initials }}</div>
-                <div class="flex-grow-1 min-width-0">
+                <div class="flex-grow-1 min-w-0">
                     <div class="name">{{ $d->user->name }}</div>
                     <div class="context">
                         @if($d->course){{ Str::limit($d->course->title, 30) }} · @endif{{ $d->created_at->diffForHumans() }}
@@ -291,8 +403,17 @@ $layout = auth()->check()
         </div>
     </div>
 @empty
-    <div class="text-center py-5 text-muted rounded-3 bg-white border">
-        <p class="mb-0">No discussions yet.@auth Be the first to start one!@endauth</p>
+    <div class="disc-empty">
+        <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M8 10h8M8 14h5M5 20l1.5-3H19a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <p class="fw-semibold text-secondary mb-1">No threads yet</p>
+        <p class="small mb-0">
+            @auth
+                Start a discussion above — use @@mention to ping someone, or attach images.
+            @endauth
+            @guest
+                Sign in to join the conversation.
+            @endguest
+        </p>
     </div>
 @endforelse
 
