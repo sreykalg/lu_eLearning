@@ -13,9 +13,9 @@
         .welcome-bg {
             position: fixed;
             inset: 0;
-            background: url('/images/campus-bg.png') center/cover no-repeat;
-            filter: blur(2px) saturate(0.9);
-            transform: scale(1.08);
+            background: url('/images/life-stadium-bg.png') center 50% / cover no-repeat;
+            filter: blur(1px) saturate(1.05);
+            transform: scale(1.05);
         }
         .welcome-overlay {
             position: fixed;
