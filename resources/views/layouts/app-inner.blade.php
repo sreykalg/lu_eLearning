@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Life University - {{ $title ?? 'LU Academy' }}</title>
+    <title>LU Academy - {{ $title ?? 'Portal' }}</title>
     <link rel="icon" href="/images/life-university-logo.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.bunny.net/css?family=dm-sans:400,500,600,700&display=swap" rel="stylesheet">
@@ -97,6 +97,9 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
         .inner-header .logo { display: flex; align-items: center; gap: 0.5rem; color: #0f172a; font-weight: 700; text-decoration: none; }
+        .inner-header .logo .logo-brand { display: flex; flex-direction: column; line-height: 1.15; align-items: flex-start; }
+        .inner-header .logo .logo-brand .brand-title { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; color: #0f172a; }
+        .inner-header .logo .logo-brand .brand-sub { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #64748b; }
         .inner-header .search-form .search {
             flex: 1;
             min-width: 0;
@@ -269,7 +272,10 @@
                 </button>
                 <a href="{{ auth()->check() ? (auth()->user()->isStudent() ? route('student.dashboard') : (auth()->user()->isInstructor() ? route('instructor.dashboard') : (auth()->user()->isHeadOfDept() ? route('hod.dashboard') : url('/')))) : route('courses.index') }}" class="logo flex-shrink-0">
                     <img src="/images/life-university-logo.png" alt="" height="32">
-                    <span>Life University</span>
+                    <span class="logo-brand">
+                        <span class="brand-title">LU Academy</span>
+                        <span class="brand-sub">Life University</span>
+                    </span>
                 </a>
                 <div class="header-center">
                 <form action="{{ auth()->check() && auth()->user()->isStudent() ? route('student.courses') : route('courses.index') }}" method="get" class="search-form d-flex align-items-center" id="headerSearchForm">

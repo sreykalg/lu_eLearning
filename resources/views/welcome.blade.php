@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LU Academy - LIFE University E-Learning</title>
+    <title>LU Academy · Life University E-Learning</title>
     <link rel="icon" href="/images/life-university-logo.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.bunny.net/css?family=dm-sans:400,500,600,700,800&display=swap" rel="stylesheet">
@@ -293,7 +293,7 @@
                     <img src="/images/life-university-logo.png" alt="">
                     <span class="brand-text">
                         <strong>LU Academy</strong>
-                        <span>LIFE University</span>
+                        <span>Life University</span>
                     </span>
                 </a>
                 <nav class="header-actions" aria-label="Account">
@@ -311,7 +311,7 @@
             <div class="hero-card">
                 <p class="hero-eyebrow">E-learning</p>
                 <h1 class="hero-title">Learn anywhere.<br><span class="accent">Grow together.</span></h1>
-                <p class="hero-lead">Short video lessons, quizzes, assignments, and community support—built for LIFE University students and instructors.</p>
+                <p class="hero-lead">Short video lessons, quizzes, assignments, and community support—built for Life University students and instructors.</p>
                 <div class="hero-chips">
                     <span class="hero-chip">Video lessons</span>
                     <span class="hero-chip">Quizzes & exams</span>
