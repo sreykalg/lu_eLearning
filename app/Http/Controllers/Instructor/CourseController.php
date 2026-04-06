@@ -184,7 +184,7 @@ class CourseController extends Controller
             $valid['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
         }
         $course->update($valid);
-        return redirect()->route('instructor.courses.edit', $course)->with('success', 'Course updated.');
+        return redirect()->route('instructor.courses.edit', $course);
     }
 
     public function destroy(Course $course)
