@@ -33,9 +33,13 @@ $layout = auth()->user()->isStudent()
         <div class="lesson-card shadow-sm position-relative">
             <div class="ratio ratio-16x9 bg-dark d-flex align-items-center justify-content-center position-relative">
                 @if ($lesson->video_url)
+                    @php
+                        $videoPath = strtolower((string) (parse_url($lesson->video_url, PHP_URL_PATH) ?: $lesson->video_url));
+                        $videoMime = Str::endsWith($videoPath, '.webm') ? 'video/webm' : 'video/mp4';
+                    @endphp
                     <video id="lesson-video" class="w-100 h-100" controls preload="metadata"
                            data-lesson-id="{{ $lesson->id }}" data-duration="{{ $lesson->video_duration ?? 0 }}">
-                        <source src="{{ $lesson->video_url }}" type="video/mp4">
+                        <source src="{{ $lesson->video_url }}" type="{{ $videoMime }}">
                         @if($lesson->subtitle_url)
                             <track kind="subtitles" src="{{ $lesson->subtitle_url }}" srclang="en" label="English" default>
                         @endif

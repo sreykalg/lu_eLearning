@@ -73,10 +73,11 @@
                 <label class="form-label fw-medium">Video Upload</label>
                 <input type="hidden" name="uploaded_video_path" id="uploadedVideoPath" value="">
                 <div class="cb-video-dropzone" onclick="document.getElementById('videoInput').click()" id="videoDropzone">
-                    <input type="file" id="videoInput" class="d-none" accept="video/mp4,video/quicktime,video/x-msvideo">
+                    <input type="file" id="videoInput" class="d-none" accept="video/mp4,video/quicktime,video/webm,.mov">
                     <svg width="40" height="40" fill="none" stroke="#9ca3af" viewBox="0 0 24 24" class="mb-2 d-block mx-auto"><path stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     <p class="mb-0 text-muted">Drag & drop a video file or click to browse</p>
-                    <p class="small text-muted mb-0 mt-1">MP4, MOV up to 500MB</p>
+                    <p class="small text-muted mb-0 mt-1">MP4, MOV, WebM up to 500MB.</p>
+                    <p class="small text-muted mb-0 mt-1">For best compatibility in production, convert your video to MP4 (H.264/AAC) first using <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer">CloudConvert.com</a>.</p>
                     @if($lesson->video_url)
                         <p class="small text-success mt-2">Current: {{ Str::limit($lesson->video_url, 50) }}</p>
                     @endif

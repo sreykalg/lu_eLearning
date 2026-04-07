@@ -7,6 +7,9 @@ use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Process\Process;
 
 class LessonController extends Controller
 {
@@ -47,7 +50,7 @@ class LessonController extends Controller
         $valid['order'] = $course->lessons()->max('order') + 1;
 
         if ($request->hasFile('video')) {
-            $valid['video_url'] = '/storage/' . $request->file('video')->store('videos', 'public');
+            $valid['video_url'] = $this->storeVideoForWebPlayback($request->file('video'));
         } elseif (!empty(trim($valid['uploaded_video_path'] ?? ''))) {
             $valid['video_url'] = trim($valid['uploaded_video_path']);
         } elseif (!empty(trim($valid['video_url'] ?? ''))) {
@@ -115,7 +118,7 @@ class LessonController extends Controller
         $valid['is_free'] = $request->boolean('is_free');
 
         if ($request->hasFile('video')) {
-            $valid['video_url'] = '/storage/' . $request->file('video')->store('videos', 'public');
+            $valid['video_url'] = $this->storeVideoForWebPlayback($request->file('video'));
         } elseif (!empty(trim($valid['uploaded_video_path'] ?? ''))) {
             $valid['video_url'] = trim($valid['uploaded_video_path']);
         } elseif (!empty(trim($valid['video_url'] ?? ''))) {
@@ -161,8 +164,7 @@ class LessonController extends Controller
     {
         $this->authorize('update', $course);
         $request->validate(['video' => 'required|file|mimes:mp4,mov,webm|max:512000']);
-        $path = $request->file('video')->store('videos', 'public');
-        return response()->json(['path' => '/storage/' . $path]);
+        return response()->json(['path' => $this->storeVideoForWebPlayback($request->file('video'))]);
     }
 
     public function uploadAttachment(Request $request, Course $course)
@@ -191,5 +193,50 @@ class LessonController extends Controller
         ]);
         $path = $request->file('subtitle')->store('subtitles', 'public');
         return response()->json(['path' => '/storage/' . $path]);
+    }
+
+    private function storeVideoForWebPlayback(UploadedFile $video): string
+    {
+        $ext = strtolower((string) $video->getClientOriginalExtension());
+        if ($ext !== 'mov') {
+            return '/storage/' . $video->store('videos', 'public');
+        }
+
+        $targetRelative = 'videos/' . Str::uuid() . '.mp4';
+        $targetAbsolute = storage_path('app/public/' . $targetRelative);
+        if (!is_dir(dirname($targetAbsolute))) {
+            mkdir(dirname($targetAbsolute), 0755, true);
+        }
+
+        // Convert MOV into MP4 (H.264/AAC) for broad browser support.
+        $process = new Process([
+            'ffmpeg',
+            '-y',
+            '-i',
+            $video->getRealPath(),
+            '-c:v',
+            'libx264',
+            '-preset',
+            'medium',
+            '-crf',
+            '23',
+            '-c:a',
+            'aac',
+            '-b:a',
+            '128k',
+            '-movflags',
+            '+faststart',
+            $targetAbsolute,
+        ]);
+        $process->setTimeout(1800);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw ValidationException::withMessages([
+                'video' => 'Could not process this MOV file for web playback. Please convert it to MP4 (H.264/AAC) and upload again.',
+            ]);
+        }
+
+        return '/storage/' . $targetRelative;
     }
 }
