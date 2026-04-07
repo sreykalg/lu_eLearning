@@ -14,7 +14,9 @@ class EnrollmentRenewalController extends Controller
 {
     public function create(Request $request): View
     {
-        $cutoffInput = $request->query('cutoff', now()->subYear()->format('Y-m-d'));
+        $cutoffInput = $request->query('cutoff_date')
+            ?? $request->query('cutoff')
+            ?? now()->subYear()->format('Y-m-d');
         $courseIds = $request->query('course_ids', []);
         if (! is_array($courseIds)) {
             $courseIds = [];

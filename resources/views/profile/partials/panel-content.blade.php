@@ -125,13 +125,9 @@ document.getElementById('profile_photo_input')?.addEventListener('change', funct
     if (!file || !file.type.startsWith('image/')) return;
     var avatar = document.querySelector('.profile-panel .avatar');
     if (!avatar) return;
-    var form = document.getElementById('profile-info-form');
     var reader = new FileReader();
     reader.onload = function () {
         avatar.innerHTML = '<img src="' + reader.result + '" alt="Profile photo preview">';
-        if (form) {
-            form.submit();
-        }
     };
     reader.readAsDataURL(file);
 });
