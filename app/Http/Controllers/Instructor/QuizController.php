@@ -75,7 +75,7 @@ class QuizController extends Controller
 
         $quiz->update($valid);
         $this->syncQuestions($request, $quiz);
-        return redirect()->route('instructor.quizzes.edit', [$course, $quiz])->with('success', 'Quiz updated.');
+        return redirect()->route('instructor.quizzes.edit', [$course, $quiz]);
     }
 
     public function destroy(Course $course, Quiz $quiz)

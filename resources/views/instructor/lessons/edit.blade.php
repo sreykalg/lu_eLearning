@@ -4,6 +4,53 @@
 
 @push('styles')
 <style>
+    .ls-edit-shell {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+    }
+    .ls-edit-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.9rem;
+        padding: 1.15rem 1.25rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+    }
+    .ls-edit-head h4 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #0f172a;
+    }
+    .ls-edit-subtitle {
+        margin: 0.3rem 0 0;
+        font-size: 0.86rem;
+        color: #64748b;
+    }
+    .ls-edit-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .ls-edit-actions .btn { border-radius: 0.6rem; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.4rem 0.7rem; }
+    .ls-edit-body { padding: 1.25rem; }
+    .ls-block {
+        border: 1px solid #e2e8f0;
+        border-radius: 0.85rem;
+        background: #fff;
+        padding: 1rem 1rem 0.4rem;
+        margin-bottom: 1rem;
+    }
+    .ls-section-title {
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 0.85rem;
+    }
     .cb-video-dropzone { border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 2rem; text-align: center; background: #f9fafb; cursor: pointer; transition: all 0.2s; }
     .cb-video-dropzone:hover, .cb-video-dropzone.dragover { border-color: #0f172a; background: #f1f5f9; }
     .cb-attach-dropzone { border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 1rem; text-align: center; background: #f9fafb; font-size: 0.875rem; color: #6b7280; cursor: pointer; transition: all 0.2s; }
@@ -38,9 +85,13 @@
         @include('instructor.course-builder.sidebar', ['course' => $course, 'lesson' => $lesson])
     </div>
     <div class="cb-main">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 fw-bold">Edit Lesson</h4>
-            <div class="d-flex gap-2">
+        <div class="ls-edit-shell">
+        <div class="ls-edit-head">
+            <div>
+                <h4>Edit Lesson</h4>
+                <p class="ls-edit-subtitle">Update lesson media, subtitles, notes, and in-video checks in one place.</p>
+            </div>
+            <div class="ls-edit-actions">
                 <button type="submit" form="lessonForm" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                     Draft
@@ -59,10 +110,12 @@
                 </button>
             </div>
         </div>
-
+        <div class="ls-edit-body">
         <form id="lessonForm" action="{{ route('instructor.lessons.update', [$course, $lesson]) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <div class="ls-block">
+                <div class="ls-section-title">Lesson Details</div>
             <div class="mb-4">
                 <label class="form-label fw-medium">Lesson Title</label>
                 <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $lesson->title) }}" required>
@@ -132,11 +185,12 @@
                 <input type="checkbox" name="is_free" value="1" class="form-check-input" id="is_free" {{ old('is_free', $lesson->is_free) ? 'checked' : '' }}>
                 <label class="form-check-label" for="is_free">Free preview</label>
             </div>
+            </div>
 
             <button type="submit" class="btn btn-primary">Save Lesson</button>
         </form>
 
-        <hr class="my-4">
+        <div class="ls-block mt-3">
         <h6 class="fw-medium mb-2">In-video quizzes</h6>
         <ul class="list-group list-group-flush mb-3">
             @forelse($lesson->videoQuizzes as $vq)
@@ -153,6 +207,9 @@
             @endforelse
         </ul>
         <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addVideoQuizModal">+ Add quiz at minute</button>
+        </div>
+    </div>
+    </div>
     </div>
 </div>
 

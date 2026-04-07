@@ -149,7 +149,7 @@ class LessonController extends Controller
                 $lesson->attachments()->create(['path' => $att['path'], 'original_name' => $att['original_name']]);
             }
         }
-        return redirect()->route('instructor.lessons.edit', [$course, $lesson])->with('success', 'Lesson updated.');
+        return redirect()->route('instructor.lessons.edit', [$course, $lesson]);
     }
 
     public function destroy(Course $course, Lesson $lesson)
