@@ -222,7 +222,13 @@ $layout = auth()->check()
 @php
     $composerName = auth()->user()->name ?? 'U';
     $composerParts = array_filter(explode(' ', $composerName));
-    $composerInitials = count($composerParts) >= 2 ? Str::upper(mb_substr($composerParts[0],0,1).mb_substr($composerParts[count($composerParts)-1],0,1)) : Str::upper(mb_substr($composerName,0,2));
+    $composerCleanParts = array_values(array_filter(array_map(fn ($p) => preg_replace('/[^A-Za-z0-9]/', '', $p), $composerParts)));
+    if (count($composerCleanParts) >= 2) {
+        $composerInitials = Str::upper(mb_substr($composerCleanParts[0], 0, 1) . mb_substr($composerCleanParts[count($composerCleanParts)-1], 0, 1));
+    } else {
+        $composerFallback = preg_replace('/[^A-Za-z0-9]/', '', $composerName);
+        $composerInitials = Str::upper(mb_substr($composerFallback !== '' ? $composerFallback : 'U', 0, 2));
+    }
 @endphp
 {{-- New discussion input --}}
 <div class="discussion-composer mb-4">
@@ -278,7 +284,13 @@ $layout = auth()->check()
             @php
                 $name = $d->user->name ?? 'U';
                 $parts = array_filter(explode(' ', $name));
-                $initials = count($parts) >= 2 ? Str::upper(mb_substr($parts[0],0,1).mb_substr($parts[count($parts)-1],0,1)) : Str::upper(mb_substr($name,0,2));
+                $cleanParts = array_values(array_filter(array_map(fn ($p) => preg_replace('/[^A-Za-z0-9]/', '', $p), $parts)));
+                if (count($cleanParts) >= 2) {
+                    $initials = Str::upper(mb_substr($cleanParts[0], 0, 1) . mb_substr($cleanParts[count($cleanParts)-1], 0, 1));
+                } else {
+                    $fallback = preg_replace('/[^A-Za-z0-9]/', '', $name);
+                    $initials = Str::upper(mb_substr($fallback !== '' ? $fallback : 'U', 0, 2));
+                }
                 $topReplies = $d->replies;
             @endphp
             {{-- Main post --}}
