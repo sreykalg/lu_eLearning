@@ -36,6 +36,17 @@
     .qz-edit-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .qz-edit-actions .btn { border-radius: 0.6rem; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.4rem 0.7rem; }
     .qz-edit-body { padding: 1.25rem; }
+    .qz-edit-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 0.7rem;
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: #475569;
+        text-decoration: none;
+    }
+    .qz-edit-back:hover { color: #0f172a; }
     .qz-block {
         border: 1px solid #e2e8f0;
         border-radius: 0.85rem;
@@ -69,6 +80,10 @@
         @include('instructor.course-builder.sidebar', ['course' => $course, 'quiz' => $quiz])
     </div>
     <div class="cb-main">
+        <a href="{{ route('instructor.courses.edit', $course) }}" class="qz-edit-back">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Back to Course details
+        </a>
         <div class="qz-edit-shell">
         <div class="qz-edit-head">
             <div>
