@@ -100,6 +100,7 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::delete('/announcements/{announcement}', [InstructorAnnouncementController::class, 'destroy'])->name('announcements.destroy');
     Route::resource('courses', InstructorCourseController::class)->except(['show'])->parameters(['courses' => 'course']);
     Route::post('courses/{course}/submit-approval', [InstructorCourseController::class, 'submitForApproval'])->name('courses.submit-approval');
+    Route::patch('courses/{course}/toggle-publish', [InstructorCourseController::class, 'togglePublish'])->name('courses.toggle-publish');
     Route::post('courses/{course}/modules', [InstructorModuleController::class, 'store'])->name('modules.store');
     Route::put('courses/{course}/modules/{module}', [InstructorModuleController::class, 'update'])->name('modules.update');
     Route::delete('courses/{course}/modules/{module}', [InstructorModuleController::class, 'destroy'])->name('modules.destroy');

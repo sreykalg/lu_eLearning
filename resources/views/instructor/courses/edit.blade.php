@@ -8,6 +8,17 @@
         font-size: 0.8125rem;
         margin-bottom: 1rem;
     }
+    .cb-edit-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .cb-edit-back:hover { color: #0f172a; }
     .cb-edit-breadcrumb a {
         color: #64748b;
         text-decoration: none;
@@ -122,6 +133,20 @@
         border-radius: 0.75rem;
         border: 1px solid #e2e8f0;
     }
+    .cb-status-actions {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .cb-status-toggle {
+        border-radius: 9999px;
+        padding: 0.38rem 0.85rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
     .cb-form-footer {
         display: flex;
         flex-wrap: wrap;
@@ -165,6 +190,10 @@
     </div>
 @endif
 
+<a href="{{ route('instructor.courses.index') }}" class="cb-edit-back">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M15 18l-6-6 6-6"/></svg>
+        Back
+</a>
 <div class="cb-edit-breadcrumb">
     <a href="{{ route('instructor.courses.index') }}">Course Builder</a>
     <span class="text-muted"> / </span>
@@ -290,6 +319,22 @@
                     <div class="cb-status-row mt-4">
                         <span class="fw-semibold text-secondary small text-uppercase" style="letter-spacing: 0.06em;">Status</span>
                         <span class="badge rounded-pill px-3 py-2 {{ $course->approval_status === 'approved' ? 'bg-success' : ($course->approval_status === 'pending' ? 'bg-warning text-dark' : ($course->approval_status === 'needs_revision' ? 'bg-danger' : 'bg-secondary')) }}">{{ $statusLabel }}</span>
+                        @if($course->approval_status === 'approved')
+                            <span class="badge rounded-pill px-3 py-2 {{ $course->is_published ? 'bg-success-subtle text-success-emphasis border border-success-subtle' : 'bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle' }}">
+                                {{ $course->is_published ? 'Active for students' : 'Inactive for students' }}
+                            </span>
+                            <div class="cb-status-actions">
+                                <form action="{{ route('instructor.courses.toggle-publish', $course) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    @if($course->is_published)
+                                        <button type="submit" class="btn btn-outline-danger cb-status-toggle">Set inactive</button>
+                                    @else
+                                        <button type="submit" class="btn btn-outline-success cb-status-toggle">Set active</button>
+                                    @endif
+                                </form>
+                            </div>
+                        @endif
                     </div>
                     @if($course->revision_notes)
                         <div class="mt-3 p-3 rounded-3 bg-light border">

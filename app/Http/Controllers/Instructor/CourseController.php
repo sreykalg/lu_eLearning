@@ -207,4 +207,24 @@ class CourseController extends Controller
         ]);
         return redirect()->route('instructor.courses.index')->with('success', 'Course submitted for approval.');
     }
+
+    public function togglePublish(Course $course): RedirectResponse
+    {
+        $this->authorize('update', $course);
+
+        if ($course->approval_status !== Course::APPROVAL_APPROVED) {
+            return back()->with('error', 'Only approved courses can be published or unpublished.');
+        }
+
+        $course->update([
+            'is_published' => ! $course->is_published,
+        ]);
+
+        return back()->with(
+            'success',
+            $course->is_published
+                ? 'Course is now active for students.'
+                : 'Course is now inactive for students.'
+        );
+    }
 }
