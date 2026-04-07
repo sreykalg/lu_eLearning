@@ -34,8 +34,9 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Thumbnail (optional)</label>
-                        <input type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/*">
+                        <input type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
                         @error('thumbnail')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <p class="small text-muted mt-2 mb-0">Use JPG, PNG, or WebP up to 4MB. Uploaded thumbnails are optimized to web-safe format for production.</p>
                     </div>
                     <div class="border rounded p-3 mb-3">
                         <h6 class="fw-bold mb-3">Grading Setup (must total 100)</h6>

@@ -10,7 +10,9 @@ use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class CourseController extends Controller
@@ -108,7 +110,7 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'level' => 'required|in:beginner,intermediate,advanced',
-            'thumbnail' => 'nullable|image|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'quiz_weight' => 'required|integer|in:10,20',
             'assignment_weight' => 'required|integer|in:10,20',
             'midterm_weight' => 'required|integer|in:30,40',
@@ -134,7 +136,7 @@ class CourseController extends Controller
         $valid['submitted_at'] = now();
 
         if ($request->hasFile('thumbnail')) {
-            $valid['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+            $valid['thumbnail'] = $this->storeThumbnailForWeb($request->file('thumbnail'));
         }
 
         Course::create($valid);
@@ -161,7 +163,7 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'level' => 'required|in:beginner,intermediate,advanced',
-            'thumbnail' => 'nullable|image|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'quiz_weight' => 'required|integer|in:10,20',
             'assignment_weight' => 'required|integer|in:10,20',
             'midterm_weight' => 'required|integer|in:30,40',
@@ -181,7 +183,11 @@ class CourseController extends Controller
         }
 
         if ($request->hasFile('thumbnail')) {
-            $valid['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+            $newThumbnailPath = $this->storeThumbnailForWeb($request->file('thumbnail'));
+            if (! empty($course->thumbnail)) {
+                Storage::disk('public')->delete($course->thumbnail);
+            }
+            $valid['thumbnail'] = $newThumbnailPath;
         }
         $course->update($valid);
         return redirect()->route('instructor.courses.edit', $course);
@@ -226,5 +232,30 @@ class CourseController extends Controller
                 ? 'Course is now active for students.'
                 : 'Course is now inactive for students.'
         );
+    }
+
+    private function storeThumbnailForWeb(UploadedFile $thumbnail): string
+    {
+        if (function_exists('imagecreatefromstring') && function_exists('imagejpeg')) {
+            $raw = @file_get_contents($thumbnail->getRealPath());
+            if ($raw !== false) {
+                $image = @imagecreatefromstring($raw);
+                if ($image !== false) {
+                    $relativePath = 'thumbnails/' . Str::uuid() . '.jpg';
+                    $absolutePath = storage_path('app/public/' . $relativePath);
+                    $dir = dirname($absolutePath);
+                    if (! is_dir($dir)) {
+                        @mkdir($dir, 0755, true);
+                    }
+                    if (@imagejpeg($image, $absolutePath, 85)) {
+                        imagedestroy($image);
+                        return $relativePath;
+                    }
+                    imagedestroy($image);
+                }
+            }
+        }
+
+        return $thumbnail->store('thumbnails', 'public');
     }
 }

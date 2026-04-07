@@ -242,8 +242,9 @@
                             </div>
                             <div class="mb-0">
                                 <label class="form-label" for="course_thumbnail">Thumbnail (optional)</label>
-                                <input id="course_thumbnail" type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/*">
+                                <input id="course_thumbnail" type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
                                 @error('thumbnail')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <p class="small text-muted mt-2 mb-0">Use JPG, PNG, or WebP up to 4MB. Uploaded thumbnails are optimized to web-safe format for production.</p>
                                 @if($course->thumbnail)
                                     <div class="cb-thumb-preview mt-3">
                                         <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="Current course thumbnail">
