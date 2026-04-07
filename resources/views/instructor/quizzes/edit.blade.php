@@ -2,6 +2,60 @@
 
 @include('instructor.course-builder.sidebar-styles')
 
+@push('styles')
+<style>
+    .qz-edit-shell {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+    }
+    .qz-edit-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.9rem;
+        padding: 1.15rem 1.25rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+    }
+    .qz-edit-head h4 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #0f172a;
+    }
+    .qz-edit-subtitle {
+        margin: 0.3rem 0 0;
+        font-size: 0.86rem;
+        color: #64748b;
+    }
+    .qz-edit-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .qz-edit-actions .btn { border-radius: 0.6rem; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.4rem 0.7rem; }
+    .qz-edit-body { padding: 1.25rem; }
+    .qz-block {
+        border: 1px solid #e2e8f0;
+        border-radius: 0.85rem;
+        background: #fff;
+        padding: 1rem 1rem 0.4rem;
+        margin-bottom: 1rem;
+    }
+    .qz-section-title {
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 0.85rem;
+    }
+    .question-block { border: 1px solid #e2e8f0; border-radius: 0.85rem; overflow: hidden; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
+    .question-block .card-body { padding: 0.9rem; }
+</style>
+@endpush
+
 @section('content')
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}
@@ -15,9 +69,13 @@
         @include('instructor.course-builder.sidebar', ['course' => $course, 'quiz' => $quiz])
     </div>
     <div class="cb-main">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0 fw-bold">Edit Quiz</h4>
-            <div class="d-flex gap-2">
+        <div class="qz-edit-shell">
+        <div class="qz-edit-head">
+            <div>
+                <h4>Edit Quiz</h4>
+                <p class="qz-edit-subtitle">Refine quiz settings, attempts, and questions for this course module.</p>
+            </div>
+            <div class="qz-edit-actions">
                 <button type="submit" form="quizForm" class="btn btn-outline-secondary btn-sm">Draft</button>
                 <form action="{{ route('instructor.quizzes.destroy', [$course, $quiz]) }}" method="post" class="d-inline" onsubmit="return confirm('Delete this quiz?')">
                     @csrf
@@ -27,10 +85,12 @@
                 <button type="submit" form="quizForm" class="btn btn-sm" style="background:#0f172a;color:#fff;border:none;">Publish</button>
             </div>
         </div>
-
+        <div class="qz-edit-body">
         <form action="{{ route('instructor.quizzes.update', [$course, $quiz]) }}" method="post" id="quizForm">
                     @csrf
                     @method('PUT')
+                    <div class="qz-block">
+                        <div class="qz-section-title">Quiz Details</div>
                     <div class="mb-3">
                         <label class="form-label">Title</label>
                         <input type="text" name="title" class="form-control" value="{{ old('title', $quiz->title) }}" required>
@@ -77,8 +137,9 @@
                         <input type="checkbox" name="is_required" value="1" class="form-check-input" id="is_required" {{ old('is_required', $quiz->is_required) ? 'checked' : '' }}>
                         <label class="form-check-label" for="is_required">Required</label>
                     </div>
+                    </div>
 
-                    <hr>
+                    <div class="qz-block">
                     <h5 class="mb-3">Questions <span class="text-muted small fw-normal">(Total: <span id="questionsTotalPoints">0</span> pts)</span></h5>
                     <div id="questionsContainer">
                         @foreach($quiz->questions as $i => $q)
@@ -135,12 +196,15 @@
                         @endforeach
                     </div>
                     <button type="button" class="btn btn-outline-secondary btn-sm mb-3" id="addQuestion">+ Add question</button>
+                    </div>
 
                     <hr>
                     <button type="submit" class="btn btn-primary">Save Quiz</button>
                     <a href="{{ route('instructor.courses.edit', $course) }}" class="btn btn-outline-secondary">Cancel</a>
                 </form>
-    </div>
+        </div>
+        </div>
+</div>
 </div>
 
     @push('scripts')
