@@ -55,9 +55,16 @@ class User extends Authenticatable
         return $this->hasMany(Enrollment::class);
     }
 
+    public function activeEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)->whereNull('archived_at');
+    }
+
     public function enrolledCourses()
     {
-        return $this->belongsToMany(Course::class, 'enrollments')->withTimestamps();
+        return $this->belongsToMany(Course::class, 'enrollments')
+            ->withTimestamps()
+            ->whereNull('enrollments.archived_at');
     }
 
     public function lessonProgress()

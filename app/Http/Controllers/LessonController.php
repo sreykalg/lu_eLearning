@@ -22,8 +22,10 @@ class LessonController extends Controller
             abort(404);
         }
 
-        $enrollment = Enrollment::where('user_id', $request->user()->id)
+        $enrollment = Enrollment::query()
+            ->where('user_id', $request->user()->id)
             ->where('course_id', $course->id)
+            ->active()
             ->first();
 
         if (!$enrollment && !$lesson->is_free) {
@@ -95,8 +97,10 @@ class LessonController extends Controller
             abort(404);
         }
         $course = $lesson->course;
-        $enrollment = Enrollment::where('user_id', $request->user()->id)
+        $enrollment = Enrollment::query()
+            ->where('user_id', $request->user()->id)
             ->where('course_id', $course->id)
+            ->active()
             ->first();
         if (!$enrollment && !$lesson->is_free) {
             return redirect()->route('courses.show', $course)

@@ -13,7 +13,7 @@ class ProgressController extends Controller
         $courses = $request->user()->courses()->orderBy('title')->get();
         $rows = [];
         foreach ($courses as $course) {
-            foreach ($course->enrollments()->with('user')->get() as $e) {
+            foreach ($course->activeEnrollments()->with('user')->get() as $e) {
                 $user = $e->user;
                 if (!$user->isStudent()) continue; // only show actual students
                 $lessons = $course->lessons()->count();

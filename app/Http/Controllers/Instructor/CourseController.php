@@ -19,7 +19,7 @@ class CourseController extends Controller
     {
         $courses = $request->user()
             ->courses()
-            ->withCount(['lessons', 'quizzes', 'assignments', 'enrollments'])
+            ->withCount(['lessons', 'quizzes', 'assignments', 'activeEnrollments as enrollments_count'])
             ->orderBy('title')
             ->get();
 
@@ -34,7 +34,7 @@ class CourseController extends Controller
             $selectedCourse = $courses->first();
         }
         if ($selectedCourse) {
-            $students = $selectedCourse->enrollments()
+            $students = $selectedCourse->activeEnrollments()
                 ->with('user')
                 ->orderByDesc('created_at')
                 ->get()
@@ -76,7 +76,7 @@ class CourseController extends Controller
     {
         abort_unless($course->instructor_id === $request->user()->id, 403);
 
-        $enrollment = $course->enrollments()
+        $enrollment = $course->activeEnrollments()
             ->where('user_id', $student->id)
             ->first();
 
@@ -84,7 +84,7 @@ class CourseController extends Controller
             return back()->with('error', 'Student is not enrolled in this course.');
         }
 
-        $enrollment->delete();
+        $enrollment->update(['archived_at' => now()]);
 
         return redirect()
             ->route('instructor.my-courses', ['course' => $course->slug])

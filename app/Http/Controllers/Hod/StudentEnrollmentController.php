@@ -19,7 +19,7 @@ class StudentEnrollmentController extends Controller
     {
         $courses = Course::where('is_published', true)
             ->with('instructor')
-            ->withCount('enrollments')
+            ->withCount(['activeEnrollments as enrollments_count'])
             ->orderBy('title')
             ->get();
 
@@ -32,7 +32,7 @@ class StudentEnrollmentController extends Controller
             abort(404);
         }
 
-        $enrollments = $course->enrollments()
+        $enrollments = $course->activeEnrollments()
             ->with('user')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -151,10 +151,10 @@ class StudentEnrollmentController extends Controller
             'enrollment_id' => 'required|exists:enrollments,id',
         ]);
 
-        $enrollment = Enrollment::findOrFail($validated['enrollment_id']);
+        $enrollment = Enrollment::query()->active()->findOrFail($validated['enrollment_id']);
         $course = $enrollment->course;
 
-        $enrollment->delete();
+        $enrollment->update(['archived_at' => now()]);
 
         return redirect()
             ->route('hod.students.show', $course)

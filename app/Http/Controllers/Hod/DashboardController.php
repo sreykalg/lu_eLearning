@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Hod;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\View\View;
 
@@ -19,7 +18,7 @@ class DashboardController extends Controller
             'pending' => Course::where('is_published', false)->count(),
         ];
         $instructors = User::where('role', 'instructor')->withCount('courses')->get();
-        $completion = Course::where('is_published', true)->withCount(['lessons', 'enrollments'])->take(5)->get();
+        $completion = Course::where('is_published', true)->withCount(['lessons', 'activeEnrollments as enrollments_count'])->take(5)->get();
         $completion->each(function ($c) {
             $c->completion_pct = 0;
             $total = $c->enrollments_count * max(1, $c->lessons_count);

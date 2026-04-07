@@ -17,7 +17,7 @@ class OverviewController extends Controller
 
         $enrolledIds = collect();
         if ($request->user()) {
-            $enrolledIds = $request->user()->enrollments()->pluck('course_id');
+            $enrolledIds = $request->user()->activeEnrollments()->pluck('course_id');
         }
 
         $layout = auth()->user()->isStudent()

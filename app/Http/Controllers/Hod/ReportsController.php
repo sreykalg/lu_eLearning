@@ -21,7 +21,7 @@ class ReportsController extends Controller
         $submissionRate = $assignments > 0 ? (int) round(($submissions / max($assignments, 1)) * 100) : 0;
         $examAttempts = QuizAttempt::whereHas('quiz', fn ($q) => $q->whereIn('type', ['midterm', 'final']))->count();
         $examQuizzes = Quiz::whereIn('type', ['midterm', 'final'])->count();
-        $courses = Course::where('is_published', true)->withCount(['lessons', 'enrollments'])->get();
+        $courses = Course::where('is_published', true)->withCount(['lessons', 'activeEnrollments as enrollments_count'])->get();
         return view('hod.reports', compact('avgQuiz', 'submissionRate', 'examAttempts', 'examQuizzes', 'courses'));
     }
 }

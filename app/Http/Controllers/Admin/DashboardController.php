@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $stats = [
             'users' => User::count(),
             'courses' => Course::count(),
-            'enrollments' => Enrollment::count(),
+            'enrollments' => Enrollment::active()->count(),
         ];
         $recentCourses = Course::with('instructor')->latest()->take(5)->get();
         $usersByRole = User::selectRaw('role, count(*) as total')->groupBy('role')->pluck('total', 'role');

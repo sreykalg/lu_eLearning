@@ -17,7 +17,7 @@ class QuizController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $quizzes = Quiz::whereHas('course', fn ($q) => $q->whereHas('enrollments', fn ($e) => $e->where('user_id', $user->id)))
+        $quizzes = Quiz::whereHas('course', fn ($q) => $q->whereHas('enrollments', fn ($e) => $e->where('user_id', $user->id)->whereNull('archived_at')))
             ->with('course')
             ->withCount('questions')
             ->orderBy('created_at')
@@ -31,8 +31,10 @@ class QuizController extends Controller
         if ($quiz->course_id !== $course->id) {
             abort(404);
         }
-        $enrollment = Enrollment::where('user_id', $request->user()->id)
+        $enrollment = Enrollment::query()
+            ->where('user_id', $request->user()->id)
             ->where('course_id', $course->id)
+            ->active()
             ->first();
         if (!$enrollment && !$request->user()->isInstructor() && !$request->user()->isHeadOfDept()) {
             return redirect()->route('courses.show', $course)
@@ -48,8 +50,10 @@ class QuizController extends Controller
         if ($quiz->course_id !== $course->id) {
             abort(404);
         }
-        $enrollment = Enrollment::where('user_id', $request->user()->id)
+        $enrollment = Enrollment::query()
+            ->where('user_id', $request->user()->id)
             ->where('course_id', $course->id)
+            ->active()
             ->first();
         if (!$enrollment && !$request->user()->isInstructor() && !$request->user()->isHeadOfDept()) {
             return redirect()->route('courses.show', $course)->with('error', 'Please enroll to take this quiz.');

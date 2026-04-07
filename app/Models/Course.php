@@ -91,6 +91,11 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function activeEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)->whereNull('archived_at');
+    }
+
     public function quizzes()
     {
         return $this->hasMany(Quiz::class)->orderBy('order');

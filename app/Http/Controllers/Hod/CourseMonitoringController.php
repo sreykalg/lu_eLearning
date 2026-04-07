@@ -19,7 +19,7 @@ class CourseMonitoringController extends Controller
             ->where('is_published', true)
             ->where('approval_status', Course::APPROVAL_APPROVED)
             ->with('instructor')
-            ->withCount('enrollments')
+            ->withCount(['activeEnrollments as enrollments_count'])
             ->orderBy('title')
             ->get();
 
@@ -32,7 +32,7 @@ class CourseMonitoringController extends Controller
             abort(404);
         }
 
-        $students = $course->enrollments()
+        $students = $course->activeEnrollments()
             ->with('user')
             ->orderByDesc('created_at')
             ->get()
@@ -56,7 +56,7 @@ class CourseMonitoringController extends Controller
             abort(404);
         }
 
-        $enrolled = $course->enrollments()->where('user_id', $student->id)->exists();
+        $enrolled = $course->activeEnrollments()->where('user_id', $student->id)->exists();
         abort_unless($enrolled, 404);
 
         $performance = $this->calculatePerformance($course, $student);

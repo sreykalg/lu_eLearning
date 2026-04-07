@@ -142,6 +142,7 @@ class GradeController extends Controller
                 'items' => $items->sortByDesc('pct')->values(),
                 'current_pct' => $coursePct,
                 'letter' => $letter,
+                'enrollment_archived' => $e->isArchived(),
             ]);
         }
 

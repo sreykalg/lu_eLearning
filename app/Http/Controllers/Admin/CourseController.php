@@ -11,7 +11,7 @@ class CourseController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Course::with('instructor')->withCount(['lessons', 'enrollments'])->orderBy('created_at', 'desc');
+        $query = Course::with('instructor')->withCount(['lessons', 'activeEnrollments as enrollments_count'])->orderBy('created_at', 'desc');
         if ($request->filled('status')) {
             if ($request->status === 'published') {
                 $query->where('is_published', true);

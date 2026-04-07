@@ -49,6 +49,7 @@
     }
     .grades-course-title { font-weight: 600; font-size: 1rem; color: #0f172a; }
     .grades-course-current { font-size: 0.875rem; color: #64748b; }
+    .grades-past-pill { font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 9999px; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
     .grades-letter-pill {
         padding: 0.25rem 0.75rem;
         border-radius: 9999px;
@@ -137,7 +138,12 @@
     <div class="grades-course-section">
         <div class="grades-course-header">
             <div>
-                <div class="grades-course-title">{{ $cd['course']->title }}</div>
+                <div class="grades-course-title d-flex align-items-center flex-wrap gap-2">
+                    <span>{{ $cd['course']->title }}</span>
+                    @if(!empty($cd['enrollment_archived']))
+                        <span class="grades-past-pill">Past enrollment</span>
+                    @endif
+                </div>
                 @if($cd['current_pct'] !== null)
                     <span class="grades-course-current">Current: {{ $cd['current_pct'] }}%</span>
                 @endif

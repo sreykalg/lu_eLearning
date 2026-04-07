@@ -16,7 +16,7 @@ class AssignmentController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $assignments = Assignment::whereHas('course', fn ($q) => $q->whereHas('enrollments', fn ($e) => $e->where('user_id', $user->id)))
+        $assignments = Assignment::whereHas('course', fn ($q) => $q->whereHas('enrollments', fn ($e) => $e->where('user_id', $user->id)->whereNull('archived_at')))
             ->with('course')
             ->orderBy('due_at')
             ->get();
@@ -29,8 +29,10 @@ class AssignmentController extends Controller
         if ($assignment->course_id !== $course->id) {
             abort(404);
         }
-        $enrollment = Enrollment::where('user_id', $request->user()->id)
+        $enrollment = Enrollment::query()
+            ->where('user_id', $request->user()->id)
             ->where('course_id', $course->id)
+            ->active()
             ->first();
         if (!$enrollment && !$request->user()->isInstructor() && !$request->user()->isHeadOfDept()) {
             return redirect()->route('courses.show', $course)
@@ -47,8 +49,10 @@ class AssignmentController extends Controller
         if ($assignment->course_id !== $course->id) {
             abort(404);
         }
-        $enrollment = Enrollment::where('user_id', $request->user()->id)
+        $enrollment = Enrollment::query()
+            ->where('user_id', $request->user()->id)
             ->where('course_id', $course->id)
+            ->active()
             ->first();
         if (!$enrollment) {
             return redirect()->route('courses.show', $course)->with('error', 'Please enroll to submit.');

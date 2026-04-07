@@ -13,8 +13,8 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $courseIds = $user->enrollments()->pluck('course_id');
-        $enrollments = $user->enrollments()->with(['course.instructor'])->get();
+        $courseIds = $user->activeEnrollments()->pluck('course_id');
+        $enrollments = $user->activeEnrollments()->with(['course.instructor'])->get();
 
         $totalProgress = 0;
         $count = 0;

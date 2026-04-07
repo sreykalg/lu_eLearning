@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request): View
     {
-        $courses = $request->user()->courses()->withCount(['lessons', 'quizzes', 'assignments', 'enrollments'])->orderBy('order')->get();
+        $courses = $request->user()->courses()->withCount(['lessons', 'quizzes', 'assignments', 'activeEnrollments as enrollments_count'])->orderBy('order')->get();
 
         $courses->each(function ($course) {
             $course->completion_pct = 0;

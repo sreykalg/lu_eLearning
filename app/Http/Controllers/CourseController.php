@@ -26,7 +26,7 @@ class CourseController extends Controller
 
         $enrolledIds = collect();
         if ($request->user()) {
-            $enrolledIds = $request->user()->enrollments()->pluck('course_id');
+            $enrolledIds = $request->user()->activeEnrollments()->pluck('course_id');
         }
 
         return view('courses.index', compact('courses', 'enrolledIds'));
@@ -48,8 +48,10 @@ class CourseController extends Controller
         $progress = collect();
         $coursePoints = 0;
         if ($request->user()) {
-            $enrollment = Enrollment::where('user_id', $request->user()->id)
+            $enrollment = Enrollment::query()
+                ->where('user_id', $request->user()->id)
                 ->where('course_id', $course->id)
+                ->active()
                 ->first();
             if ($enrollment) {
                 $progress = $request->user()->lessonProgress()
@@ -65,13 +67,21 @@ class CourseController extends Controller
 
     public function enroll(Request $request, Course $course)
     {
-        $exists = Enrollment::where('user_id', $request->user()->id)
+        $userId = $request->user()->id;
+        $existing = Enrollment::where('user_id', $userId)
             ->where('course_id', $course->id)
-            ->exists();
+            ->first();
 
-        if (!$exists) {
+        if ($existing) {
+            if ($existing->isArchived()) {
+                $existing->update([
+                    'archived_at' => null,
+                    'completed_at' => null,
+                ]);
+            }
+        } else {
             Enrollment::create([
-                'user_id' => $request->user()->id,
+                'user_id' => $userId,
                 'course_id' => $course->id,
             ]);
         }
