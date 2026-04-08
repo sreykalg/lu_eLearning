@@ -116,6 +116,26 @@ $layout = auth()->check()
     .discussion-card-reply .discussion-meta .avatar.regular { background: #e2e8f0; color: #0f172a; }
     .discussion-card-reply .name { font-weight: 600; color: #111; font-size: 0.9rem; }
     .discussion-card-reply .context { color: #64748b; font-size: 0.8125rem; }
+    .discussion-thread-scroll {
+        max-height: min(68vh, 920px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 0.25rem;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+    }
+    .discussion-thread-scroll::-webkit-scrollbar { width: 8px; }
+    .discussion-thread-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .discussion-thread-scroll::-webkit-scrollbar-track { background: transparent; }
+    .post-body-text,
+    .discussion-card-reply .text-body-secondary {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+    .discussion-card-main img {
+        max-width: 100%;
+        height: auto;
+    }
     .mention { color: #2563eb; font-weight: 600; }
     .discussion-reply-inline { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #e5e8f0; }
     .discussion-reply-inline .reply-input-wrap { flex: 1; min-width: 0; }
@@ -278,6 +298,7 @@ $layout = auth()->check()
 @endauth
 
 {{-- Thread list --}}
+<div class="discussion-thread-scroll">
 @forelse($discussions as $d)
     <div class="discussion-card-main card border-0 mb-4">
         <div class="card-body p-4">
@@ -428,6 +449,7 @@ $layout = auth()->check()
         </p>
     </div>
 @endforelse
+</div>
 
 {{ $discussions->links() }}
 
