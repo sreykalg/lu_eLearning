@@ -1,59 +1,109 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LU Academy Learning Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A role-based learning platform built with Laravel, used by students, instructors, HoD, and admin to manage courses, lessons, quizzes, assignments, announcements, discussions, and grading.
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.2
+- Laravel 12
+- MySQL
+- Blade + Bootstrap (primary UI framework)
+- Vite
+- Tailwind tooling available (not primary runtime styling layer)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Core Modules
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Authentication + role-based dashboards
+- Course catalog and enrollment
+- Course builder (modules, lessons, quizzes, assignments)
+- Student learning flow (watch lessons, take quizzes, submit assignments)
+- Progress, grades, and points
+- Announcements and discussions
+- HoD review/approval and monitoring tools
+- Enrollment archive workflow (`archived_at`) for historical retention
 
-## Learning Laravel
+## Recent Product Behavior
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- Enrollments support archive/unarchive via `archived_at` (instead of hard delete).
+- Student/instructor/HoD counts use active enrollments where appropriate.
+- Instructor can toggle course publish state (for approved courses).
+- Lesson video upload supports MP4/MOV/WebM with server-side compatibility handling.
+- Lesson page includes in-video quiz checkpoints and timeline marker support.
+- UI has been refreshed across multiple student/instructor/HoD screens.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Local Setup
 
-## Laravel Sponsors
+1. Clone the repository
+2. Install backend dependencies
+3. Configure environment
+4. Run migrations
+5. Install frontend dependencies
+6. Start app
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm install
+npm run dev
+php artisan serve
+```
 
-### Premium Partners
+Or use the provided composer helper:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer run setup
+```
 
-## Contributing
+## Environment Notes
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Database defaults in `.env.example`:
+  - `DB_CONNECTION=mysql`
+  - `DB_DATABASE=lu_learn`
+- Files and uploads:
+  - Ensure storage symlink is available:
 
-## Code of Conduct
+```bash
+php artisan storage:link
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- For assignment deadline correctness, set timezone in `.env`:
+  - `APP_TIMEZONE=Asia/Kuala_Lumpur` (or your local timezone)
 
-## Security Vulnerabilities
+## Video Compatibility Note
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+For best production playback compatibility:
+
+- Prefer MP4 (H.264/AAC) uploads
+- MOV is accepted; server-side handling may convert for web playback
+- Ensure `ffmpeg` is installed on the deployment environment when conversion is required
+
+## Useful Commands
+
+```bash
+# Run tests
+php artisan test
+
+# Clear config/cache
+php artisan optimize:clear
+
+# Build assets
+npm run build
+
+# Lint/format PHP
+./vendor/bin/pint
+```
+
+## Project Structure (high level)
+
+- `app/Http/Controllers` – request handlers by domain/role
+- `app/Models` – Eloquent models and scopes
+- `resources/views` – Blade UI templates
+- `routes/web.php` – web routes
+- `database/migrations` – schema evolution
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is currently maintained as an internal academy platform.  
+If you plan to open-source it, add your preferred license here.
