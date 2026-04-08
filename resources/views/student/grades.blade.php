@@ -93,7 +93,12 @@
 <div class="page-hero">
     <div class="hero-left">
         <div class="hero-icon">
-            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10"/></svg>
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 20h14"/>
+                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 20v-7"/>
+                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 20v-11"/>
+                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 20v-4"/>
+            </svg>
         </div>
         <div>
             <h1 class="h3 hero-title">Grades</h1>

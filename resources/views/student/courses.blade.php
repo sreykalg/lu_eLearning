@@ -22,7 +22,10 @@
 <div class="page-hero">
     <div class="hero-left">
         <div class="hero-icon">
-            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 6.5A2.5 2.5 0 015.5 4H11v15H5.5A2.5 2.5 0 003 21.5v-15z"/>
+                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 6.5A2.5 2.5 0 0018.5 4H13v15h5.5a2.5 2.5 0 012.5 2.5v-15z"/>
+            </svg>
         </div>
         <div>
             <h1 class="h3 hero-title">My Courses</h1>
