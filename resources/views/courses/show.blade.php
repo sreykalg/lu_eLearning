@@ -7,18 +7,39 @@ $layout = auth()->check()
 
 @push('styles')
 <style>
-    :root { --lu-deep-purple: #2d1b4e; --lu-purple: #4c1d95; --lu-purple-light: rgba(76, 29, 149, 0.08); }
-    .course-back { color: var(--lu-deep-purple); text-decoration: none; font-size: 0.875rem; }
-    .course-back:hover { color: var(--lu-purple); }
-    .course-card { border: 0; border-radius: 0.5rem; overflow: hidden; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-    .course-content-list { max-height: 400px; overflow-y: auto; }
-    .course-content-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; text-decoration: none; color: #374151; border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
-    .course-content-item:hover { background: var(--lu-purple-light, #f9fafb); }
+    :root { --lu-deep-purple: #0f172a; --lu-purple: #1e293b; --lu-purple-light: rgba(15, 23, 42, 0.08); }
+    .course-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+        border-radius: 1rem;
+        padding: 1.2rem 1.35rem;
+        color: #fff;
+        margin-bottom: 1rem;
+        box-shadow: 0 12px 36px rgba(15, 23, 42, 0.18);
+    }
+    .course-back { color: rgba(255,255,255,0.86); text-decoration: none; font-size: 0.84rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .course-back:hover { color: #fff; }
+    .course-hero-title { margin: 0.55rem 0 0.35rem; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+    .course-hero-sub { margin: 0; color: rgba(255,255,255,0.82); font-size: 0.9rem; }
+    .course-hero-actions { margin-top: 0.75rem; display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+    .course-card { border: 1px solid #e2e8f0; border-radius: 1rem; overflow: hidden; background: #fff; box-shadow: 0 4px 24px rgba(15,23,42,.06); }
+    .course-content-list { max-height: 430px; overflow-y: auto; }
+    .course-content-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.78rem 1rem; text-decoration: none; color: #334155; border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+    .course-content-item:hover { background: #f8fafc; }
     .course-content-item .num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
     .course-content-item .num.done { background: #10b981; color: #fff; }
     .course-content-item .num.todo { background: #e5e7eb; color: #374151; }
-    .btn-enroll { background: var(--lu-deep-purple); color: #fff; border: none; }
+    .btn-enroll { background: var(--lu-deep-purple); color: #fff; border: none; border-radius: 0.6rem; font-weight: 700; }
     .btn-enroll:hover { background: var(--lu-purple); color: #fff; }
+    .course-meta-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        border-radius: 9999px;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+        background: rgba(255,255,255,0.16);
+        color: #fff;
+    }
 </style>
 @endpush
 
@@ -30,27 +51,33 @@ $layout = auth()->check()
     <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
 @endif
 
-<div class="mb-4">
-    <a href="{{ auth()->check() ? route('overview') : route('courses.index') }}" class="course-back d-inline-block mb-2">&larr; Back to courses</a>
-    <h1 class="h3 fw-bold mb-2" style="color: var(--lu-deep-purple);">{{ $course->title }}</h1>
+<div class="course-hero">
+    <a href="{{ auth()->check() ? route('overview') : route('courses.index') }}" class="course-back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to courses
+    </a>
+    <h1 class="course-hero-title">{{ $course->title }}</h1>
+    <p class="course-hero-sub">Review lessons, quizzes, and your progress in one place.</p>
+    <div class="course-hero-actions">
         @auth
             @if($enrollment)
-                <div class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded small mt-1" style="background: rgba(45,27,78,0.1); color: var(--lu-deep-purple);">
+                <span class="course-meta-badge">
                     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     <span class="fw-semibold">{{ $coursePoints ?? 0 }}</span> points in this course
-                </div>
+                </span>
             @endif
             @if (!$enrollment)
-                <form action="{{ route('courses.enroll', $course) }}" method="POST" class="mt-2">@csrf
+                <form action="{{ route('courses.enroll', $course) }}" method="POST" class="m-0">@csrf
                     <button type="submit" class="btn btn-enroll btn-sm">Enroll Now</button>
                 </form>
             @endif
         @endauth
+    </div>
 </div>
 
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="course-card shadow-sm">
+        <div class="course-card">
             <div class="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center">
                 @if ($course->thumbnail)
                     <img src="{{ asset('storage/'.$course->thumbnail) }}" alt="{{ $course->title }}" class="object-fit-cover w-100 h-100">
@@ -66,7 +93,7 @@ $layout = auth()->check()
         </div>
     </div>
     <div class="col-lg-4">
-        <div class="course-card shadow-sm">
+        <div class="course-card">
             <div class="p-3 border-bottom" style="background: #f9fafb;">
                 <h5 class="mb-0 fw-semibold" style="color: var(--lu-deep-purple);">Course Content</h5>
             </div>
