@@ -230,6 +230,19 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+    .cb-lesson-quiz-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        background: #22c55e;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.18);
+        flex-shrink: 0;
+        align-self: center;
+    }
+    .cb-item.active .cb-lesson-quiz-dot {
+        background: #38bdf8;
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.28);
+    }
     .cb-section-label {
         font-size: 0.65rem;
         font-weight: 700;

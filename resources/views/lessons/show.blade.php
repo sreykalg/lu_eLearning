@@ -7,31 +7,94 @@ $layout = auth()->user()->isStudent()
 
 @push('styles')
 <style>
-    .lesson-back { color: #0f172a; text-decoration: none; font-size: 0.875rem; }
-    .lesson-back:hover { color: #1e293b; }
-    .lesson-card { border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background: #fff; }
-    .lesson-content-list { max-height: 350px; overflow-y: auto; }
-    .lesson-content-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; text-decoration: none; color: #374151; border-bottom: 1px solid #f3f4f6; transition: background 0.15s; }
-    .lesson-content-item:hover { background: #f9fafb; }
+    .lsn-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+        border-radius: 1rem;
+        padding: 1.2rem 1.3rem;
+        color: #fff;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 12px 36px rgba(15, 23, 42, 0.18);
+    }
+    .lsn-back {
+        color: rgba(255, 255, 255, 0.86);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
+    .lsn-back:hover { color: #fff; }
+    .lsn-title { margin: 0.55rem 0 0; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
+    .lsn-subtitle { margin: 0.35rem 0 0; color: rgba(255,255,255,0.84); font-size: 0.9rem; }
+    .lesson-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+    }
+    .lsn-video-wrap { background: #020617; }
+    .lesson-content-list { max-height: 380px; overflow-y: auto; }
+    .lesson-content-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.78rem 1rem; text-decoration: none; color: #334155; border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+    .lesson-content-item:hover { background: #f8fafc; }
     .lesson-content-item.current { background: #0f172a; color: #fff; }
     .lesson-content-item.current .num { background: #fff; color: #0f172a; }
     .lesson-content-item .num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
     .lesson-content-item .num.done { background: #10b981; color: #fff; }
-    .lesson-content-item .num.todo { background: #e5e7eb; color: #374151; }
+    .lesson-content-item .num.todo { background: #e2e8f0; color: #334155; }
     .lesson-content-item.current .num.todo { background: #fff; color: #0f172a; }
+    .lsn-notes-head {
+        padding: 1rem 1.15rem;
+        border-bottom: 1px solid #f1f5f9;
+        background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+    }
+    .lsn-notes-head h5 { margin: 0; font-weight: 800; color: #0f172a; }
+    .lsn-notes-body { padding: 1rem 1.15rem 1.2rem; }
+    .lsn-attachments-list a { color: #0f172a; }
+    .lsn-attachments-list a:hover { color: #1d4ed8; }
+    .video-quiz-timeline {
+        inset: 0;
+        z-index: 20;
+        pointer-events: none;
+    }
+    .video-quiz-track {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        /* Native controls can cover overlays near the bar; keep marker just above it */
+        bottom: 34px;
+        height: 2px;
+        background: transparent;
+    }
+    .video-quiz-marker {
+        width: 11px;
+        height: 11px;
+        background: #fbbf24;
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55), 0 2px 6px rgba(0, 0, 0, 0.45);
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 50;
+        opacity: 1;
+    }
 </style>
 @endpush
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('courses.show', $course) }}" class="lesson-back d-inline-block mb-2">&larr; {{ $course->title }}</a>
-    <h1 class="h3 fw-bold mb-0" style="color: #0f172a;">{{ $lesson->title }}</h1>
+<div class="lsn-hero">
+    <a href="{{ route('courses.show', $course) }}" class="lsn-back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        {{ $course->title }}
+    </a>
+    <h1 class="lsn-title">{{ $lesson->title }}</h1>
+    <p class="lsn-subtitle">Watch the lesson, complete in-video quiz checks, and continue your course progression.</p>
 </div>
 
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="lesson-card shadow-sm position-relative">
-            <div class="ratio ratio-16x9 bg-dark d-flex align-items-center justify-content-center position-relative">
+        <div class="lesson-card position-relative">
+            <div class="lsn-video-wrap ratio ratio-16x9 d-flex align-items-center justify-content-center position-relative">
                 @if ($lesson->video_url)
                     @php
                         $videoPath = strtolower((string) (parse_url($lesson->video_url, PHP_URL_PATH) ?: $lesson->video_url));
@@ -53,11 +116,11 @@ $layout = auth()->user()->isStudent()
                                 <button type="button" id="quiz-submit" class="btn btn-sm" style="background:#0f172a;color:#fff;">Submit</button>
                             </div>
                         </div>
-                        <div id="video-quiz-timeline" class="position-absolute start-0 end-0 d-none align-items-center" style="bottom: 0; height: 20px; z-index: 5; padding: 0 12px 4px; pointer-events: none;">
-                            <div class="flex-grow-1 position-relative rounded overflow-visible" style="height: 4px; background: rgba(255,255,255,0.4);">
-                                <div id="video-progress-fill" class="position-absolute top-0 start-0 bottom-0 rounded" style="background: rgba(255,255,255,0.9); width: 0%;"></div>
+                        <div id="video-quiz-timeline" class="video-quiz-timeline position-absolute">
+                            <div class="video-quiz-track position-relative overflow-visible">
+                                <div id="video-progress-fill" class="position-absolute top-0 start-0 bottom-0 rounded" style="background: transparent; width: 0%;"></div>
                                 @foreach($lesson->videoQuizzes as $vq)
-                                    <span class="quiz-marker position-absolute top-50 translate-middle-y rounded-circle" style="width: 10px; height: 10px; background: #fbbf24; left: 0%; margin-left: -5px;" data-seconds="{{ $vq->timestamp_seconds }}" title="Quiz at {{ gmdate('i:s', $vq->timestamp_seconds) }}"></span>
+                                    <span class="quiz-marker video-quiz-marker position-absolute rounded-circle" style="left: 0%;" data-seconds="{{ $vq->timestamp_seconds }}" title="Quiz at {{ gmdate('i:s', $vq->timestamp_seconds) }}"></span>
                                 @endforeach
                             </div>
                         </div>
@@ -80,19 +143,21 @@ $layout = auth()->user()->isStudent()
             @endif
         </div>
         @if ($lesson->content || $lesson->attachments->isNotEmpty())
-            <div class="lesson-card shadow-sm mt-4">
-                <div class="p-4">
-                    <h5 class="fw-semibold mb-2">Lesson Notes</h5>
+            <div class="lesson-card mt-4">
+                <div class="lsn-notes-head">
+                    <h5>Lesson Notes</h5>
+                </div>
+                <div class="lsn-notes-body">
                     @if ($lesson->content)
                         <p class="text-muted mb-0">{{ $lesson->content }}</p>
                     @endif
                     @if ($lesson->attachments->isNotEmpty())
                         <div class="mt-3 pt-3 border-top">
                             <p class="small fw-semibold mb-2 text-secondary">Attachments</p>
-                            <ul class="list-unstyled mb-0">
+                            <ul class="list-unstyled mb-0 lsn-attachments-list">
                                 @foreach ($lesson->attachments as $att)
                                     <li class="mb-2">
-                                        <a href="{{ route('lesson-attachments.download', $att) }}" class="d-inline-flex align-items-center gap-2 text-decoration-none" style="color: #0f172a;">
+                                        <a href="{{ route('lesson-attachments.download', $att) }}" class="d-inline-flex align-items-center gap-2 text-decoration-none">
                                             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                             {{ $att->original_name }}
                                         </a>
@@ -106,7 +171,7 @@ $layout = auth()->user()->isStudent()
         @endif
     </div>
     <div class="col-lg-4">
-        <div class="lesson-card shadow-sm sticky-top">
+        <div class="lesson-card sticky-top">
             <div class="p-3 border-bottom" style="background: #f9fafb;">
                 <h5 class="mb-0 fw-semibold">Course Content</h5>
             </div>
@@ -217,10 +282,7 @@ $layout = auth()->user()->isStudent()
         function updateTimeline() {
             var dur = video.duration;
             if (!dur || !isFinite(dur)) return;
-            if (timeline) {
-                timeline.classList.remove('d-none');
-                timeline.classList.add('d-flex');
-            }
+            if (timeline) timeline.classList.add('d-block');
             if (progressFill) progressFill.style.width = (video.currentTime / dur * 100) + '%';
             document.querySelectorAll('.quiz-marker').forEach(function(m) {
                 var sec = parseInt(m.dataset.seconds || 0);
@@ -228,9 +290,11 @@ $layout = auth()->user()->isStudent()
             });
         }
         video.addEventListener('loadedmetadata', updateTimeline);
+        video.addEventListener('canplay', updateTimeline);
         video.addEventListener('durationchange', updateTimeline);
         video.addEventListener('timeupdate', function() {
             var dur = video.duration;
+            if (timeline && !timeline.classList.contains('d-block')) updateTimeline();
             if (progressFill && dur && isFinite(dur)) progressFill.style.width = (video.currentTime / dur * 100) + '%';
         });
 
@@ -277,6 +341,9 @@ $layout = auth()->user()->isStudent()
                 btn.textContent = 'Finish & earn point';
             });
         });
+
+        // Ensure markers show even if metadata loaded before listeners attached.
+        setTimeout(updateTimeline, 0);
     });
 </script>
 @endpush

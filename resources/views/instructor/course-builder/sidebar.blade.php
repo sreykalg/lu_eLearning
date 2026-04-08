@@ -41,6 +41,9 @@
                                 @endif
                             </span>
                             <span class="cb-label">{{ Str::limit($l->title, 34) }}</span>
+                            @if($l->videoQuizzes->isNotEmpty())
+                                <span class="cb-lesson-quiz-dot" title="Has in-video quiz" aria-label="Has in-video quiz"></span>
+                            @endif
                         </a>
                     @endforeach
                     @foreach($mod->quizzes as $q)
@@ -88,6 +91,9 @@
                             @endif
                         </span>
                         <span class="cb-label">{{ Str::limit($l->title, 34) }}</span>
+                        @if($l->videoQuizzes->isNotEmpty())
+                            <span class="cb-lesson-quiz-dot" title="Has in-video quiz" aria-label="Has in-video quiz"></span>
+                        @endif
                     </a>
                 @endforeach
                 @foreach($uQuizzes as $q)
