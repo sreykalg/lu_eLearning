@@ -2,23 +2,35 @@
 
 @push('styles')
 <style>
-    .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
+    .page-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%);
+        border-radius: 1rem;
+        padding: 1.25rem 1.4rem;
+        color: #fff;
+        margin-bottom: 1rem;
+        box-shadow: 0 12px 34px rgba(15, 23, 42, 0.18);
+    }
     .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
     .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
-    .page-hero .hero-title { margin: 0; font-weight: 700; }
+    .page-hero .hero-title { margin: 0; font-weight: 800; letter-spacing: -0.015em; }
     .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
+    .quiz-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.015em;
+        color: #0f172a;
+    }
     .quiz-card { transition: box-shadow 0.2s; }
     .quiz-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
     .quiz-type-pill { font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 0.25rem; }
     .quiz-type-practice { background: #dbeafe; color: #1e40af; }
     .quiz-type-midterm { background: #fef3c7; color: #b45309; }
     .quiz-type-final { background: #fce7f3; color: #9d174d; }
-    .upcoming-card {
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 0.9rem !important;
-        background: #fff;
-        overflow: hidden;
-    }
+    .upcoming-card { border: 1px solid #e2e8f0 !important; border-radius: 0.95rem !important; background: #fff; overflow: hidden; }
     .upcoming-card .card-body {
         padding: 0.95rem 1rem !important;
     }
@@ -63,6 +75,22 @@
         border-color: #0f172a;
         color: #fff;
     }
+    .completed-card {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 0.95rem !important;
+        background: #fff;
+    }
+    .completed-score {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 9999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.79rem;
+        color: #334155;
+    }
 </style>
 @endpush
 
@@ -85,7 +113,7 @@
 
 @if($upcoming->isNotEmpty())
     <div class="mb-4">
-        <h5 class="d-flex align-items-center gap-2 mb-3 fw-semibold">
+        <h5 class="quiz-section-title">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             Upcoming
         </h5>
@@ -124,7 +152,7 @@
 
 @if($completed->isNotEmpty())
     <div>
-        <h5 class="d-flex align-items-center gap-2 mb-3 fw-semibold">
+        <h5 class="quiz-section-title">
             <svg width="20" height="20" fill="#16a34a" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
             Completed
         </h5>
@@ -132,7 +160,7 @@
             @foreach($completed as $q)
                 @php $attempt = $attempts->get($q->id); @endphp
                 <a href="{{ route('student.quizzes.show', [$q->course, $q]) }}" class="text-decoration-none text-dark">
-                    <div class="card border-0 shadow-sm quiz-card">
+                    <div class="card border-0 shadow-sm quiz-card completed-card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                                 <div class="flex-grow-1 min-w-0">
@@ -146,7 +174,13 @@
                                     </div>
                                     <p class="text-muted small mb-2">{{ $q->course->title }}</p>
                                     @if($attempt)
-                                        <span class="small fw-medium">Score: {{ $attempt->score }}/{{ $attempt->total_points }} @if($attempt->passed !== null) ({{ $attempt->passed ? 'Passed' : 'Not passed' }}) @endif</span>
+                                        <span class="completed-score">
+                                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                                            {{ $attempt->score }}/{{ $attempt->total_points }}
+                                            @if($attempt->passed !== null)
+                                                · {{ $attempt->passed ? 'Passed' : 'Not passed' }}
+                                            @endif
+                                        </span>
                                     @endif
                                 </div>
                                 <span class="btn btn-outline-secondary btn-sm">View Details</span>
