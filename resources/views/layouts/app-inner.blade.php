@@ -125,6 +125,26 @@
         .inner-header .search-history-item:hover { background: #f8fafc; }
         .inner-header .search-history-item svg { flex-shrink: 0; opacity: 0.6; }
         .inner-header .header-right { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
+        .inner-header .header-right .guest-login-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.46rem 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border-radius: 0.65rem;
+            text-decoration: none;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+            transition: transform .15s ease, box-shadow .2s ease, color .2s ease;
+        }
+        .inner-header .header-right .guest-login-btn:hover {
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.35);
+        }
         .inner-header .header-right .notif { position: relative; }
         .inner-header .header-right .notif .dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; display: none; }
         .inner-header .header-right .notif.has-unread .dot { display: block; }
@@ -369,8 +389,7 @@
                         </ul>
                     </div>
                     @else
-                    <a href="{{ route('login') }}" class="nav-link text-dark text-decoration-none">Log in</a>
-                    <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Register</a>
+                    <a href="{{ route('login') }}" class="guest-login-btn">Log in</a>
                     @endauth
                 </div>
             </header>
