@@ -246,17 +246,16 @@
             </div>
             <div>
                 <h1 class="ccr-title">Create Course</h1>
-                <p class="ccr-sub">Create a draft course first, then submit it to HoD for approval from the edit page.</p>
+                <p class="ccr-sub">Create your course and add modules/lessons, submit to HoD for review, then publish after approval.</p>
             </div>
         </div>
     </div>
 </div>
 
 <div class="ccr-flow">
-    <span class="ccr-flow-chip active">1. Create draft</span>
-    <span class="ccr-flow-chip">2. Add modules/lessons</span>
-    <span class="ccr-flow-chip">3. Submit to HoD</span>
-    <span class="ccr-flow-chip">4. Publish after approval</span>
+    <span class="ccr-flow-chip active">1. Create course</span>
+    <span class="ccr-flow-chip">2. Submit to HoD for review</span>
+    <span class="ccr-flow-chip">3. Publish after approval</span>
 </div>
 
 <div class="ccr-form">
@@ -269,18 +268,11 @@
         <div class="ccr-section">
             <h2 class="ccr-section-title">Course information</h2>
             <div class="row g-3 px-1">
-                <div class="col-lg-5">
+                <div class="col-lg-7">
                     <label class="form-label">Title</label>
                     <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" required>
                     @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
-                <div class="col-lg-7">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="4">{{ old('description') }}</textarea>
-                    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-            </div>
-            <div class="row g-3 px-1 ccr-info-gap">
                 <div class="col-lg-5">
                     <label class="form-label">Level</label>
                     <select name="level" class="form-select @error('level') is-invalid @enderror" required>
@@ -290,7 +282,14 @@
                     </select>
                     @error('level')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+            </div>
+            <div class="row g-3 px-1 ccr-info-gap">
                 <div class="col-lg-7">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="4">{{ old('description') }}</textarea>
+                    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-lg-5">
                     <label class="form-label">Thumbnail (optional)</label>
                     <div class="ccr-thumb-upload">
                         <div class="ccr-drop-circle" id="createThumbDropCircle" role="button" tabindex="0" aria-label="Upload thumbnail by dragging file or clicking">

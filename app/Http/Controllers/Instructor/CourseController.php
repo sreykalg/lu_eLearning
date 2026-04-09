@@ -140,7 +140,7 @@ class CourseController extends Controller
         }
 
         Course::create($valid);
-        return redirect()->route('instructor.courses.index')->with('success', 'Course created and submitted for approval.');
+        return redirect()->route('instructor.courses.index');
     }
 
     public function edit(Course $course)
