@@ -20,7 +20,7 @@ $layout = auth()->user()->isStudent()
     .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
     .page-hero .hero-title { margin: 0; font-weight: 800; letter-spacing: -0.015em; }
     .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
-    .page-hero .back-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.85rem; }
+    .page-hero .back-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.3rem; margin-bottom: 0.65rem; }
     .page-hero .back-link:hover { color: #fff; }
     .quiz-shell { background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 22px rgba(15, 23, 42, 0.06); }
     .quiz-shell .quiz-intro { padding: 1rem 1.2rem; border-bottom: 1px solid #f1f5f9; background: linear-gradient(180deg, #fff 0%, #fafbfc 100%); }
@@ -53,6 +53,10 @@ $layout = auth()->user()->isStudent()
 
 @section('content')
 <div class="page-hero">
+    <a href="{{ route('courses.show', $course) }}" class="back-link">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        {{ $course->title }}
+    </a>
     <div class="hero-row">
         <div class="hero-left">
             <div class="hero-icon">
@@ -68,7 +72,6 @@ $layout = auth()->user()->isStudent()
                 </p>
             </div>
         </div>
-        <a href="{{ route('courses.show', $course) }}" class="back-link">&larr; {{ $course->title }}</a>
     </div>
 </div>
 
