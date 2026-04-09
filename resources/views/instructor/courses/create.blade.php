@@ -192,6 +192,19 @@
         color: #475569;
         font-weight: 600;
     }
+    .ccr-drop-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0.7rem;
+        display: none;
+    }
+    .ccr-drop-placeholder {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
     .ccr-file-input-hidden {
         position: absolute !important;
         width: 1px !important;
@@ -281,9 +294,12 @@
                     <label class="form-label">Thumbnail (optional)</label>
                     <div class="ccr-thumb-upload">
                         <div class="ccr-drop-circle" id="createThumbDropCircle" role="button" tabindex="0" aria-label="Upload thumbnail by dragging file or clicking">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M12 16V7m0 0l-3 3m3-3l3 3"/><path stroke-width="2" d="M20 16.5a3.5 3.5 0 00-3.5-3.5h-1.2A5.3 5.3 0 005.3 11.9 3.3 3.3 0 005.5 18H18a2 2 0 002-2v-.5z"/></svg>
-                            <div class="ccr-drop-main">Drag & Drop</div>
-                            <div class="ccr-drop-sub">or click</div>
+                            <img id="createThumbPreview" class="ccr-drop-preview" alt="Selected thumbnail preview">
+                            <div id="createThumbPlaceholder" class="ccr-drop-placeholder">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M12 16V7m0 0l-3 3m3-3l3 3"/><path stroke-width="2" d="M20 16.5a3.5 3.5 0 00-3.5-3.5h-1.2A5.3 5.3 0 005.3 11.9 3.3 3.3 0 005.5 18H18a2 2 0 002-2v-.5z"/></svg>
+                                <div class="ccr-drop-main">Drag & Drop</div>
+                                <div class="ccr-drop-sub">or click</div>
+                            </div>
                         </div>
                         <input id="create_course_thumbnail" type="file" name="thumbnail" class="ccr-file-input-hidden @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
                         <div class="ccr-drop-filename" id="createThumbFileName">No file selected</div>
@@ -373,11 +389,27 @@
         const thumbInput = document.getElementById('create_course_thumbnail');
         const thumbDropCircle = document.getElementById('createThumbDropCircle');
         const thumbFileName = document.getElementById('createThumbFileName');
+        const thumbPreview = document.getElementById('createThumbPreview');
+        const thumbPlaceholder = document.getElementById('createThumbPlaceholder');
 
         function updateThumbFilename() {
             if (!thumbFileName || !thumbInput) return;
             const file = thumbInput.files && thumbInput.files[0];
             thumbFileName.textContent = file ? file.name : 'No file selected';
+            if (!thumbPreview || !thumbPlaceholder) return;
+            if (!file || !file.type.startsWith('image/')) {
+                thumbPreview.style.display = 'none';
+                thumbPreview.removeAttribute('src');
+                thumbPlaceholder.style.display = 'inline-flex';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                thumbPreview.src = String(event.target?.result || '');
+                thumbPreview.style.display = 'block';
+                thumbPlaceholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
         }
 
         function preventDefaults(e) {
