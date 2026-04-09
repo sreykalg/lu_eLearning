@@ -119,7 +119,7 @@ $layout = auth()->user()->isStudent()
                             </label>
                         @endforeach
                     @elseif($qType === 'short_answer')
-                        <input type="text" name="answers[{{ $q->id }}]" class="form-control" placeholder="Your answer">
+                        <textarea name="answers[{{ $q->id }}]" class="form-control" rows="3" placeholder="Your answer"></textarea>
                     @else
                         <textarea name="answers[{{ $q->id }}]" class="form-control font-monospace" rows="6" placeholder="Write your code or answer here"></textarea>
                     @endif
@@ -137,3 +137,22 @@ $layout = auth()->user()->isStudent()
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.querySelector('form[action*="quizzes"][action*="submit"]');
+    if (!form) return;
+    form.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        var t = e.target;
+        if (!t) return;
+        var tag = (t.tagName || '').toLowerCase();
+        // Allow Enter in textareas for multiline answers.
+        if (tag === 'textarea') return;
+        // Prevent accidental submit by Enter on other controls.
+        e.preventDefault();
+    });
+});
+</script>
+@endpush
