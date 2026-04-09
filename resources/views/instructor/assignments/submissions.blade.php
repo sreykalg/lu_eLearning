@@ -214,10 +214,9 @@
     }
     .asub-note strong { color: #0f172a; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .asub-grade {
-        background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
-        border: 1px solid #e2e8f0;
-        border-radius: 0.85rem;
-        padding: 1.1rem 1.15rem;
+        margin-top: 0.6rem;
+        padding-top: 0.7rem;
+        border-top: 1px solid #f1f5f9;
     }
     .asub-grade .form-label {
         font-size: 0.7rem;
@@ -227,22 +226,44 @@
         color: #64748b;
         margin-bottom: 0.35rem;
     }
+    .asub-grade-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.6rem;
+    }
+    .asub-grade-title {
+        margin: 0;
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+    }
+    .asub-grade-max {
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: #475569;
+    }
     .asub-grade .form-control,
     .asub-grade .form-label {
         font-size: 0.875rem;
     }
     .asub-grade .form-control {
-        border-radius: 0.65rem;
+        border-radius: 0.6rem;
         border-color: #cbd5e1;
+        background: #fff;
+        min-height: 42px;
     }
     .asub-grade .form-control:focus {
         border-color: #0f172a;
         box-shadow: 0 0 0 0.2rem rgba(15, 23, 42, 0.08);
     }
     .asub-grade .btn-submit {
-        border-radius: 0.65rem;
-        font-weight: 600;
-        padding: 0.5rem 1.5rem;
+        border-radius: 0.6rem;
+        font-weight: 700;
+        padding: 0.5rem 1.15rem;
     }
     .asub-empty {
         text-align: center;
@@ -341,12 +362,16 @@
                     <form action="{{ route('instructor.assignments.submissions.grade', [$course, $assignment, $sub]) }}" method="post" class="asub-grade">
                         @csrf
                         @method('PUT')
+                        <div class="asub-grade-head">
+                            <h3 class="asub-grade-title">Grade submission</h3>
+                            <span class="asub-grade-max">Max {{ $assignment->max_score }}</span>
+                        </div>
                         <div class="row g-3">
-                            <div class="col-sm-4 col-md-3">
-                                <label class="form-label" for="score-{{ $sub->id }}">Score (max {{ $assignment->max_score }})</label>
+                            <div class="col-md-3">
+                                <label class="form-label" for="score-{{ $sub->id }}">Score</label>
                                 <input id="score-{{ $sub->id }}" type="number" name="score" class="form-control" min="0" max="{{ $assignment->max_score }}" value="{{ old('score', $sub->score ?? 0) }}" required>
                             </div>
-                            <div class="col-sm-8 col-md-9">
+                            <div class="col-12">
                                 <label class="form-label" for="feedback-{{ $sub->id }}">Feedback to student</label>
                                 <textarea id="feedback-{{ $sub->id }}" name="feedback" class="form-control" rows="3" placeholder="Optional feedback visible to the student">{{ old('feedback', $sub->feedback) }}</textarea>
                             </div>
