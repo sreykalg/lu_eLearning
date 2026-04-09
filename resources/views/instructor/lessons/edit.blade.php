@@ -5,11 +5,11 @@
 @push('styles')
 <style>
     .ls-edit-shell {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 1rem;
-        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
-        overflow: hidden;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        overflow: visible;
     }
     .ls-edit-head {
         display: flex;
@@ -17,9 +17,10 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 0.9rem;
-        padding: 1.15rem 1.25rem 1rem;
-        border-bottom: 1px solid #f1f5f9;
-        background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+        padding: 1rem 1.1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.9rem;
+        background: #fff;
     }
     .ls-edit-head h4 {
         margin: 0;
@@ -35,7 +36,10 @@
     }
     .ls-edit-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .ls-edit-actions .btn { border-radius: 0.6rem; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.4rem 0.7rem; }
-    .ls-edit-body { padding: 1.25rem; }
+    .ls-edit-body {
+        margin-top: 0.9rem;
+        padding: 0;
+    }
     .ls-edit-back {
         display: inline-flex;
         align-items: center;
@@ -48,25 +52,160 @@
     }
     .ls-edit-back:hover { color: #0f172a; }
     .ls-block {
-        border: 1px solid #e2e8f0;
-        border-radius: 0.85rem;
-        background: #fff;
-        padding: 1rem 1rem 0.4rem;
-        margin-bottom: 1rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        padding: 0;
+        margin-bottom: 0;
     }
     .ls-section-title {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 800;
         letter-spacing: 0.06em;
         text-transform: uppercase;
         color: #64748b;
-        margin-bottom: 0.85rem;
+        margin-bottom: 1rem;
+    }
+    .ls-form-flat {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.9rem;
+        padding: 1rem 1.1rem;
+    }
+    .ls-field {
+        padding-bottom: 1.05rem;
+        margin-bottom: 1.05rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .ls-field:last-of-type {
+        padding-bottom: 0;
+        margin-bottom: 0.9rem;
+        border-bottom: 0;
+    }
+    .ls-submit-row {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .ls-submit-row .btn {
+        border-radius: 0.65rem;
+        font-weight: 700;
+        padding-inline: 1rem;
+    }
+    .ls-quiz-section {
+        margin-top: 0.9rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    .ls-quiz-add-btn {
+        background: transparent;
+        border-color: #0f172a;
+        color: #0f172a;
+        border-radius: 0.65rem;
+        font-weight: 700;
+    }
+    .ls-quiz-add-btn:hover,
+    .ls-quiz-add-btn:focus {
+        background: rgba(15, 23, 42, 0.06);
+        border-color: #0f172a;
+        box-shadow: 0 0 0 0.2rem rgba(15, 23, 42, 0.12);
+        color: #0f172a;
     }
     .cb-video-dropzone { border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 2rem; text-align: center; background: #f9fafb; cursor: pointer; transition: all 0.2s; }
     .cb-video-dropzone:hover, .cb-video-dropzone.dragover { border-color: #0f172a; background: #f1f5f9; }
+    .cb-video-placeholder { display: block; }
+    .cb-video-preview-wrap {
+        display: none;
+        margin-bottom: 0.65rem;
+    }
+    .cb-video-preview {
+        width: min(100%, 560px);
+        max-height: 260px;
+        border-radius: 0.55rem;
+        background: #0f172a;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
+    }
     .cb-attach-dropzone { border: 2px dashed #d1d5db; border-radius: 0.5rem; padding: 1rem; text-align: center; background: #f9fafb; font-size: 0.875rem; color: #6b7280; cursor: pointer; transition: all 0.2s; }
     .cb-attach-dropzone:hover, .cb-attach-dropzone.dragover { border-color: #0f172a; background: #f1f5f9; }
-    .cb-duration-chip { background: #e5e7eb; color: #374151; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.875rem; }
+    .cb-drop-current {
+        margin-top: 0.7rem;
+        font-size: 0.82rem;
+        color: #0f766e;
+        font-weight: 600;
+    }
+    .cb-drop-current-list {
+        margin-top: 0.65rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        justify-content: center;
+    }
+    .cb-drop-current-chip {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        padding: 0.25rem 0.55rem;
+        border-radius: 9999px;
+        background: #eef2ff;
+        border: 1px solid #c7d2fe;
+        color: #3730a3;
+        font-size: 0.76rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .cb-drop-current-chip:hover { color: #312e81; background: #e0e7ff; }
+    .ls-duration-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 0.85rem;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        padding: 0.8rem 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.85rem;
+        flex-wrap: wrap;
+    }
+    .ls-duration-meta {
+        min-width: 200px;
+    }
+    .ls-duration-title {
+        margin: 0;
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .ls-duration-help {
+        margin: 0.2rem 0 0;
+        font-size: 0.78rem;
+        color: #64748b;
+    }
+    .ls-duration-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+    .ls-duration-input-wrap .form-control {
+        width: 98px;
+        text-align: right;
+        font-weight: 700;
+    }
+    .ls-duration-unit {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+    .cb-duration-chip {
+        background: #e0e7ff;
+        border: 1px solid #c7d2fe;
+        color: #3730a3;
+        padding: 0.36rem 0.62rem;
+        border-radius: 9999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        min-width: 68px;
+        text-align: center;
+    }
     .cb-file-row { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb; }
     .cb-file-row:last-child { border-bottom: none; }
     .cb-file-icon { flex-shrink: 0; width: 32px; height: 40px; background: #e5e7eb; border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; color: #6b7280; }
@@ -129,32 +268,35 @@
         <form id="lessonForm" action="{{ route('instructor.lessons.update', [$course, $lesson]) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
-            <div class="ls-block">
+            <div class="ls-form-flat">
                 <div class="ls-section-title">Lesson Details</div>
-            <div class="mb-4">
+            <div class="ls-field">
                 <label class="form-label fw-medium">Lesson Title</label>
                 <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $lesson->title) }}" required>
                 @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
-            <div class="mb-4">
+            <div class="ls-field">
                 <label class="form-label fw-medium">Video Upload</label>
                 <input type="hidden" name="uploaded_video_path" id="uploadedVideoPath" value="">
-                <div class="cb-video-dropzone" onclick="document.getElementById('videoInput').click()" id="videoDropzone">
+                <div class="cb-video-dropzone" id="videoDropzone">
                     <input type="file" id="videoInput" class="d-none" accept="video/mp4,video/quicktime,video/webm,.mov">
-                    <svg width="40" height="40" fill="none" stroke="#9ca3af" viewBox="0 0 24 24" class="mb-2 d-block mx-auto"><path stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                    <p class="mb-0 text-muted">Drag & drop a video file or click to browse</p>
-                    <p class="small text-muted mb-0 mt-1">MP4, MOV, WebM up to 500MB.</p>
-                    <p class="small text-muted mb-0 mt-1">For best compatibility in production, convert your video to MP4 (H.264/AAC) first using <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer">CloudConvert.com</a>.</p>
-                    @if($lesson->video_url)
-                        <p class="small text-success mt-2">Current: {{ Str::limit($lesson->video_url, 50) }}</p>
-                    @endif
+                    <div class="cb-video-preview-wrap" id="videoPreviewWrap">
+                        <video id="videoPreview" class="cb-video-preview" controls preload="metadata"></video>
+                    </div>
+                    <div id="videoPlaceholder" class="cb-video-placeholder">
+                        <svg width="40" height="40" fill="none" stroke="#9ca3af" viewBox="0 0 24 24" class="mb-2 d-block mx-auto"><path stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        <p class="mb-0 text-muted">Drag & drop a video file or click to browse</p>
+                        <p class="small text-muted mb-0 mt-1">MP4, MOV, WebM up to 500MB.</p>
+                        <p class="small text-muted mb-0 mt-1">For best compatibility in production, convert your video to MP4 (H.264/AAC) first using <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer">CloudConvert.com</a>.</p>
+                    </div>
+                    <p class="cb-drop-current d-none" id="currentVideoLabel"></p>
                 </div>
                 <div id="videoFileList" class="mt-2"></div>
                 <input type="text" name="video_url" class="form-control form-control-sm mt-2" placeholder="Or paste video URL" value="{{ old('video_url', $lesson->video_url) }}">
             </div>
 
-            <div class="mb-4">
+            <div class="ls-field">
                 <label class="form-label fw-medium">Subtitles (CC)</label>
                 <input type="hidden" name="uploaded_subtitle_path" id="uploadedSubtitlePath" value="{{ old('uploaded_subtitle_path') }}">
                 <div class="d-flex gap-2 align-items-center flex-wrap">
@@ -166,46 +308,56 @@
                 <div id="subtitleFileInfo" class="small text-success mt-1 {{ $lesson->subtitle_url ? '' : 'd-none' }}">{{ $lesson->subtitle_url ? 'Current: ' . Str::limit($lesson->subtitle_url, 40) : '' }}</div>
             </div>
 
-            <div class="mb-4">
+            <div class="ls-field">
                 <label class="form-label fw-medium">Description</label>
                 <textarea name="content" class="form-control @error('content') is-invalid @enderror" rows="4" placeholder="This lesson covers the fundamentals...">{{ old('content', $lesson->content) }}</textarea>
                 @error('content')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
-            <div class="mb-4">
+            <div class="ls-field">
                 <label class="form-label fw-medium">Attachments</label>
                 <div id="uploadedAttachmentsContainer"></div>
                 <div class="cb-attach-dropzone" id="attachDropzone" onclick="document.getElementById('attachInput').click()">
                     <input type="file" id="attachInput" class="d-none" multiple accept=".pdf,.doc,.docx,.ppt,.pptx">
                     <p class="mb-0 text-muted">Drag & drop files (PDF, DOCX, PPTX) or click to browse</p>
+                    @if($lesson->attachments->isNotEmpty())
+                        <div class="cb-drop-current-list">
+                            @foreach($lesson->attachments as $a)
+                                <a href="{{ $a->path }}" target="_blank" class="cb-drop-current-chip" onclick="event.stopPropagation()">{{ Str::limit($a->original_name, 34) }}</a>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
-                @if($lesson->attachments->isNotEmpty())
-                    <p class="small text-muted mt-2 mb-1">Existing: @foreach($lesson->attachments as $a) <a href="{{ $a->path }}" target="_blank">{{ $a->original_name }}</a>@if(!$loop->last), @endif @endforeach</p>
-                @endif
                 <div id="attachList" class="mt-2"></div>
             </div>
 
-            <div class="mb-4">
+            <div class="ls-field">
                 <label class="form-label fw-medium">Lesson Duration</label>
-                <div class="d-flex align-items-center justify-content-between gap-3">
-                    <p class="text-muted small mb-0">Auto-detected from video, or set manually.</p>
-                    <div class="d-flex align-items-center gap-2">
-                        <input type="number" name="video_duration" class="form-control form-control-sm" style="max-width:80px" min="0" value="{{ old('video_duration', $lesson->video_duration) }}" placeholder="sec">
-                        <span class="cb-duration-chip">{{ $lesson->video_duration ? floor($lesson->video_duration/60) . ' min' : '—' }}</span>
+                <div class="ls-duration-card">
+                    <div class="ls-duration-meta">
+                        <p class="ls-duration-title">Duration in seconds</p>
+                        <p class="ls-duration-help">Auto-detected from video, or adjust manually for better timeline syncing.</p>
+                    </div>
+                    <div class="ls-duration-input-wrap">
+                        <input id="lessonDurationSeconds" type="number" name="video_duration" class="form-control form-control-sm" min="0" value="{{ old('video_duration', $lesson->video_duration) }}" placeholder="0">
+                        <span class="ls-duration-unit">sec</span>
+                        <span class="cb-duration-chip" id="lessonDurationMinutesChip">{{ $lesson->video_duration ? floor($lesson->video_duration/60) . ' min' : '—' }}</span>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-3 form-check">
+            <div class="mb-0 form-check">
                 <input type="checkbox" name="is_free" value="1" class="form-check-input" id="is_free" {{ old('is_free', $lesson->is_free) ? 'checked' : '' }}>
                 <label class="form-check-label" for="is_free">Free preview</label>
             </div>
-            </div>
+            </div>    
 
-            <button type="submit" class="btn btn-primary">Save Lesson</button>
+            <div class="ls-submit-row mt-3">
+                <button type="submit" class="btn btn-primary">Save Lesson</button>
+            </div>
         </form>
 
-        <div class="ls-block mt-3">
+        <div class="ls-quiz-section">
         <h6 class="fw-medium mb-2">In-video quizzes</h6>
         <ul class="list-group list-group-flush mb-3">
             @forelse($lesson->videoQuizzes as $vq)
@@ -221,7 +373,7 @@
                 <li class="list-group-item text-muted small px-0">No in-video quizzes.</li>
             @endforelse
         </ul>
-        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addVideoQuizModal">+ Add quiz at minute</button>
+        <button type="button" class="btn btn-sm ls-quiz-add-btn" data-bs-toggle="modal" data-bs-target="#addVideoQuizModal">+ Add quiz at minute</button>
         </div>
     </div>
     </div>
@@ -279,11 +431,41 @@
     var uploadAttachmentUrl = @json(route('instructor.lessons.upload-attachment', $course));
     var uploadSubtitleUrl = @json(route('instructor.lessons.upload-subtitle', $course));
     var csrf = document.querySelector('input[name="_token"]')?.value;
+    var existingVideoUrl = @json($lesson->video_url);
+    var objectVideoPreviewUrl = null;
 
     function fmt(size) { return (size / 1024).toFixed(0) + ' KB'; }
     function fileIcon(name) {
         var ext = (name.split('.').pop() || '').toLowerCase();
         return ext === 'pdf' ? '<div class="cb-file-icon pdf">PDF</div>' : '<div class="cb-file-icon">DOC</div>';
+    }
+
+    function updateVideoPreview(src, label, isObjectUrl) {
+        var preview = document.getElementById('videoPreview');
+        var wrap = document.getElementById('videoPreviewWrap');
+        var placeholder = document.getElementById('videoPlaceholder');
+        var currentLabel = document.getElementById('currentVideoLabel');
+        if (!preview || !wrap || !placeholder || !currentLabel) return;
+        if (objectVideoPreviewUrl && !isObjectUrl) {
+            URL.revokeObjectURL(objectVideoPreviewUrl);
+            objectVideoPreviewUrl = null;
+        }
+        if (!src) {
+            preview.removeAttribute('src');
+            preview.load();
+            wrap.style.display = 'none';
+            placeholder.style.display = 'block';
+            currentLabel.classList.add('d-none');
+            currentLabel.textContent = '';
+            return;
+        }
+        if (isObjectUrl) objectVideoPreviewUrl = src;
+        preview.src = src;
+        preview.load();
+        wrap.style.display = 'block';
+        placeholder.style.display = 'none';
+        currentLabel.classList.remove('d-none');
+        currentLabel.textContent = label || 'Current video';
     }
 
     function uploadVideo(file) {
@@ -295,6 +477,7 @@
         list.innerHTML = '';
         list.appendChild(row);
         document.getElementById('uploadedVideoPath').value = '';
+        updateVideoPreview(URL.createObjectURL(file), 'Selected: ' + file.name, true);
 
         var xhr = new XMLHttpRequest();
         var fd = new FormData();
@@ -320,7 +503,11 @@
                 del.className = 'btn btn-link btn-sm p-0 text-muted';
                 del.title = 'Remove';
                 del.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>';
-                del.onclick = function() { list.innerHTML = ''; document.getElementById('uploadedVideoPath').value = ''; };
+                del.onclick = function() {
+                    list.innerHTML = '';
+                    document.getElementById('uploadedVideoPath').value = '';
+                    updateVideoPreview(existingVideoUrl || '', existingVideoUrl ? ('Current video: ' + (existingVideoUrl.split('/').pop() || 'video')) : '', false);
+                };
                 row.querySelector('.cb-file-actions').appendChild(del);
             } else {
                 row.querySelector('.cb-file-size').innerHTML = '<span class="text-danger">Upload failed</span>';
@@ -331,7 +518,13 @@
             row.querySelector('.cb-file-size').innerHTML = '<span class="text-danger">Upload failed</span>';
             row.querySelector('.cb-cancel')?.remove();
         };
-        row.querySelector('.cb-cancel').onclick = function() { xhr.abort(); list.innerHTML = ''; document.getElementById('uploadedVideoPath').value = ''; row.remove(); };
+        row.querySelector('.cb-cancel').onclick = function() {
+            xhr.abort();
+            list.innerHTML = '';
+            document.getElementById('uploadedVideoPath').value = '';
+            row.remove();
+            updateVideoPreview(existingVideoUrl || '', existingVideoUrl ? ('Current video: ' + (existingVideoUrl.split('/').pop() || 'video')) : '', false);
+        };
         xhr.open('POST', uploadVideoUrl);
         xhr.send(fd);
     }
@@ -419,6 +612,18 @@
         }).catch(function() { info.textContent = 'Upload failed'; });
     });
 
+    if (existingVideoUrl) {
+        var existingName = existingVideoUrl.split('/').pop() || 'video';
+        updateVideoPreview(existingVideoUrl, 'Current video: ' + existingName, false);
+    }
+
+    document.getElementById('videoDropzone')?.addEventListener('click', function(e) {
+        var clickedVideo = e.target.closest('video');
+        var clickedLink = e.target.closest('a');
+        if (clickedVideo || clickedLink) return;
+        document.getElementById('videoInput')?.click();
+    });
+
     document.getElementById('videoDropzone')?.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
     document.getElementById('videoDropzone')?.addEventListener('dragleave', function() { this.classList.remove('dragover'); });
     document.getElementById('videoDropzone')?.addEventListener('drop', function(e) {
@@ -445,6 +650,22 @@
         for (var i = 0; i < this.files.length; i++) uploadAttachment(this.files[i], i);
         this.value = '';
     });
+
+    var durationInput = document.getElementById('lessonDurationSeconds');
+    var durationChip = document.getElementById('lessonDurationMinutesChip');
+    if (durationInput && durationChip) {
+        var updateDurationChip = function() {
+            var seconds = Number(durationInput.value || 0);
+            if (!Number.isFinite(seconds) || seconds <= 0) {
+                durationChip.textContent = '—';
+                return;
+            }
+            var mins = Math.round((seconds / 60) * 10) / 10;
+            durationChip.textContent = mins + ' min';
+        };
+        durationInput.addEventListener('input', updateDurationChip);
+        updateDurationChip();
+    }
 })();
 </script>
 @endpush
