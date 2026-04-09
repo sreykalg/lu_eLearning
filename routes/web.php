@@ -93,6 +93,7 @@ Route::middleware(['auth', 'verified', 'instructor'])->prefix('instructor')->nam
     Route::delete('/my-courses/{course}/students/{student}', [InstructorCourseController::class, 'removeStudent'])->name('my-courses.students.remove');
     Route::get('/progress', [InstructorProgressController::class, 'index'])->name('progress');
     Route::get('/submissions', [InstructorSubmissionsController::class, 'index'])->name('submissions');
+    Route::get('/submissions/{course}', [InstructorSubmissionsController::class, 'show'])->name('submissions.show');
     Route::get('/announcements', [InstructorAnnouncementController::class, 'index'])->name('announcements.index');
     Route::get('/announcements/create', [InstructorAnnouncementController::class, 'create'])->name('announcements.create');
     Route::post('/announcements', [InstructorAnnouncementController::class, 'store'])->name('announcements.store');
