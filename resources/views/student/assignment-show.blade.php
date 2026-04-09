@@ -8,7 +8,15 @@
     .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
     .page-hero .hero-title { margin: 0; font-weight: 700; }
     .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
-    .page-hero .back-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.85rem; }
+    .page-hero .back-link {
+        color: rgba(255,255,255,0.85);
+        text-decoration: none;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin-bottom: 0.65rem;
+    }
     .page-hero .back-link:hover { color: #fff; }
     .assignment-shell { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.9rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .assignment-intro { padding: 1rem 1.2rem; border-bottom: 1px solid #f1f5f9; background: #fcfdff; }
@@ -27,17 +35,24 @@
 
 @section('content')
 <div class="page-hero">
+    <a href="{{ route('student.assignments') }}" class="back-link">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Assignments
+    </a>
     <div class="hero-row">
         <div class="hero-left">
             <div class="hero-icon">
-                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg>
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+                    <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
             </div>
             <div>
                 <h1 class="h3 hero-title">{{ $assignment->title }}</h1>
                 <p class="hero-subtitle">{{ $assignment->course->title }}</p>
             </div>
         </div>
-        <a href="{{ route('student.assignments') }}" class="back-link">&larr; Assignments</a>
     </div>
 </div>
 
