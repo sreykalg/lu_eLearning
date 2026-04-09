@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Instructor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
+use App\Models\AssignmentAttachment;
 use App\Models\AssignmentSubmission;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AssignmentController extends Controller
 {
@@ -45,6 +47,7 @@ class AssignmentController extends Controller
         $this->authorize('update', $course);
         if ($assignment->course_id !== $course->id) abort(404);
         $course->load('lessons');
+        $assignment->load('attachments');
         return view('instructor.assignments.edit', compact('course', 'assignment'));
     }
 
@@ -62,11 +65,43 @@ class AssignmentController extends Controller
             'due_at' => 'nullable|date',
             'allow_late_submission' => 'boolean',
             'is_required' => 'boolean',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|max:51200',
+            'remove_attachments' => 'nullable|array',
+            'remove_attachments.*' => 'integer',
         ]);
         $valid['is_required'] = $request->boolean('is_required');
         $valid['allow_late_submission'] = $request->boolean('allow_late_submission', false);
 
         $assignment->update($valid);
+
+        if ($request->filled('remove_attachments')) {
+            $ids = collect($request->input('remove_attachments', []))
+                ->map(fn ($id) => (int) $id)
+                ->filter()
+                ->values();
+            if ($ids->isNotEmpty()) {
+                $toDelete = $assignment->attachments()->whereIn('id', $ids)->get();
+                foreach ($toDelete as $attachment) {
+                    Storage::disk('public')->delete($attachment->path);
+                    $attachment->delete();
+                }
+            }
+        }
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $storedPath = $file->store('assignment-attachments', 'public');
+                AssignmentAttachment::create([
+                    'assignment_id' => $assignment->id,
+                    'path' => $storedPath,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getClientMimeType(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+        }
+
         return redirect()->route('instructor.courses.edit', $course)->with('success', 'Assignment updated.');
     }
 

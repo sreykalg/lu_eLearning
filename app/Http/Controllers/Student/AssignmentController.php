@@ -29,6 +29,7 @@ class AssignmentController extends Controller
         if ($assignment->course_id !== $course->id) {
             abort(404);
         }
+        $assignment->load('attachments');
         $enrollment = Enrollment::query()
             ->where('user_id', $request->user()->id)
             ->where('course_id', $course->id)

@@ -48,6 +48,21 @@
     .assignment-primary-btn { background: #0f172a; color: #fff; border: none; border-radius: 0.55rem; padding: 0.5rem 0.95rem; font-weight: 600; }
     .assignment-primary-btn:hover { background: #1e293b; color: #fff; }
     .assignment-status-chip { font-size: 0.76rem; font-weight: 700; padding: 0.22rem 0.55rem; border-radius: 9999px; }
+    .assignment-resource-list { display: grid; gap: 0.45rem; }
+    .assignment-resource-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        width: fit-content;
+        text-decoration: none;
+        border: 1px solid #e2e8f0;
+        color: #0f172a;
+        border-radius: 9999px;
+        padding: 0.3rem 0.62rem;
+        font-size: 0.8rem;
+        background: #fff;
+    }
+    .assignment-resource-link:hover { color: #1e293b; border-color: #cbd5e1; background: #f8fafc; }
     @media (max-width: 991.98px) {
         .assignment-submission-grid { grid-template-columns: 1fr; }
     }
@@ -115,6 +130,19 @@
             <div class="assignment-section">
                 <h6 class="assignment-section-title">Instructions</h6>
                 <p class="text-muted mb-0">{!! nl2br(e($assignment->instructions)) !!}</p>
+            </div>
+        @endif
+        @if($assignment->attachments->isNotEmpty())
+            <div class="assignment-section">
+                <h6 class="assignment-section-title">Assignment files</h6>
+                <div class="assignment-resource-list">
+                    @foreach($assignment->attachments as $file)
+                        <a href="{{ asset('storage/' . $file->path) }}" target="_blank" class="assignment-resource-link">
+                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            {{ $file->original_name }}
+                        </a>
+                    @endforeach
+                </div>
             </div>
         @endif
         @if($submission)
