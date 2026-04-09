@@ -111,19 +111,6 @@
     <a href="{{ route('instructor.courses.create') }}" class="btn btn-sm btn-create">Create course</a>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success border-0 rounded-3 shadow-sm alert-dismissible fade show mb-3" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-@if(session('error'))
-    <div class="alert alert-warning border-0 rounded-3 shadow-sm alert-dismissible fade show mb-3" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-
 <div class="row g-4">
     @forelse($courses as $course)
         <div class="col-md-6 col-lg-4">
