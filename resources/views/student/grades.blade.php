@@ -82,9 +82,25 @@
         font-size: 0.75rem;
         padding: 0.2rem 0.5rem;
         border-radius: 0.25rem;
-        font-weight: 500;
+        font-weight: 600;
         background: #f1f5f9;
         color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+    .grades-table .type-badge.type-assignment {
+        background: #ede9fe;
+        color: #5b21b6;
+        border-color: #ddd6fe;
+    }
+    .grades-table .type-badge.type-attendance {
+        background: #dcfce7;
+        color: #166534;
+        border-color: #bbf7d0;
+    }
+    .grades-table .type-badge.type-quiz {
+        background: #dbeafe;
+        color: #1e40af;
+        border-color: #bfdbfe;
     }
 </style>
 @endpush
@@ -178,9 +194,17 @@
                 </thead>
                 <tbody>
                     @foreach($cd['items'] as $item)
+                        @php
+                            $typeVal = strtolower((string) ($item['type'] ?? ''));
+                            $typeClass = str_contains($typeVal, 'assignment')
+                                ? 'type-assignment'
+                                : (str_contains($typeVal, 'attendance')
+                                    ? 'type-attendance'
+                                    : (str_contains($typeVal, 'quiz') ? 'type-quiz' : ''));
+                        @endphp
                         <tr>
                             <td class="fw-medium">{{ $item['title'] }}</td>
-                            <td><span class="type-badge">{{ $item['type'] }}</span></td>
+                            <td><span class="type-badge {{ $typeClass }}">{{ $item['type'] }}</span></td>
                             <td>{{ (int) $item['earned'] }}</td>
                             <td>{{ (int) $item['max'] }}</td>
                             <td class="fw-semibold">{{ $item['pct'] }}%</td>
