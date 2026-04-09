@@ -27,8 +27,15 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'ends_with:lifeun.edu.kh'],
             'password' => ['required', 'string'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.ends_with' => 'Only @lifeun.edu.kh email addresses are allowed.',
         ];
     }
 
