@@ -148,6 +148,17 @@
         align-items: center;
         justify-content: center;
     }
+    .cb-file-input-hidden {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        border: 0 !important;
+        white-space: nowrap !important;
+    }
     .cb-grading-card {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
@@ -311,7 +322,7 @@
                             <div class="mb-0">
                                 <label class="form-label" for="course_thumbnail">Thumbnail (optional)</label>
                                 <div class="cb-thumb-upload">
-                                    <div class="cb-drop-circle" id="thumbDropCircle" role="button" tabindex="0" aria-label="Upload thumbnail by dragging file or clicking">
+                                    <div class="cb-drop-circle" id="thumbDropCircle" role="button" tabindex="0" aria-label="Upload thumbnail by dragging file or clicking" data-existing-src="{{ $course->thumbnail ? asset('storage/' . $course->thumbnail) : '' }}">
                                         <img id="thumbPreview" class="cb-drop-preview" alt="Selected thumbnail preview">
                                         <div id="thumbPlaceholder" class="cb-drop-placeholder">
                                             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M12 16V7m0 0l-3 3m3-3l3 3"/><path stroke-width="2" d="M20 16.5a3.5 3.5 0 00-3.5-3.5h-1.2A5.3 5.3 0 005.3 11.9 3.3 3.3 0 005.5 18H18a2 2 0 002-2v-.5z"/></svg>
@@ -319,15 +330,12 @@
                                             <div class="cb-drop-sub">or click</div>
                                         </div>
                                     </div>
-                                    <input id="course_thumbnail" type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+                                    <input id="course_thumbnail" type="file" name="thumbnail" class="cb-file-input-hidden @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
                                     <div class="cb-drop-filename" id="thumbFileName">No file selected</div>
                                 </div>
-                                @error('thumbnail')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                @error('thumbnail')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                                 <p class="small text-muted mt-2 mb-0">Use JPG, PNG, or WebP up to 4MB. Uploaded thumbnails are optimized to web-safe format for production.</p>
                                 @if($course->thumbnail)
-                                    <div class="cb-thumb-preview mt-3">
-                                        <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="Current course thumbnail">
-                                    </div>
                                     <p class="small text-muted mt-2 mb-0">Upload a new image to replace the current thumbnail.</p>
                                 @endif
                             </div>
@@ -463,6 +471,7 @@
         const thumbFileName = document.getElementById('thumbFileName');
         const thumbPreview = document.getElementById('thumbPreview');
         const thumbPlaceholder = document.getElementById('thumbPlaceholder');
+        const existingThumbSrc = thumbDropCircle?.dataset?.existingSrc || '';
 
         function updateThumbFilename() {
             if (!thumbFileName || !thumbInput) return;
@@ -470,9 +479,15 @@
             thumbFileName.textContent = file ? file.name : 'No file selected';
             if (!thumbPreview || !thumbPlaceholder) return;
             if (!file || !file.type.startsWith('image/')) {
-                thumbPreview.style.display = 'none';
-                thumbPreview.removeAttribute('src');
-                thumbPlaceholder.style.display = 'inline-flex';
+                if (existingThumbSrc) {
+                    thumbPreview.src = existingThumbSrc;
+                    thumbPreview.style.display = 'block';
+                    thumbPlaceholder.style.display = 'none';
+                } else {
+                    thumbPreview.style.display = 'none';
+                    thumbPreview.removeAttribute('src');
+                    thumbPlaceholder.style.display = 'inline-flex';
+                }
                 return;
             }
             const reader = new FileReader();

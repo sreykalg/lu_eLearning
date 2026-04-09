@@ -86,7 +86,6 @@ class CourseController extends Controller
             ]);
         }
 
-        return redirect()->route('courses.show', $course)
-            ->with('success', 'Successfully enrolled!');
+        return redirect()->route('courses.show', $course);
     }
 }

@@ -37,7 +37,7 @@ class ApprovalController extends Controller
             'approved_at' => now(),
             'revision_notes' => null,
         ]);
-        return back()->with('success', 'Course approved.');
+        return back();
     }
 
     public function requestChanges(Request $request, Course $course): RedirectResponse
