@@ -113,7 +113,9 @@ $layout = auth()->user()->isStudent()
                                 <h5 class="fw-bold mb-3" id="quiz-question"></h5>
                                 <div id="quiz-options" class="d-flex flex-column gap-2 mb-3"></div>
                                 <div id="quiz-feedback" class="small mb-2 d-none"></div>
-                                <button type="button" id="quiz-submit" class="btn btn-sm" style="background:#0f172a;color:#fff;">Submit</button>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" id="quiz-submit" class="btn btn-sm" style="background:#0f172a;color:#fff;">Submit</button>
+                                </div>
                             </div>
                         </div>
                         <div id="video-quiz-timeline" class="video-quiz-timeline position-absolute">
