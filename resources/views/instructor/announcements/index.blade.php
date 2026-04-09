@@ -32,38 +32,37 @@
     .annx-hero-btn { border-color: rgba(255,255,255,0.35); color: #fff; border-radius: 0.65rem; font-weight: 700; }
     .annx-hero-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.5); }
     .annx-list {
-        border: 1px solid #e2e8f0;
-        border-radius: 1rem;
-        background: #fff;
-        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
-        padding: 1rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
         width: 100%;
     }
     .annx-item {
-        border: 1px solid #e2e8f0;
-        border-radius: 0.85rem;
+        border: 1px solid #e5e7eb;
+        border-left: 4px solid #0f172a;
+        border-radius: 0.8rem;
         background: #fff;
-        padding: 1rem 1.05rem;
+        padding: 0.95rem 1rem;
     }
     .annx-item + .annx-item { margin-top: 0.75rem; }
     .annx-item-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 340px;
-        gap: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
         align-items: start;
     }
     .annx-content { min-width: 0; }
     .annx-title { font-weight: 800; color: #0f172a; margin-bottom: 0.2rem; letter-spacing: -0.01em; }
     .annx-course { color: #64748b; font-size: 0.84rem; margin-bottom: 0.5rem; }
     .annx-body { color: #334155; white-space: pre-wrap; margin: 0; font-size: 0.9rem; }
-    .annx-meta { color: #64748b; font-size: 0.8rem; display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.65rem; }
+    .annx-meta { color: #64748b; font-size: 0.8rem; display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.6rem; }
     .annx-meta-dot { width: 4px; height: 4px; border-radius: 999px; background: #cbd5e1; display: inline-block; }
     .annx-actions {
-        padding: 0.75rem;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.7rem;
-        height: 100%;
+        width: 100%;
+        padding-top: 0.6rem;
+        border-top: 1px dashed #e2e8f0;
     }
     .annx-actions-title {
         font-size: 0.74rem;
@@ -74,9 +73,17 @@
         margin-bottom: 0.45rem;
     }
     .annx-expiry-input { max-width: 210px; }
-    .annx-action-stack { display: flex; flex-direction: column; gap: 0.6rem; }
+    .annx-action-stack { display: flex; gap: 0.7rem; align-items: end; justify-content: space-between; flex-wrap: wrap; }
     .annx-action-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: end; }
     .annx-update-form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: end; }
+    .annx-field-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
     .annx-empty {
         text-align: center;
         padding: 2.75rem 1.5rem;
@@ -130,13 +137,12 @@
                     </div>
                 </div>
                 <div class="annx-actions">
-                    <div class="annx-actions-title">Actions</div>
                     <div class="annx-action-stack">
                         <form action="{{ route('instructor.announcements.update', $a) }}" method="POST" class="annx-update-form">
                             @csrf
                             @method('PATCH')
                             <div>
-                                <label class="form-label small mb-1">Update Expiry</label>
+                                <label class="annx-field-label">Expiry</label>
                                 <input
                                     type="datetime-local"
                                     name="expires_at"
