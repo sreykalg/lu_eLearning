@@ -8,6 +8,53 @@
     .page-hero .hero-title { margin: 0; font-weight: 700; }
     .page-hero .hero-subtitle { margin: 0.2rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem; }
     .course-card-top { min-height: 80px; background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .myc-card {
+        border-radius: 1rem;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+    .myc-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+    .myc-body { padding: 0.88rem 0.95rem 0.95rem; }
+    .myc-title {
+        margin: 0 0 0.35rem;
+        color: #0f172a;
+        font-weight: 800;
+        letter-spacing: -0.012em;
+        line-height: 1.25;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.5em;
+    }
+    .myc-inst {
+        margin: 0 0 0.55rem;
+        color: #64748b;
+        font-size: 0.84rem;
+    }
+    .myc-lessons-row {
+        display: flex;
+        align-items: center;
+        gap: 0.38rem;
+        font-size: 0.82rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    .myc-progress-wrap { margin-top: 0.15rem; }
+    .myc-progress-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.78rem;
+        color: #64748b;
+        margin-bottom: 0.28rem;
+    }
     .course-level-badge { font-size: 0.65rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.25rem; text-transform: uppercase; }
     .course-level-beginner { background: #dbeafe; color: #1e40af; }
     .course-level-intermediate { background: #fef3c7; color: #b45309; }
@@ -55,7 +102,7 @@
     @forelse($courses as $course)
         <div class="col-md-6 col-lg-4">
             <a href="{{ route('courses.show', $course) }}" class="text-decoration-none text-dark d-block h-100">
-                <div class="rounded-3 bg-white shadow-sm border h-100 overflow-hidden">
+                <div class="myc-card h-100">
                     <div class="course-card-top ratio ratio-16x9">
                         @if($course->thumbnail)
                             <img src="{{ asset('storage/'.$course->thumbnail) }}" alt="{{ $course->title }}" class="object-fit-cover w-100 h-100">
@@ -65,21 +112,29 @@
                             </div>
                         @endif
                     </div>
-                    <div class="p-3">
+                    <div class="myc-body">
                         <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
                             <span class="course-level-badge course-level-{{ $course->level ?? 'beginner' }}">{{ strtoupper($course->level ?? 'beginner') }}</span>
                             <span class="small text-muted">· {{ $course->course_points ?? 0 }} pts</span>
                         </div>
-                        <h6 class="fw-semibold mb-1">{{ Str::limit($course->title, 45) }}</h6>
-                        <p class="text-muted small mb-2">{{ $course->instructor->name ?? '—' }}</p>
-                        <div class="d-flex align-items-center gap-2 small mb-2">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
-                            <span class="text-muted">{{ $course->progress_done }}/{{ $course->lessons_count }} lessons</span>
+                        <h6 class="myc-title">{{ Str::limit($course->title, 65) }}</h6>
+                        <p class="myc-inst">{{ $course->instructor->name ?? '—' }}</p>
+                        <div class="myc-lessons-row">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 6.5A2.5 2.5 0 015.5 4H11v15H5.5A2.5 2.5 0 003 21.5v-15z"/>
+                                <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 6.5A2.5 2.5 0 0018.5 4H13v15h5.5a2.5 2.5 0 012.5 2.5v-15z"/>
+                            </svg>
+                            <span>{{ $course->progress_done }}/{{ $course->lessons_count }} lessons</span>
                         </div>
-                        <div class="progress mb-0" style="height: 6px; background: #e5e7eb;">
-                            <div class="progress-bar" style="width: {{ $course->progress_pct }}%; background: #0f172a;"></div>
+                        <div class="myc-progress-wrap">
+                            <div class="myc-progress-label">
+                                <span>Progress</span>
+                                <span class="fw-semibold">{{ $course->progress_pct }}%</span>
+                            </div>
+                            <div class="progress mb-0" style="height: 6px; background: #e5e7eb;">
+                                <div class="progress-bar" style="width: {{ $course->progress_pct }}%; background: #0f172a;"></div>
+                            </div>
                         </div>
-                        <div class="small text-muted mt-1">{{ $course->progress_pct }}%</div>
                     </div>
                 </div>
             </a>
