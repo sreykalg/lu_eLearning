@@ -18,18 +18,39 @@
         margin-bottom: 0.65rem;
     }
     .page-hero .back-link:hover { color: #fff; }
-    .assignment-shell { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.9rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-    .assignment-intro { padding: 1rem 1.2rem; border-bottom: 1px solid #f1f5f9; background: #fcfdff; }
-    .assignment-content { padding: 1rem 1.2rem 1.2rem; }
+    .assignment-shell { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.95rem; overflow: hidden; box-shadow: 0 4px 20px rgba(15,23,42,.06); }
+    .assignment-intro { padding: 1rem 1.2rem; border-bottom: 1px solid #f1f5f9; background: linear-gradient(180deg, #fff 0%, #fafbfc 100%); }
+    .assignment-content { padding: 0.8rem 1.2rem 1.1rem; }
     .assignment-meta { color: #64748b; font-size: 0.85rem; }
-    .assignment-section { border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 0.9rem; margin-bottom: 0.85rem; background: #fff; }
-    .assignment-section-title { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-bottom: 0.45rem; }
-    .assignment-note { background: #f8fafc; border: 1px solid #e2e8f0; }
-    .assignment-feedback { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .assignment-section { padding: 0.85rem 0.1rem; margin: 0; border-bottom: 1px solid #f1f5f9; background: transparent; }
+    .assignment-section:last-of-type { border-bottom: none; }
+    .assignment-section-title { font-size: 0.92rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem; letter-spacing: -0.01em; }
+    .assignment-note { background: transparent; border: 0; }
+    .assignment-submission-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-bottom: 0.85rem; }
+    .assignment-download-btn {
+        background: #0f172a;
+        border-color: #0f172a;
+        color: #fff;
+    }
+    .assignment-download-btn:hover {
+        background: #1e293b;
+        border-color: #1e293b;
+        color: #fff;
+    }
+    .assignment-feedback {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+        border-radius: 0.7rem;
+        padding: 0.75rem 0.8rem;
+    }
     .assignment-actions { border-top: 1px solid #e5e7eb; padding-top: 0.85rem; margin-top: 0.85rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .assignment-primary-btn { background: #0f172a; color: #fff; border: none; border-radius: 0.55rem; padding: 0.5rem 0.95rem; font-weight: 600; }
     .assignment-primary-btn:hover { background: #1e293b; color: #fff; }
     .assignment-status-chip { font-size: 0.76rem; font-weight: 700; padding: 0.22rem 0.55rem; border-radius: 9999px; }
+    @media (max-width: 991.98px) {
+        .assignment-submission-grid { grid-template-columns: 1fr; }
+    }
 </style>
 @endpush
 
@@ -97,25 +118,33 @@
             </div>
         @endif
         @if($submission)
-            @if($submission->file_path)
-                <div class="assignment-section">
-                    <h6 class="assignment-section-title">Your submitted file</h6>
-                    <a href="{{ asset('storage/' . $submission->file_path) }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Download submitted file
-                    </a>
+            @if($submission->file_path || $submission->feedback)
+                <div class="assignment-submission-grid">
+                    @if($submission->file_path)
+                        <div class="assignment-section">
+                            <h6 class="assignment-section-title">Your submitted file</h6>
+                            <a href="{{ asset('storage/' . $submission->file_path) }}" target="_blank" class="btn btn-sm assignment-download-btn">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                Download submitted file
+                            </a>
+                        </div>
+                    @else
+                        <div class="assignment-section"></div>
+                    @endif
+                    @if($submission->feedback)
+                        <div class="assignment-section">
+                            <h6 class="assignment-section-title">Feedback</h6>
+                            <div class="assignment-feedback">
+                                <p class="mb-0">{!! nl2br(e($submission->feedback)) !!}</p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @endif
             @if($submission->content)
                 <div class="assignment-section assignment-note">
                     <h6 class="assignment-section-title">Your notes</h6>
                     <p class="text-muted mb-0">{!! nl2br(e($submission->content)) !!}</p>
-                </div>
-            @endif
-            @if($submission->feedback)
-                <div class="assignment-section assignment-feedback">
-                    <h6 class="assignment-section-title">Feedback</h6>
-                    <p class="mb-0">{!! nl2br(e($submission->feedback)) !!}</p>
                 </div>
             @endif
             <div class="assignment-actions">
