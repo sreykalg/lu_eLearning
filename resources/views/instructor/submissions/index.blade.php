@@ -29,10 +29,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 1rem;
+        flex-shrink: 0;
     }
+    .submissions-hero .hero-head { display: flex; align-items: center; gap: 1rem; }
+    .submissions-hero .hero-copy { min-width: 0; }
     .submissions-hero h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-    .submissions-hero p { opacity: 0.85; font-size: 0.9375rem; margin-bottom: 0; }
+    .submissions-hero h1 { margin: 0; }
+    .submissions-hero p { opacity: 0.85; font-size: 0.9375rem; margin: 0.35rem 0 0; }
+    @media (max-width: 575.98px) {
+        .submissions-hero .hero-head { align-items: flex-start; }
+    }
     .submissions-course-card {
         background: #fff;
         border-radius: 1rem;
@@ -136,11 +142,15 @@
 
 @section('content')
 <div class="submissions-hero">
-    <div class="icon-wrap">
-        <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+    <div class="hero-head">
+        <div class="icon-wrap">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <div class="hero-copy">
+            <h1>Submissions</h1>
+            <p>View and grade assignments, quizzes & exams across your courses</p>
+        </div>
     </div>
-    <h1>Submissions</h1>
-    <p>View and grade assignments, quizzes & exams across your courses</p>
 </div>
 
 @forelse($courses as $course)
