@@ -199,6 +199,46 @@
         display: block;
     }
     .qz-score-alert.warn { display: block; }
+    .qz-file-wrap { margin-top: 0.6rem; }
+    .qz-file-dropzone {
+        border: 2px dashed #cbd5e1;
+        border-radius: 0.75rem;
+        background: #f8fafc;
+        padding: 0.72rem 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .qz-file-dropzone:hover { border-color: #334155; background: #f1f5f9; }
+    .qz-file-dropzone.is-dragover { border-color: #0f172a; background: #eef2ff; box-shadow: 0 0 0 4px rgba(15,23,42,0.08); }
+    .qz-file-drop-main { font-size: 0.82rem; font-weight: 700; color: #334155; }
+    .qz-file-drop-sub { font-size: 0.74rem; color: #64748b; margin-top: 0.1rem; }
+    .qz-file-picked { margin-top: 0.5rem; display: none; }
+    .qz-file-picked.show { display: block; }
+    .qz-file-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 9999px;
+        background: #fff;
+        padding: 0.24rem 0.56rem;
+        font-size: 0.76rem;
+    }
+    .qz-file-chip a { color: #0f172a; text-decoration: underline; text-underline-offset: 2px; }
+    .qz-file-chip button {
+        border: 1px solid #fecaca;
+        background: #fff1f2;
+        color: #b91c1c;
+        border-radius: 9999px;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0;
+    }
 </style>
 @endpush
 
@@ -236,7 +276,7 @@
             </div>
         </div>
         <div class="qz-edit-body">
-        <form action="{{ route('instructor.quizzes.update', [$course, $quiz]) }}" method="post" id="quizForm">
+        <form action="{{ route('instructor.quizzes.update', [$course, $quiz]) }}" method="post" id="quizForm" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="qz-form-flat">
@@ -296,6 +336,7 @@
                                                     <option value="multiple_choice" {{ ($q->type ?? 'multiple_choice') === 'multiple_choice' ? 'selected' : '' }}>Multiple choice</option>
                                                     <option value="short_answer" {{ ($q->type ?? '') === 'short_answer' ? 'selected' : '' }}>Q&A / Short answer</option>
                                                     <option value="code" {{ ($q->type ?? '') === 'code' ? 'selected' : '' }}>Code writing</option>
+                                                    <option value="file_upload" {{ ($q->type ?? '') === 'file_upload' ? 'selected' : '' }}>As file upload</option>
                                                 </select>
                                             </div>
                                             <div class="qz-points-wrap">
@@ -305,8 +346,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="form-label qz-question-label">Question text</label>
-                                        <input type="text" name="questions[{{ $i }}][question]" class="form-control q-text qz-question-text" value="{{ old("questions.{$i}.question", $q->question) }}">
+                                        <label class="form-label qz-question-label">{{ ($q->type ?? '') === 'file_upload' ? 'Instruction' : 'Question text' }}</label>
+                                        <input type="text" name="questions[{{ $i }}][question]" class="form-control q-text qz-question-text" value="{{ old("questions.{$i}.question", $q->question) }}" placeholder="{{ ($q->type ?? '') === 'file_upload' ? 'Write instruction for file answer' : 'Question text' }}">
                                     </div>
                                     <div class="q-options-wrap {{ $isMc ? '' : 'd-none' }}">
                                         <label class="form-label small">Options (select correct)</label>
@@ -319,6 +360,24 @@
                                                 <input type="text" name="questions[{{ $i }}][options][{{ $j }}][text]" class="form-control" value="{{ $opt['text'] ?? '' }}" placeholder="Option {{ $j+1 }}">
                                             </div>
                                         @endforeach
+                                    </div>
+                                    @php $existingPrompt = $q->options['prompt_file'] ?? null; @endphp
+                                    <div class="q-file-wrap {{ ($q->type ?? '') === 'file_upload' ? '' : 'd-none' }}">
+                                        <label class="form-label small">Question file (optional)</label>
+                                        <div class="qz-file-dropzone">
+                                            <div class="qz-file-drop-main">Drag and drop a file, or click to browse</div>
+                                            <div class="qz-file-drop-sub">Attach a prompt/resource file students can view while answering.</div>
+                                        </div>
+                                        <input type="file" name="questions[{{ $i }}][prompt_file]" class="d-none q-file-input">
+                                        <input type="hidden" name="questions[{{ $i }}][remove_prompt_file]" value="0" class="q-file-remove-flag">
+                                        <div class="qz-file-picked {{ $existingPrompt ? 'show' : '' }}">
+                                            @if($existingPrompt)
+                                                <span class="qz-file-chip">
+                                                    <a href="{{ asset('storage/' . $existingPrompt['path']) }}" target="_blank">{{ $existingPrompt['name'] ?? 'Attached file' }}</a>
+                                                    <button type="button" class="q-file-remove-btn">X</button>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="d-flex justify-content-end qz-divider">
                                         <button type="button" class="btn btn-sm delete-question qz-delete-btn" title="Delete question">
@@ -384,11 +443,21 @@
         function toggleQuestionType(block) {
             var type = block.querySelector('.q-type')?.value;
             var opts = block.querySelector('.q-options-wrap');
+            var fileWrap = block.querySelector('.q-file-wrap');
             if (type === 'multiple_choice') {
                 if (opts) opts.classList.remove('d-none');
+                if (fileWrap) fileWrap.classList.add('d-none');
             } else {
                 if (opts) opts.classList.add('d-none');
+                if (fileWrap) {
+                    if (type === 'file_upload') fileWrap.classList.remove('d-none');
+                    else fileWrap.classList.add('d-none');
+                }
             }
+            var textLabel = block.querySelector('.qz-question-label');
+            var textInput = block.querySelector('.qz-question-text');
+            if (textLabel) textLabel.textContent = type === 'file_upload' ? 'Instruction' : 'Question text';
+            if (textInput) textInput.placeholder = type === 'file_upload' ? 'Write instruction for file answer' : 'Question text';
         }
         document.getElementById('questionsContainer')?.addEventListener('change', function(e) {
             if (e.target.classList.contains('q-type')) toggleQuestionType(e.target.closest('.question-block'));
@@ -411,6 +480,7 @@
                                         <option value="multiple_choice">Multiple choice</option>
                                         <option value="short_answer">Q&amp;A / Short answer</option>
                                         <option value="code">Code writing</option>
+                                        <option value="file_upload">As file upload</option>
                                     </select>
                                 </div>
                                 <div class="qz-points-wrap">
@@ -432,6 +502,16 @@
                                 </div>
                             `).join('')}
                         </div>
+                        <div class="q-file-wrap d-none">
+                            <label class="form-label small">Question file (optional)</label>
+                            <div class="qz-file-dropzone">
+                                <div class="qz-file-drop-main">Drag and drop a file, or click to browse</div>
+                                <div class="qz-file-drop-sub">Attach a prompt/resource file students can view while answering.</div>
+                            </div>
+                            <input type="file" name="questions[${qIndex}][prompt_file]" class="d-none q-file-input">
+                            <input type="hidden" name="questions[${qIndex}][remove_prompt_file]" value="0" class="q-file-remove-flag">
+                            <div class="qz-file-picked"></div>
+                        </div>
                         <div class="d-flex justify-content-end qz-divider">
                             <button type="button" class="btn btn-sm delete-question qz-delete-btn" title="Delete question">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
@@ -450,6 +530,70 @@
                 e.target.closest('.question-block')?.remove();
                 updateTotalPoints();
             }
+            var dropzone = e.target.closest('.qz-file-dropzone');
+            if (dropzone) {
+                dropzone.closest('.q-file-wrap')?.querySelector('.q-file-input')?.click();
+                return;
+            }
+            var removeBtn = e.target.closest('.q-file-remove-btn');
+            if (removeBtn) {
+                var wrap = removeBtn.closest('.q-file-wrap');
+                if (!wrap) return;
+                var input = wrap.querySelector('.q-file-input');
+                var picked = wrap.querySelector('.qz-file-picked');
+                var removeFlag = wrap.querySelector('.q-file-remove-flag');
+                if (input) input.value = '';
+                if (picked) { picked.innerHTML = ''; picked.classList.remove('show'); }
+                if (removeFlag) removeFlag.value = '1';
+            }
+        });
+        document.getElementById('questionsContainer')?.addEventListener('dragenter', function(e) {
+            var dz = e.target.closest('.qz-file-dropzone');
+            if (dz) dz.classList.add('is-dragover');
+        });
+        document.getElementById('questionsContainer')?.addEventListener('dragover', function(e) {
+            var dz = e.target.closest('.qz-file-dropzone');
+            if (dz) { e.preventDefault(); dz.classList.add('is-dragover'); }
+        });
+        document.getElementById('questionsContainer')?.addEventListener('dragleave', function(e) {
+            var dz = e.target.closest('.qz-file-dropzone');
+            if (dz) dz.classList.remove('is-dragover');
+        });
+        document.getElementById('questionsContainer')?.addEventListener('drop', function(e) {
+            var dz = e.target.closest('.qz-file-dropzone');
+            if (!dz) return;
+            e.preventDefault();
+            dz.classList.remove('is-dragover');
+            var files = e.dataTransfer?.files;
+            if (!files || !files.length) return;
+            var file = files[0];
+            var wrap = dz.closest('.q-file-wrap');
+            var input = wrap?.querySelector('.q-file-input');
+            var removeFlag = wrap?.querySelector('.q-file-remove-flag');
+            if (!input) return;
+            var transfer = new DataTransfer();
+            transfer.items.add(file);
+            input.files = transfer.files;
+            if (removeFlag) removeFlag.value = '0';
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        document.getElementById('questionsContainer')?.addEventListener('change', function(e) {
+            if (!e.target.classList.contains('q-file-input')) return;
+            var input = e.target;
+            var wrap = input.closest('.q-file-wrap');
+            var picked = wrap?.querySelector('.qz-file-picked');
+            var removeFlag = wrap?.querySelector('.q-file-remove-flag');
+            var file = input.files && input.files[0];
+            if (!picked) return;
+            if (!file) {
+                picked.innerHTML = '';
+                picked.classList.remove('show');
+                return;
+            }
+            var url = URL.createObjectURL(file);
+            picked.innerHTML = '<span class="qz-file-chip"><a href="' + url + '" target="_blank">' + file.name + '</a><button type="button" class="q-file-remove-btn">X</button></span>';
+            picked.classList.add('show');
+            if (removeFlag) removeFlag.value = '0';
         });
         document.getElementById('quizForm')?.addEventListener('submit', function(e) {
             if (!validateScoreMatch()) {

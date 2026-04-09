@@ -87,6 +87,85 @@ $layout = auth()->user()->isStudent()
         font-size: 0.78rem;
         font-weight: 600;
     }
+    .ans-file-dropzone {
+        border: 2px dashed #cbd5e1;
+        border-radius: 0.8rem;
+        background: #f8fafc;
+        padding: 0.85rem 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .ans-file-dropzone:hover { border-color: #334155; background: #f1f5f9; }
+    .ans-file-dropzone.is-dragover {
+        border-color: #0f172a;
+        background: #eef2ff;
+        box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08);
+    }
+    .ans-file-dropzone .main { color: #334155; font-size: 0.84rem; font-weight: 700; }
+    .ans-file-dropzone .sub { color: #64748b; font-size: 0.76rem; margin-top: 0.15rem; }
+    .ans-file-list { margin-top: 0.6rem; display: grid; gap: 0.45rem; }
+    .ans-file-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.55rem;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        border-radius: 0.75rem;
+        padding: 0.46rem 0.62rem;
+    }
+    .ans-file-card-link {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        min-width: 0;
+        color: #0f172a;
+        text-decoration: none;
+    }
+    .ans-file-card-link:hover { color: #0f172a; }
+    .ans-file-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 0.5rem;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #475569;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .ans-file-name {
+        font-size: 0.84rem;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .ans-file-type {
+        font-size: 0.7rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-top: 0.08rem;
+    }
+    .ans-file-remove {
+        width: 22px;
+        height: 22px;
+        border-radius: 9999px;
+        border: 1px solid #fecaca;
+        background: #fff1f2;
+        color: #b91c1c;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0;
+    }
+    .ans-file-remove:hover { background: #ffe4e6; border-color: #fca5a5; color: #991b1b; }
 </style>
 @endpush
 
@@ -141,7 +220,7 @@ $layout = auth()->user()->isStudent()
         @endif
     </div>
     <div class="quiz-content">
-        <form method="POST" action="{{ route('student.quizzes.submit', [$course, $quiz]) }}">
+        <form method="POST" action="{{ route('student.quizzes.submit', [$course, $quiz]) }}" enctype="multipart/form-data">
             @csrf
             @foreach($quiz->questions as $index => $q)
                 @php
@@ -161,6 +240,22 @@ $layout = auth()->user()->isStudent()
                         <label class="answer-label" for="answer-{{ $q->id }}">Your answer</label>
                         <textarea id="answer-{{ $q->id }}" name="answers[{{ $q->id }}]" class="answer-input" rows="4" placeholder="Type your answer here..."></textarea>
                         <div class="answer-hint">Press Enter for a new line.</div>
+                    @elseif($qType === 'file_upload')
+                        <label class="answer-label">Upload answer file</label>
+                        @php $promptFile = $opts['prompt_file'] ?? null; @endphp
+                        @if($promptFile && !empty($promptFile['path']))
+                            <div class="mb-2">
+                                <a href="{{ asset('storage/' . $promptFile['path']) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    View question file: {{ $promptFile['name'] ?? 'Attachment' }}
+                                </a>
+                            </div>
+                        @endif
+                        <div class="ans-file-dropzone" data-file-dropzone data-qid="{{ $q->id }}" role="button" tabindex="0">
+                            <div class="main">Drag & drop your answer file, or click to browse</div>
+                            <div class="sub">Upload one file for this question (PDF, DOCX, PPTX, ZIP, image, etc. up to 50MB).</div>
+                        </div>
+                        <input type="file" class="d-none" data-file-input data-qid="{{ $q->id }}" name="answer_files[{{ $q->id }}]">
+                        <div class="ans-file-list d-none" data-file-list data-qid="{{ $q->id }}"></div>
                     @else
                         <label class="answer-label" for="answer-{{ $q->id }}">Your answer</label>
                         <textarea id="answer-{{ $q->id }}" name="answers[{{ $q->id }}]" class="answer-input font-monospace" rows="8" placeholder="Write your code or answer here..."></textarea>
@@ -195,6 +290,95 @@ document.addEventListener('DOMContentLoaded', function () {
         if (tag === 'textarea') return;
         // Prevent accidental submit by Enter on other controls.
         e.preventDefault();
+    });
+
+    var fileInputs = document.querySelectorAll('[data-file-input]');
+    var getFileExt = function (name) {
+        var parts = String(name || '').split('.');
+        return parts.length > 1 ? parts.pop().toUpperCase() : 'FILE';
+    };
+    var renderFileCard = function (qid, file) {
+        var list = document.querySelector('[data-file-list][data-qid="' + qid + '"]');
+        var input = document.querySelector('[data-file-input][data-qid="' + qid + '"]');
+        if (!list || !input || !file) return;
+        list.innerHTML = '';
+        list.classList.remove('d-none');
+        var row = document.createElement('div');
+        row.className = 'ans-file-card';
+        var fileUrl = URL.createObjectURL(file);
+        var link = document.createElement('a');
+        link.className = 'ans-file-card-link';
+        link.href = fileUrl;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.addEventListener('click', function (e) { e.stopPropagation(); });
+        var icon = document.createElement('span');
+        icon.className = 'ans-file-icon';
+        icon.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M14 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V8z"/><path stroke-width="2" d="M14 2v6h6"/></svg>';
+        var meta = document.createElement('div');
+        meta.style.minWidth = '0';
+        var name = document.createElement('div');
+        name.className = 'ans-file-name';
+        name.textContent = file.name;
+        var type = document.createElement('div');
+        type.className = 'ans-file-type';
+        type.textContent = getFileExt(file.name);
+        meta.appendChild(name);
+        meta.appendChild(type);
+        link.appendChild(icon);
+        link.appendChild(meta);
+        var remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'ans-file-remove';
+        remove.textContent = 'X';
+        remove.addEventListener('click', function (e) {
+            e.stopPropagation();
+            input.value = '';
+            list.innerHTML = '';
+            list.classList.add('d-none');
+        });
+        row.appendChild(link);
+        row.appendChild(remove);
+        list.appendChild(row);
+    };
+
+    document.querySelectorAll('[data-file-dropzone]').forEach(function (dropzone) {
+        var qid = dropzone.getAttribute('data-qid');
+        var input = document.querySelector('[data-file-input][data-qid="' + qid + '"]');
+        if (!input) return;
+        var preventDefaults = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        };
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (name) {
+            dropzone.addEventListener(name, preventDefaults);
+        });
+        ['dragenter', 'dragover'].forEach(function (name) {
+            dropzone.addEventListener(name, function () { dropzone.classList.add('is-dragover'); });
+        });
+        ['dragleave', 'drop'].forEach(function (name) {
+            dropzone.addEventListener(name, function () { dropzone.classList.remove('is-dragover'); });
+        });
+        dropzone.addEventListener('click', function () { input.click(); });
+        dropzone.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                input.click();
+            }
+        });
+        dropzone.addEventListener('drop', function (e) {
+            var files = e.dataTransfer && e.dataTransfer.files;
+            if (!files || !files.length) return;
+            var transfer = new DataTransfer();
+            transfer.items.add(files[0]);
+            input.files = transfer.files;
+            renderFileCard(qid, files[0]);
+        });
+        input.addEventListener('change', function () {
+            var file = input.files && input.files[0];
+            if (!file) return;
+            renderFileCard(qid, file);
+        });
     });
 });
 </script>

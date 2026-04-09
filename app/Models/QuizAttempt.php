@@ -37,6 +37,11 @@ class QuizAttempt extends Model
         return $this->belongsTo(Quiz::class);
     }
 
+    public function files()
+    {
+        return $this->hasMany(QuizAttemptFile::class, 'quiz_attempt_id');
+    }
+
     public function getScorePercentage(): ?int
     {
         if ($this->total_points && $this->total_points > 0 && $this->score !== null) {

@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class QuizController extends Controller
 {
@@ -101,8 +102,12 @@ class QuizController extends Controller
         foreach ($questions as $i => $q) {
             if (empty(trim($q['question'] ?? ''))) continue;
 
-            $type = in_array($q['type'] ?? '', ['multiple_choice', 'short_answer', 'code']) ? $q['type'] : 'multiple_choice';
+            $type = in_array($q['type'] ?? '', ['multiple_choice', 'short_answer', 'code', 'file_upload']) ? $q['type'] : 'multiple_choice';
             $points = max(0, (int) ($q['points'] ?? 1));
+            $existingQuestion = null;
+            if (!empty($q['id'])) {
+                $existingQuestion = QuizQuestion::where('quiz_id', $quiz->id)->find($q['id']);
+            }
 
             if ($type === 'multiple_choice') {
                 $rawOptions = $q['options'] ?? [];
@@ -118,9 +123,41 @@ class QuizController extends Controller
                 }
                 if (count($options) < 2) continue;
                 if ($correctIdx === null || count(array_filter($options, fn ($o) => $o['is_correct'])) !== 1) continue;
-            } else {
+            } elseif (in_array($type, ['short_answer', 'code'])) {
                 $expected = trim($q['expected_answer'] ?? '');
                 $options = $expected !== '' ? [['text' => $expected]] : [];
+            } else {
+                $promptFile = null;
+                $existingPrompt = $existingQuestion->options['prompt_file'] ?? null;
+                $removePrompt = (int) ($q['remove_prompt_file'] ?? 0) === 1;
+                $uploadedPrompt = $request->file("questions.$i.prompt_file");
+
+                if ($existingPrompt && $removePrompt && !empty($existingPrompt['path'])) {
+                    Storage::disk('public')->delete($existingPrompt['path']);
+                    $existingPrompt = null;
+                }
+
+                if ($uploadedPrompt) {
+                    if ($existingPrompt && !empty($existingPrompt['path'])) {
+                        Storage::disk('public')->delete($existingPrompt['path']);
+                    }
+                    $storedPromptPath = $uploadedPrompt->store('quiz-question-files', 'public');
+                    $promptFile = [
+                        'path' => $storedPromptPath,
+                        'name' => $uploadedPrompt->getClientOriginalName(),
+                    ];
+                } else {
+                    $promptFile = $existingPrompt;
+                }
+
+                $options = $promptFile ? ['prompt_file' => $promptFile] : [];
+            }
+
+            if ($type !== 'file_upload' && $existingQuestion) {
+                $existingPrompt = $existingQuestion->options['prompt_file'] ?? null;
+                if ($existingPrompt && !empty($existingPrompt['path'])) {
+                    Storage::disk('public')->delete($existingPrompt['path']);
+                }
             }
 
             $data = [
@@ -132,7 +169,7 @@ class QuizController extends Controller
                 'points' => $points,
             ];
             if (!empty($q['id'])) {
-                $question = QuizQuestion::where('quiz_id', $quiz->id)->find($q['id']);
+                $question = $existingQuestion ?: QuizQuestion::where('quiz_id', $quiz->id)->find($q['id']);
                 if ($question) {
                     $question->update($data);
                     $ids[] = $question->id;

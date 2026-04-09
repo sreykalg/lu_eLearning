@@ -93,6 +93,7 @@
                                     <option value="multiple_choice">Multiple choice</option>
                                     <option value="short_answer">Q&amp;A / Short answer</option>
                                     <option value="code">Code writing</option>
+                                    <option value="file_upload">As file upload</option>
                                 </select>
                             </div>
                             <div class="q-options-wrap">
@@ -144,6 +145,9 @@
         if (type === 'multiple_choice') {
             if (opts) opts.classList.remove('d-none');
             if (exp) exp.classList.add('d-none');
+        } else if (type === 'file_upload') {
+            if (opts) opts.classList.add('d-none');
+            if (exp) exp.classList.add('d-none');
         } else {
             if (opts) opts.classList.add('d-none');
             if (exp) exp.classList.remove('d-none');
@@ -178,6 +182,7 @@
                             <option value="multiple_choice">Multiple choice</option>
                             <option value="short_answer">Q&amp;A / Short answer</option>
                             <option value="code">Code writing</option>
+                            <option value="file_upload">As file upload</option>
                         </select>
                     </div>
                     <div class="q-options-wrap">

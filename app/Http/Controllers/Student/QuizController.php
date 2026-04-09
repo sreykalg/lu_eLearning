@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Models\QuizAttemptFile;
 use App\Models\UserPointEarning;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -59,6 +60,10 @@ class QuizController extends Controller
             return redirect()->route('courses.show', $course)->with('error', 'Please enroll to take this quiz.');
         }
         $quiz->load('questions');
+        $request->validate([
+            'answer_files' => 'nullable|array',
+            'answer_files.*' => 'nullable|file|max:51200',
+        ]);
         $answers = $request->input('answers', []);
         $score = 0;
         $totalPoints = 0;
@@ -71,7 +76,7 @@ class QuizController extends Controller
                 if ($selected !== null && $q->getCorrectOptionIndex() === $selected) {
                     $score += $pts;
                 }
-            } else {
+            } elseif (in_array($qType, ['short_answer', 'code'])) {
                 $submitted = trim((string) ($answers[$q->id] ?? ''));
                 $expected = $q->options[0]['text'] ?? null;
                 if ($expected !== null && $expected !== '') {
@@ -83,6 +88,8 @@ class QuizController extends Controller
                         $score += $pts;
                     }
                 }
+            } else {
+                // File upload question: manually reviewed, no auto-score.
             }
         }
         $total = ($quiz->total_points > 0 ? $quiz->total_points : null) ?? $totalPoints ?: 1;
@@ -94,7 +101,7 @@ class QuizController extends Controller
             UserPointEarning::award($request->user(), 'quiz', $quiz->id, 5, $quiz->course_id);
         }
 
-        QuizAttempt::create([
+        $attempt = QuizAttempt::create([
             'user_id' => $request->user()->id,
             'quiz_id' => $quiz->id,
             'answers' => $answers,
@@ -104,6 +111,26 @@ class QuizController extends Controller
             'started_at' => now(),
             'submitted_at' => now(),
         ]);
+
+        foreach ($quiz->questions as $q) {
+            $qType = $q->type ?? 'multiple_choice';
+            if ($qType !== 'file_upload') {
+                continue;
+            }
+            $uploaded = $request->file('answer_files.' . $q->id);
+            if (!$uploaded) {
+                continue;
+            }
+            $storedPath = $uploaded->store('quiz-answer-files', 'public');
+            QuizAttemptFile::create([
+                'quiz_attempt_id' => $attempt->id,
+                'quiz_question_id' => $q->id,
+                'path' => $storedPath,
+                'original_name' => $uploaded->getClientOriginalName(),
+                'mime_type' => $uploaded->getClientMimeType(),
+                'size' => $uploaded->getSize(),
+            ]);
+        }
         return redirect()->route('student.quizzes.show', [$course, $quiz])
             ->with('success', 'Quiz submitted! Score: ' . $score . '/' . $total);
     }
