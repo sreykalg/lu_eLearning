@@ -80,6 +80,61 @@
         display: block;
         vertical-align: middle;
     }
+    .cb-thumb-upload {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        align-items: flex-start;
+    }
+    .cb-drop-circle {
+        width: 220px;
+        height: 120px;
+        border-radius: 0.85rem;
+        border: 2px dashed #94a3b8;
+        background: #f8fafc;
+        color: #475569;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+        padding: 0.55rem;
+    }
+    .cb-drop-circle:hover {
+        border-color: #334155;
+        color: #0f172a;
+        background: #f1f5f9;
+    }
+    .cb-drop-circle.is-dragover {
+        border-color: #0f172a;
+        border-style: solid;
+        box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08);
+        background: #eef2ff;
+        color: #0f172a;
+    }
+    .cb-drop-circle svg {
+        margin-bottom: 0.35rem;
+        opacity: 0.9;
+    }
+    .cb-drop-main {
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+    .cb-drop-sub {
+        font-size: 0.68rem;
+        color: #64748b;
+        line-height: 1.15;
+        margin-top: 0.15rem;
+    }
+    .cb-drop-filename {
+        font-size: 0.75rem;
+        color: #475569;
+        font-weight: 600;
+    }
     .cb-grading-card {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
@@ -242,7 +297,15 @@
                             </div>
                             <div class="mb-0">
                                 <label class="form-label" for="course_thumbnail">Thumbnail (optional)</label>
-                                <input id="course_thumbnail" type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+                                <div class="cb-thumb-upload">
+                                    <div class="cb-drop-circle" id="thumbDropCircle" role="button" tabindex="0" aria-label="Upload thumbnail by dragging file or clicking">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M12 16V7m0 0l-3 3m3-3l3 3"/><path stroke-width="2" d="M20 16.5a3.5 3.5 0 00-3.5-3.5h-1.2A5.3 5.3 0 005.3 11.9 3.3 3.3 0 005.5 18H18a2 2 0 002-2v-.5z"/></svg>
+                                        <div class="cb-drop-main">Drag & Drop</div>
+                                        <div class="cb-drop-sub">or click</div>
+                                    </div>
+                                    <input id="course_thumbnail" type="file" name="thumbnail" class="form-control @error('thumbnail') is-invalid @enderror" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+                                    <div class="cb-drop-filename" id="thumbFileName">No file selected</div>
+                                </div>
                                 @error('thumbnail')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 <p class="small text-muted mt-2 mb-0">Use JPG, PNG, or WebP up to 4MB. Uploaded thumbnails are optimized to web-safe format for production.</p>
                                 @if($course->thumbnail)
@@ -379,6 +442,48 @@
         const barMid = document.getElementById('barMid');
         const barFinal = document.getElementById('barFinal');
         const barAtt = document.getElementById('barAtt');
+        const thumbInput = document.getElementById('course_thumbnail');
+        const thumbDropCircle = document.getElementById('thumbDropCircle');
+        const thumbFileName = document.getElementById('thumbFileName');
+
+        function updateThumbFilename() {
+            if (!thumbFileName || !thumbInput) return;
+            const file = thumbInput.files && thumbInput.files[0];
+            thumbFileName.textContent = file ? file.name : 'No file selected';
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        if (thumbDropCircle && thumbInput) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+                thumbDropCircle.addEventListener(eventName, preventDefaults);
+            });
+            ['dragenter', 'dragover'].forEach((eventName) => {
+                thumbDropCircle.addEventListener(eventName, () => thumbDropCircle.classList.add('is-dragover'));
+            });
+            ['dragleave', 'drop'].forEach((eventName) => {
+                thumbDropCircle.addEventListener(eventName, () => thumbDropCircle.classList.remove('is-dragover'));
+            });
+            thumbDropCircle.addEventListener('click', () => thumbInput.click());
+            thumbDropCircle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    thumbInput.click();
+                }
+            });
+            thumbDropCircle.addEventListener('drop', (e) => {
+                const files = e.dataTransfer?.files;
+                if (!files || !files.length) return;
+                thumbInput.files = files;
+                thumbInput.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            thumbInput.addEventListener('change', updateThumbFilename);
+            updateThumbFilename();
+        }
+
         function updateTotal() {
             const total = fields.reduce((sum, el) => sum + Number(el?.value || 0), 0);
             const q = Number(fields[0]?.value || 0);
