@@ -25,9 +25,48 @@ $layout = auth()->user()->isStudent()
     .quiz-shell { background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 22px rgba(15, 23, 42, 0.06); }
     .quiz-shell .quiz-intro { padding: 1rem 1.2rem; border-bottom: 1px solid #f1f5f9; background: linear-gradient(180deg, #fff 0%, #fafbfc 100%); }
     .quiz-shell .quiz-content { padding: 1rem 1.2rem 1.2rem; }
-    .question-card { border: 1px solid #e5e7eb; border-radius: 0.8rem; background: #fff; padding: 0.95rem; margin-bottom: 0.9rem; }
+    .question-card {
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        padding: 0 0 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
     .question-title { font-weight: 700; color: #0f172a; margin-bottom: 0.65rem; }
     .question-pts { color: #64748b; font-weight: 500; font-size: 0.82rem; }
+    .answer-label {
+        display: block;
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+    }
+    .answer-input {
+        display: block;
+        width: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.6rem;
+        padding: 0.72rem 0.82rem;
+        font-size: 0.94rem;
+        color: #0f172a;
+        background: #fff;
+        transition: border-color .15s ease, box-shadow .15s ease;
+        resize: vertical;
+        min-height: 120px;
+    }
+    .answer-input:focus {
+        border-color: #0f172a;
+        box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+        outline: none;
+    }
+    .answer-hint {
+        margin-top: 0.45rem;
+        font-size: 0.76rem;
+        color: #64748b;
+    }
     .option-item { border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.55rem 0.65rem; margin-bottom: 0.5rem; background: #f8fafc; }
     .option-item:hover { background: #f1f5f9; border-color: #cbd5e1; }
     .quiz-submit-row { border-top: 1px solid #e5e7eb; margin-top: 0.8rem; padding-top: 0.9rem; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
@@ -119,9 +158,13 @@ $layout = auth()->user()->isStudent()
                             </label>
                         @endforeach
                     @elseif($qType === 'short_answer')
-                        <textarea name="answers[{{ $q->id }}]" class="form-control" rows="3" placeholder="Your answer"></textarea>
+                        <label class="answer-label" for="answer-{{ $q->id }}">Your answer</label>
+                        <textarea id="answer-{{ $q->id }}" name="answers[{{ $q->id }}]" class="answer-input" rows="4" placeholder="Type your answer here..."></textarea>
+                        <div class="answer-hint">Press Enter for a new line.</div>
                     @else
-                        <textarea name="answers[{{ $q->id }}]" class="form-control font-monospace" rows="6" placeholder="Write your code or answer here"></textarea>
+                        <label class="answer-label" for="answer-{{ $q->id }}">Your answer</label>
+                        <textarea id="answer-{{ $q->id }}" name="answers[{{ $q->id }}]" class="answer-input font-monospace" rows="8" placeholder="Write your code or answer here..."></textarea>
+                        <div class="answer-hint">Press Enter for a new line.</div>
                     @endif
                 </div>
             @endforeach
