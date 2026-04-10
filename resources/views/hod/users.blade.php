@@ -167,7 +167,10 @@
 <div class="hod-usr-hero">
     <div class="hero-left">
         <div class="hero-icon">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m20 0v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8z"/>
+                <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0114 0"/>
+            </svg>
         </div>
         <div>
             <h1 class="hero-title">User management</h1>

@@ -32,7 +32,10 @@
         <span>Archive enrollments</span>
     </a>
     <a class="nav-link {{ request()->routeIs('hod.users.*') ? 'active' : '' }}" href="{{ route('hod.users') }}" data-drawer-close>
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8z"/>
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0114 0"/>
+        </svg>
         <span>User Management</span>
     </a>
 @endsection
