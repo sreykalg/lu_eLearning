@@ -11,6 +11,17 @@
     .page-hero .back-link { color: rgba(255,255,255,0.88); text-decoration: none; font-weight: 200; }
     .page-hero .back-link:hover { color: #fff; }
     .student-avatar { width: 34px; height: 34px; border-radius: 50%; background: #0f172a; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; }
+    .btn-progress {
+        border-color: #0f172a;
+        color: #0f172a;
+        font-weight: 600;
+    }
+    .btn-progress:hover,
+    .btn-progress:focus {
+        background: #0f172a;
+        border-color: #0f172a;
+        color: #fff;
+    }
 </style>
 @endpush
 
@@ -58,7 +69,7 @@
                         </td>
                         <td class="px-3 py-3">{{ $s->overall !== null ? $s->overall.'%' : '—' }}</td>
                         <td class="px-3 py-3 text-end">
-                            <a href="{{ route('hod.monitoring.student', [$course, $s->user]) }}" class="btn btn-sm btn-outline-primary">View Progress</a>
+                            <a href="{{ route('hod.monitoring.student', [$course, $s->user]) }}" class="btn btn-sm btn-outline-dark btn-progress">View Progress</a>
                         </td>
                     </tr>
                 @empty
