@@ -10,7 +10,7 @@
     .monitor-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.95rem; overflow: hidden; transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
     .monitor-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(15,23,42,0.08); border-color: #cbd5e1; }
     .monitor-card-head {
-        height: 84px;
+        height: 180px;
         background:
             radial-gradient(circle at top right, rgba(59,130,246,0.28), transparent 58%),
             linear-gradient(135deg, #0f172a 0%, #1e293b 56%, #334155 100%);
@@ -18,6 +18,23 @@
         align-items: flex-start;
         justify-content: space-between;
         padding: 0.8rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .monitor-card-head::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.28) 0%, rgba(30, 41, 59, 0.14) 100%);
+        pointer-events: none;
+    }
+    .monitor-card-head > * {
+        position: relative;
+        z-index: 1;
+    }
+    .monitor-card-head.has-thumb {
+        background-size: cover;
+        background-position: center;
     }
     .monitor-level-chip { font-size: 0.68rem; letter-spacing: 0.03em; font-weight: 700; border-radius: 9999px; padding: 0.25rem 0.55rem; background: rgba(255,255,255,0.16); color: #fff; }
     .monitor-live-chip { font-size: 0.68rem; font-weight: 700; border-radius: 9999px; padding: 0.25rem 0.55rem; background: #dcfce7; color: #166534; }
@@ -47,7 +64,10 @@
     @forelse($courses as $course)
         <div class="col-md-6 col-xl-4">
             <div class="monitor-card h-100 d-flex flex-column">
-                <div class="monitor-card-head">
+                <div class="monitor-card-head{{ $course->thumbnail ? ' has-thumb' : '' }}"
+                     @if($course->thumbnail)
+                         style="background-image: url('{{ asset('storage/' . $course->thumbnail) }}');"
+                     @endif>
                     <span class="monitor-level-chip">{{ strtoupper($course->level ?? 'beginner') }}</span>
                     <span class="monitor-live-chip">ONGOING</span>
                 </div>
