@@ -421,7 +421,4 @@
     </div>
 </div>
 
-<div class="asub-footer-back">
-    <a href="{{ route('instructor.submissions') }}" class="btn btn-outline-secondary rounded-3 px-4">Back to submissions</a>
-</div>
 @endsection
