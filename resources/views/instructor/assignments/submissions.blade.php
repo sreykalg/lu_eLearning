@@ -308,9 +308,9 @@
 </div>
 
 <div class="asub-hero">
-    <a href="{{ route('instructor.assignments.edit', [$course, $assignment]) }}" class="asub-back">
+    <a href="{{ route('instructor.submissions.show', $course) }}" class="asub-back">
         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        Back to assignment
+        Back to Course
     </a>
     <div class="asub-hero__row">
         <div class="hero-left">
