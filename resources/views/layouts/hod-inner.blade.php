@@ -38,4 +38,11 @@
         </svg>
         <span>User Management</span>
     </a>
+    <a class="nav-link {{ request()->routeIs('hod.instructors.*') ? 'active' : '' }}" href="{{ route('hod.instructors.index') }}" data-drawer-close>
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8z"/>
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0114 0"/>
+        </svg>
+        <span>Manage Instructors</span>
+    </a>
 @endsection

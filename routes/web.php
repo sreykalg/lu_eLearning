@@ -146,6 +146,10 @@ Route::middleware(['auth', 'verified', 'head_of_dept'])->prefix('hod')->name('ho
     Route::get('/enrollments/archive', [HodEnrollmentRenewalController::class, 'create'])->name('enrollments.archive');
     Route::post('/enrollments/archive', [HodEnrollmentRenewalController::class, 'store'])->name('enrollments.archive.store');
     Route::get('/users', [HodUserController::class, 'index'])->name('users');
+    Route::get('/instructors', [HodUserController::class, 'instructors'])->name('instructors.index');
+    Route::post('/instructors', [HodUserController::class, 'storeInstructor'])->name('instructors.store');
+    Route::put('/instructors/{instructor}', [HodUserController::class, 'updateInstructor'])->name('instructors.update');
+    Route::delete('/instructors/{instructor}', [HodUserController::class, 'destroyInstructor'])->name('instructors.destroy');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
