@@ -6,6 +6,21 @@
 
 @push('styles')
 <style>
+    .qatt-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.84rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    .qatt-hero .qatt-back {
+        align-self: flex-start;
+        color: rgba(255, 255, 255, 0.82);
+    }
+    .qatt-hero .qatt-back:hover {
+        color: #fff;
+    }
     .qatt-breadcrumb {
         font-size: 0.8125rem;
         margin-bottom: 1rem;
@@ -22,11 +37,17 @@
         color: #fff;
         margin-bottom: 1.25rem;
         display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.85rem;
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
+    }
+    .qatt-hero__row {
+        display: flex;
         align-items: flex-start;
         justify-content: space-between;
         gap: 1rem;
         flex-wrap: wrap;
-        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
     }
     .qatt-hero .hero-left { display: flex; align-items: flex-start; gap: 1rem; }
     .qatt-hero .hero-icon {
@@ -165,19 +186,25 @@
 </div>
 
 <div class="qatt-hero">
-    <div class="hero-left">
-        <div class="hero-icon">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+    <a href="{{ route('instructor.submissions.show', $course) }}" class="qatt-back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to Course
+    </a>
+    <div class="qatt-hero__row">
+        <div class="hero-left">
+            <div class="hero-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            </div>
+            <div>
+                <h1 class="hero-title">Quiz attempts · {{ $quiz->title }}</h1>
+                <p class="hero-subtitle">{{ $course->title }}</p>
+                <span class="qatt-type-pill">{{ ucfirst(str_replace('_', ' ', $quiz->type)) }}</span>
+            </div>
         </div>
-        <div>
-            <h1 class="hero-title">Quiz attempts · {{ $quiz->title }}</h1>
-            <p class="hero-subtitle">{{ $course->title }}</p>
-            <span class="qatt-type-pill">{{ ucfirst(str_replace('_', ' ', $quiz->type)) }}</span>
+        <div class="hero-meta">
+            <span class="label">Attempts recorded</span>
+            <span class="fw-bold">{{ $attemptCount }} {{ Str::plural('attempt', $attemptCount) }}</span>
         </div>
-    </div>
-    <div class="hero-meta">
-        <span class="label">Attempts recorded</span>
-        <span class="fw-bold">{{ $attemptCount }} {{ Str::plural('attempt', $attemptCount) }}</span>
     </div>
 </div>
 
@@ -226,7 +253,4 @@
     @endif
 </div>
 
-<div class="qatt-footer">
-    <a href="{{ route('instructor.submissions') }}" class="btn btn-outline-secondary rounded-3 px-4">Back to submissions</a>
-</div>
 @endsection
