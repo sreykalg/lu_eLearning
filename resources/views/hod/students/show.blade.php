@@ -3,7 +3,7 @@
 @push('styles')
 <style>
     .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #334155 100%); border-radius: 1rem; padding: 1.25rem 1.4rem; color: #fff; margin-bottom: 1rem; }
-    .page-hero .hero-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+    .page-hero .hero-row { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; }
     .page-hero .hero-left { display: flex; align-items: center; gap: 0.9rem; }
     .page-hero .hero-icon { width: 44px; height: 44px; border-radius: 0.75rem; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
     .page-hero .hero-title { margin: 0; font-weight: 700; }
@@ -25,6 +25,10 @@
 @section('content')
 <div class="page-hero">
     <div class="hero-row">
+        <a href="{{ route('hod.students.index') }}" class="back-link d-inline-flex align-items-center gap-1">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Back to courses
+        </a>
         <div class="hero-left">
             <div class="hero-icon">
                 <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/></svg>
@@ -34,10 +38,6 @@
                 <p class="hero-subtitle">Enrolled students and performance · {{ $students->count() }} students</p>
             </div>
         </div>
-        <a href="{{ route('hod.students.index') }}" class="back-link d-inline-flex align-items-center gap-1">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            Back to courses
-        </a>
     </div>
 </div>
 
@@ -88,9 +88,9 @@
                             <span class="score-cell {{ $scoreClass($s->overall) }}">{{ $s->overall !== null ? $s->overall . '%' : '—' }}</span>
                         </td>
                         <td class="px-4 py-3 text-end">
+                            <!-- Remove Student Button -->
                             <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeStudentModal" data-enrollment-id="{{ $s->enrollment->id }}" data-student-name="{{ e($s->user->name ?? 'Unknown') }}">
                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="me-1"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                Remove
                             </button>
                         </td>
                     </tr>
