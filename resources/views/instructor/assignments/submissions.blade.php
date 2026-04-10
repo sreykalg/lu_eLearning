@@ -2,6 +2,21 @@
 
 @push('styles')
 <style>
+    .asub-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.84rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    .asub-hero .asub-back {
+        align-self: flex-start;
+        color: rgba(255, 255, 255, 0.82);
+    }
+    .asub-hero .asub-back:hover {
+        color: #fff;
+    }
     .asub-breadcrumb {
         font-size: 0.8125rem;
         margin-bottom: 1rem;
@@ -18,11 +33,17 @@
         color: #fff;
         margin-bottom: 1.25rem;
         display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.85rem;
+        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
+    }
+    .asub-hero__row {
+        display: flex;
         align-items: flex-start;
         justify-content: space-between;
         gap: 1rem;
         flex-wrap: wrap;
-        box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
     }
     .asub-hero .hero-left { display: flex; align-items: flex-start; gap: 1rem; }
     .asub-hero .hero-icon {
@@ -287,19 +308,25 @@
 </div>
 
 <div class="asub-hero">
-    <div class="hero-left">
-        <div class="hero-icon">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    <a href="{{ route('instructor.assignments.edit', [$course, $assignment]) }}" class="asub-back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to assignment
+    </a>
+    <div class="asub-hero__row">
+        <div class="hero-left">
+            <div class="hero-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <div>
+                <h1 class="hero-title">Submissions · {{ $assignment->title }}</h1>
+                <p class="hero-subtitle">Review files, notes, and grades for {{ $course->title }}.</p>
+            </div>
         </div>
-        <div>
-            <h1 class="hero-title">Submissions · {{ $assignment->title }}</h1>
-            <p class="hero-subtitle">Review files, notes, and grades for {{ $course->title }}.</p>
+        <div class="hero-meta">
+            <span class="label">Total</span>
+            <span class="fw-bold">{{ $submissions->count() }} {{ Str::plural('submission', $submissions->count()) }}</span>
+            <span class="d-block mt-2 small opacity-90">Max score {{ $assignment->max_score }}</span>
         </div>
-    </div>
-    <div class="hero-meta">
-        <span class="label">Total</span>
-        <span class="fw-bold">{{ $submissions->count() }} {{ Str::plural('submission', $submissions->count()) }}</span>
-        <span class="d-block mt-2 small opacity-90">Max score {{ $assignment->max_score }}</span>
     </div>
 </div>
 
