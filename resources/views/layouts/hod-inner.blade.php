@@ -40,8 +40,10 @@
     </a>
     <a class="nav-link {{ request()->routeIs('hod.instructors.*') ? 'active' : '' }}" href="{{ route('hod.instructors.index') }}" data-drawer-close>
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8z"/>
-            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0114 0"/>
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M16 10a3 3 0 100-6 3 3 0 000 6z"/>
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M8 12a3 3 0 100-6 3 3 0 000 6z"/>
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M3 20a5 5 0 0110 0"/>
+            <path stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M13 20a5 5 0 018 0"/>
         </svg>
         <span>Manage Instructors</span>
     </a>
