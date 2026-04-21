@@ -21,15 +21,15 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'email' => 'test@lifeun.edu.kh',
+            'password' => 'Str0ng!Pass',
+            'password_confirmation' => 'Str0ng!Pass',
         ]);
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
 
-        $user = User::where('email', 'test@example.com')->first();
+        $user = User::where('email', 'test@lifeun.edu.kh')->first();
         $this->assertNotNull($user);
         $this->assertSame('student', $user->role);
     }
@@ -38,14 +38,14 @@ class RegistrationTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Malicious User',
-            'email' => 'malicious@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'email' => 'malicious@lifeun.edu.kh',
+            'password' => 'Str0ng!Pass',
+            'password_confirmation' => 'Str0ng!Pass',
             'role' => 'instructor',
         ]);
 
         $this->assertAuthenticated();
-        $user = User::where('email', 'malicious@example.com')->first();
+        $user = User::where('email', 'malicious@lifeun.edu.kh')->first();
         $this->assertSame('student', $user->role);
     }
 }
