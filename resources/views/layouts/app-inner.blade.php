@@ -155,7 +155,8 @@
         .inner-header .notif-item.unread { background: #f8fafc; }
         .inner-header .notif-item .notif-text { color: #334155; }
         .inner-header .notif-item .notif-time { font-size: 0.75rem; color: #94a3b8; }
-        .inner-header .profile-dropdown .dropdown-toggle { border: none; background: transparent; padding: 0.25rem; border-radius: 0.5rem; transition: background 0.2s; }
+        .inner-header .profile-dropdown .dropdown-toggle { border: none; background: transparent; padding: 0.25rem 0.35rem 0.25rem 0.25rem; border-radius: 0.5rem; transition: background 0.2s; }
+        .inner-header .profile-dropdown .dropdown-toggle::after { margin-inline-start: 0.2rem; vertical-align: middle; opacity: 0.65; }
         .inner-header .profile-dropdown .dropdown-toggle:hover { background: #f1f5f9; }
         .inner-header .profile-dropdown .dropdown-menu { min-width: 260px; padding: 0; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 10px 40px rgba(0,0,0,0.12); margin-top: 0.5rem; overflow: hidden; }
         .inner-header .profile-dropdown .dropdown-header-custom { padding: 1rem 1.25rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; }
@@ -343,15 +344,14 @@
                         </div>
                     </div>
                     <div class="dropdown profile-dropdown">
-                        <button class="dropdown-toggle btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button type="button" class="dropdown-toggle btn d-flex align-items-center gap-1" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="{{ __('Account menu') }} — {{ auth()->user()->name ?? 'User' }}">
                             <div class="avatar d-flex align-items-center justify-content-center rounded-circle overflow-hidden" style="width:40px;height:40px;font-size:0.875rem;font-weight:600;background:#0f172a;color:#fff;">
                                 @if(!empty($profilePhotoUrl))
-                                    <img src="{{ $profilePhotoUrl }}" alt="{{ auth()->user()->name ?? 'User' }}" style="width:100%;height:100%;object-fit:cover;">
+                                    <img src="{{ $profilePhotoUrl }}" alt="" style="width:100%;height:100%;object-fit:cover;">
                                 @else
                                     {{ $initials ?? 'U' }}
                                 @endif
                             </div>
-                            <span class="d-none d-md-inline text-dark fw-medium" style="font-size:0.9rem;">{{ auth()->user()->name ?? 'User' }}</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li class="px-0">
